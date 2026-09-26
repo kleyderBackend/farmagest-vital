@@ -41,4 +41,3 @@ database/schema.sql
 ```
 
 Ese archivo sirve como base para implementar luego MySQL o PostgreSQL con backend.
-
