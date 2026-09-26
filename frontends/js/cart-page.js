@@ -24,7 +24,7 @@ const renderCart = () => {
         <i class="fa-solid fa-basket-shopping" aria-hidden="true"></i>
         <h2>Tu carrito está vacío</h2>
         <p>Explora el catálogo y añade los productos que necesitas.</p>
-        <a class="cart-continue" href="./index.html#productos">Ver productos</a>
+        <a class="cart-continue" href="../index.html#productos">Ver productos</a>
       </section>
     `;
     updateCartBadges();

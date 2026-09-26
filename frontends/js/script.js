@@ -75,7 +75,7 @@ const createProductCard = (product) => {
             <strong>$${product.price.toLocaleString("es-CO")}</strong>
 
             <div class="actions">
-                <a href="details.html?id=${product.id}">
+                <a href="./ecommerce/details.html?id=${product.id}">
                     <button>Detalles</button>
                 </a>
                 <button type="button" data-add-to-cart="${product.id}">
