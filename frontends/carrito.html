@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="es">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Carrito | Farmagest Vital</title>
+		<link rel="stylesheet" href="./css/style.css?v=1" />
+		<link rel="stylesheet" href="./css/products.css?v=3" />
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+		/>
+	</head>
+	<body>
+		<header>
+			<nav>
+				<a href="./index.html#inicio">
+					<img src="/frontends/imgs/logo.png" alt="Farmagest Vital" />
+				</a>
+				<ul>
+					<li><a href="./index.html#inicio">Inicio</a></li>
+					<li><a href="./index.html#categorias">Categorías</a></li>
+					<li><a href="./index.html#productos">Productos</a></li>
+					<li>
+						<a class="cart-nav-link" href="./carrito.html" aria-current="page">
+							<i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+							<span>Carrito</span>
+							<span class="cart-count" data-cart-count hidden>0</span>
+						</a>
+					</li>
+				</ul>
+			</nav>
+		</header>
+
+		<main class="cart-page">
+			<div class="cart-heading">
+				<div>
+					<p>Tu compra</p>
+					<h1>Carrito</h1>
+				</div>
+				<a href="./index.html#productos"><i class="fa-solid fa-arrow-left"></i> Seguir comprando</a>
+			</div>
+			<div id="cart-root" aria-live="polite"></div>
+		</main>
+
+		<script type="module" src="./js/cart-page.js?v=1"></script>
+	</body>
+</html>
