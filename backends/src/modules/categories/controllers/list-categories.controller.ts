@@ -8,6 +8,13 @@ export async function listCategoriesController(_req: Request, res: Response) {
   try {
     const categories = await listCategoriesService();
 
+    if (categories.length === 0) {
+      return res.status(400).json({
+        status: "fail",
+        message: "No hay categorias registradas",
+      });
+    }
+
     return res.status(200).json({
       status: "success",
       message: "Categorias listadas con exito",
@@ -28,6 +35,13 @@ export async function listActiveCategoriesController(
 ) {
   try {
     const categories = await listActiveCategoriesService();
+
+    if (categories.length === 0) {
+      return res.status(400).json({
+        status: "fail",
+        message: "No hay categorias activas registradas",
+      });
+    }
 
     return res.status(200).json({
       status: "success",

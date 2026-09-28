@@ -19,21 +19,21 @@ export function authMiddleware(
   res: Response,
   next: NextFunction
 ) {
-  const authHeader = req.headers.authorization;
+  const authHeader = req.get("authorization");
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+  if (!authHeader) {
     return res.status(401).json({
       status: "fail",
       message: "Token no proporcionado",
     });
   }
 
-  const token = authHeader.split(" ")[1];
+  const [scheme, token] = authHeader.trim().split(/\s+/);
 
-  if (!token) {
+  if (scheme?.toLowerCase() !== "bearer" || !token) {
     return res.status(401).json({
       status: "fail",
-      message: "Token no proporcionado",
+      message: "Formato de token invalido",
     });
   }
 
