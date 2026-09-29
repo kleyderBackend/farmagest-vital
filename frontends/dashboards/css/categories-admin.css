@@ -1,0 +1,30 @@
+aside div:first-child li:first-child,
+aside div:first-child li:nth-child(2) {
+  background: transparent;
+  color: #344760;
+}
+
+aside div:first-child li:first-child::after,
+aside div:first-child li:nth-child(2)::after {
+  display: none;
+}
+
+aside div:first-child li:nth-child(3) {
+  background: linear-gradient(90deg, rgba(8, 127, 115, 0.14), rgba(8, 127, 115, 0.05));
+  color: var(--primary-dark);
+}
+
+aside div:first-child li:nth-child(3)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 3px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--primary);
+}
+
+.category-form-card .form-grid {
+  grid-template-columns: 1fr;
+}
+

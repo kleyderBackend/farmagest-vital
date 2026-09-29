@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Productos | Farmagest Vital</title>
+    <link rel="stylesheet" href="../css/dashboard-general.css" />
+    <link rel="stylesheet" href="../css/products-admin.css" />
+  </head>
+  <body data-page="products">
+    <header>
+      <nav>
+        <input
+          type="search"
+          placeholder="Buscar productos, codigos o categorias..."
+        />
+        <div>
+          <img src="../../imgs/admin.img" alt="imagen o logo de admin" />
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <div>
+        <div>
+          <img src="../../imgs/logo.png" alt="logo de Farmagest Vital" />
+        </div>
+        <aside>
+          <div>
+            <ul>
+              <li><a href="../dashboardAdmin.html">Dashboard</a></li>
+              <li><a href="./products.html">Productos</a></li>
+              <li><a href="../categories/categories.html">Categorías</a></li>
+              <li><a href="">Ventas</a></li>
+              <li><a href="">Inventario</a></li>
+              <li><a href="">Stock</a></li>
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <li><a href="">Clientes</a></li>
+              <li><a href="">Reportes</a></li>
+              <li><a href="">Configuración</a></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+
+      <section class="admin-page-header">
+        <div>
+          <span>Inventario</span>
+          <h1>Productos</h1>
+          <p>Gestiona el catálogo, disponibilidad, precios y niveles de stock.</p>
+        </div>
+        <a class="primary-action" href="./create-product.html">Nuevo producto</a>
+      </section>
+
+      <section class="products-summary">
+        <article>
+          <span>Total productos</span>
+          <strong id="totalProducts">0</strong>
+          <small>Productos registrados</small>
+        </article>
+        <article>
+          <span>Disponibles</span>
+          <strong id="availableProducts">0</strong>
+          <small>Activos para venta</small>
+        </article>
+        <article>
+          <span>Stock bajo</span>
+          <strong id="lowStockProducts">0</strong>
+          <small>Requieren revisión</small>
+        </article>
+        <article>
+          <span>Vencen pronto</span>
+          <strong id="expireSoonProducts">0</strong>
+          <small>Próximos 30 días</small>
+        </article>
+      </section>
+
+      <section class="products-toolbar">
+        <div>
+          <label for="filterCategory">Categoría</label>
+          <select
+            id="filterCategory"
+            data-categories-select
+            data-placeholder="Todas"
+          >
+            <option value="">Todas</option>
+          </select>
+        </div>
+        <div>
+          <label for="filterStatus">Estado</label>
+          <select id="filterStatus">
+            <option>Todos</option>
+            <option>Disponibles</option>
+            <option>No disponibles</option>
+            <option>Stock bajo</option>
+          </select>
+        </div>
+        <button type="button" id="applyProductFilters">Aplicar filtros</button>
+      </section>
+
+      <section class="products-table">
+        <div class="section-title">
+          <h2>Listado de productos</h2>
+          <span>Administración del catálogo</span>
+        </div>
+        <div id="adminMessage" class="admin-message" aria-live="polite"></div>
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Precio</th>
+                <th>Stock</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="productsTableBody">
+              <tr>
+                <td colspan="7">Cargando productos...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="../../js/admin-products.js"></script>
+  </body>
+</html>

@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inicio De Sesión | Farmagest Vital</title>
+    <link rel="stylesheet" href="../css/auth.css" />
+    <link
+      rel="shortcut icon"
+      href="/frontends/imgs/logo.png"
+      type="image/x-icon"
+    />
+  </head>
+  <body>
+    <main>
+      <div class="loginAdminDashboard">
+        <img src="../../imgs/logo.png" alt="logo Farmagest Vital" />
+        <h1>Inicio de Sesión</h1>
+        <div id="authMessage" class="auth-message" aria-live="polite"></div>
+        <form action="" id="formLoginAdmin">
+          <label for="emailAdmin">Usuario</label>
+          <input
+            type="email"
+            name="email"
+            id="emailAdmin"
+            required
+            placeholder="admin@farmagest.com"
+          />
+
+          <label for="passwordAdmin">Contraseña</label>
+          <input
+            type="password"
+            name="password"
+            id="passwordAdmin"
+            required
+            minlength="6"
+            placeholder="•••••••••••"
+          />
+          <div>
+            <button type="submit" id="btn-login-admin">Ingresar</button>
+          </div>
+        </form>
+      </div>
+    </main>
+    <script type="module" src="../../js/auth.js"></script>
+  </body>
+</html>
