@@ -5,6 +5,7 @@ import {
   updateProduct,
 } from "../repositories/update-product.repository";
 import type { UpdateProductInput } from "../products.type";
+import { validateExpirationDate } from "../utils/validate-expiration-date";
 
 export async function updateProductService(data: UpdateProductInput) {
   const existingProduct = await findProductById(data.productId);
@@ -51,6 +52,10 @@ export async function updateProductService(data: UpdateProductInput) {
     (data.minimumStock < 0 || Number.isNaN(data.minimumStock))
   ) {
     throw new Error("El stock minimo del producto debe ser un valor numerico y no puede ser negativo");
+  }
+
+  if (data.expirationDate !== undefined) {
+    validateExpirationDate(data.expirationDate);
   }
 
   const product = await updateProduct(data);

@@ -5,102 +5,67 @@
 }
 
 :root {
-  --color-primary: #087f73;
-  --color-primary-dark: #075e56;
-  --color-accent: #2f80ed;
-  --color-bg: #f5f8f7;
-  --color-surface: #ffffff;
-  --color-text: #152238;
-  --color-muted: #66758a;
-  --color-border: #d7e4e1;
-  --color-shadow: rgba(21, 34, 56, 0.14);
-  --radius-md: 8px;
+  --primary: #0b766d;
+  --primary-dark: #075f59;
+  --bg: #f6f8f8;
+  --surface: #ffffff;
+  --text: #101d2f;
+  --muted: #69778c;
+  --border: #dce5e3;
+  --danger: #dc2626;
+  --radius: 8px;
+  --shadow: 0 18px 50px rgba(16, 29, 47, 0.1);
 }
 
 body {
   min-height: 100vh;
+  background: var(--bg);
+  color: var(--text);
   font-family:
     Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
-  color: var(--color-text);
-  background:
-    radial-gradient(circle at 18% 20%, rgba(8, 127, 115, 0.13), transparent 30%),
-    radial-gradient(circle at 82% 82%, rgba(47, 128, 237, 0.1), transparent 28%),
-    linear-gradient(135deg, #f9fbfa 0%, #f0f6f4 48%, #e9f1ef 100%),
-    var(--color-bg);
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: 0;
-  pointer-events: none;
-  background-image:
-    linear-gradient(rgba(8, 127, 115, 0.045) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(8, 127, 115, 0.045) 1px, transparent 1px);
-  background-size: 44px 44px;
-  mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.65), transparent 80%);
 }
 
 main {
   min-height: 100vh;
   display: grid;
   place-items: center;
-  padding: 32px 20px;
+  padding: 32px 18px;
 }
 
 .loginAdminDashboard {
-  position: relative;
-  width: min(100%, 440px);
-  padding: 40px;
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.94);
-  border: 1px solid rgba(255, 255, 255, 0.78);
-  border-radius: var(--radius-md);
-  box-shadow:
-    0 26px 70px var(--color-shadow),
-    inset 0 1px 0 rgba(255, 255, 255, 0.9);
-  backdrop-filter: blur(18px);
-}
-
-.loginAdminDashboard::after {
-  content: "";
-  position: absolute;
-  inset: 0 0 auto;
-  height: 4px;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-accent));
+  width: min(100%, 410px);
+  padding: 34px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow);
 }
 
 .loginAdminDashboard img {
   display: block;
-  width: 92px;
-  height: 92px;
+  width: 86px;
+  height: 58px;
   object-fit: contain;
   margin: 0 auto 18px;
-  padding: 10px;
-  background: #ffffff;
-  border: 1px solid var(--color-border);
-  border-radius: 22px;
-  box-shadow: 0 12px 30px rgba(21, 34, 56, 0.1);
 }
 
 .loginAdminDashboard h1 {
-  margin-bottom: 28px;
-  padding-bottom: 20px;
-  border-bottom: 1px solid var(--color-border);
-  color: var(--color-text);
-  font-size: 1.55rem;
+  margin-bottom: 24px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+  font-size: 1.38rem;
   font-weight: 850;
   line-height: 1.15;
   text-align: center;
-  letter-spacing: 0;
 }
 
 .auth-message {
   display: none;
   margin-bottom: 16px;
   padding: 12px 14px;
-  border-radius: var(--radius-md);
+  border-radius: var(--radius);
   font-size: 0.92rem;
   font-weight: 750;
 }
@@ -111,15 +76,15 @@ main {
 }
 
 .auth-message.success {
-  border: 1px solid rgba(8, 127, 115, 0.22);
-  background: rgba(8, 127, 115, 0.09);
-  color: var(--color-primary-dark);
+  border: 1px solid rgba(11, 118, 109, 0.22);
+  background: rgba(11, 118, 109, 0.08);
+  color: var(--primary-dark);
 }
 
 .auth-message.error {
-  border: 1px solid rgba(229, 72, 77, 0.22);
-  background: rgba(229, 72, 77, 0.09);
-  color: #b42328;
+  border: 1px solid rgba(220, 38, 38, 0.22);
+  background: rgba(220, 38, 38, 0.08);
+  color: var(--danger);
 }
 
 form {
@@ -128,40 +93,34 @@ form {
 }
 
 label {
-  margin-top: 8px;
-  color: var(--color-text);
-  font-size: 0.9rem;
-  font-weight: 700;
+  margin-top: 6px;
+  color: #40516a;
+  font-size: 0.88rem;
+  font-weight: 800;
 }
 
 input {
   width: 100%;
-  min-height: 50px;
-  padding: 0 15px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
+  min-height: 46px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
   outline: none;
-  background: #f9fcfb;
-  color: var(--color-text);
+  background: #ffffff;
+  color: var(--text);
   font: inherit;
   transition:
-    border-color 180ms ease,
-    box-shadow 180ms ease,
-    background-color 180ms ease;
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
 input::placeholder {
-  color: #8a98a8;
-}
-
-input:hover {
-  border-color: #c8d8d4;
+  color: #8a96a8;
 }
 
 input:focus {
-  border-color: var(--color-primary);
-  background: #ffffff;
-  box-shadow: 0 0 0 4px rgba(8, 127, 115, 0.13);
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(11, 118, 109, 0.12);
 }
 
 form > div {
@@ -170,32 +129,26 @@ form > div {
 
 button {
   width: 100%;
-  min-height: 50px;
-  border: 0;
-  border-radius: var(--radius-md);
-  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-dark));
+  min-height: 46px;
+  border: 1px solid var(--primary);
+  border-radius: var(--radius);
+  background: var(--primary);
   color: #ffffff;
   font: inherit;
-  font-weight: 800;
+  font-weight: 850;
   cursor: pointer;
   transition:
-    background-color 180ms ease,
-    transform 180ms ease,
-    box-shadow 180ms ease;
+    background-color 160ms ease,
+    border-color 160ms ease;
 }
 
 button:hover {
-  box-shadow: 0 14px 30px rgba(8, 127, 115, 0.26);
-  transform: translateY(-1px);
-}
-
-button:active {
-  transform: translateY(0);
-  box-shadow: none;
+  background: var(--primary-dark);
+  border-color: var(--primary-dark);
 }
 
 button:focus-visible {
-  outline: 3px solid rgba(37, 99, 235, 0.28);
+  outline: 3px solid rgba(11, 118, 109, 0.2);
   outline-offset: 3px;
 }
 
@@ -205,15 +158,6 @@ button:focus-visible {
   }
 
   .loginAdminDashboard {
-    padding: 30px 20px 24px;
-  }
-
-  .loginAdminDashboard img {
-    width: 78px;
-    height: 78px;
-  }
-
-  .loginAdminDashboard h1 {
-    font-size: 1.32rem;
+    padding: 28px 20px 24px;
   }
 }

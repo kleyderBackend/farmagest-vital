@@ -15,7 +15,7 @@
           placeholder="Buscar productos, codigos o categorias..."
         />
         <div>
-          <img src="../../imgs/admin.img" alt="imagen o logo de admin" />
+          <img src="../../imgs/admin.img" alt="Administrador" />
         </div>
       </nav>
     </header>
@@ -23,7 +23,7 @@
     <main>
       <div>
         <div>
-          <img src="../../imgs/logo.png" alt="logo de Farmagest Vital" />
+          <img src="../../imgs/logo.png" alt="Farmagest Vital" />
         </div>
         <aside>
           <div>
@@ -31,16 +31,16 @@
               <li><a href="../dashboardAdmin.html">Dashboard</a></li>
               <li><a href="./products.html">Productos</a></li>
               <li><a href="../categories/categories.html">Categorías</a></li>
-              <li><a href="">Ventas</a></li>
-              <li><a href="">Inventario</a></li>
-              <li><a href="">Stock</a></li>
+              <li><a href="#" aria-disabled="true">Ventas</a></li>
+              <li><a href="#" aria-disabled="true">Inventario</a></li>
+              <li><a href="#" aria-disabled="true">Stock</a></li>
             </ul>
           </div>
           <div>
             <ul>
-              <li><a href="">Clientes</a></li>
-              <li><a href="">Reportes</a></li>
-              <li><a href="">Configuración</a></li>
+              <li><a href="#" aria-disabled="true">Clientes</a></li>
+              <li><a href="#" aria-disabled="true">Reportes</a></li>
+              <li><a href="#" aria-disabled="true">Configuración</a></li>
             </ul>
           </div>
         </aside>
@@ -96,6 +96,8 @@
             <option>Disponibles</option>
             <option>No disponibles</option>
             <option>Stock bajo</option>
+            <option>Por vencer</option>
+            <option>Vencidos</option>
           </select>
         </div>
         <button type="button" id="applyProductFilters">Aplicar filtros</button>
@@ -116,13 +118,14 @@
                 <th>Categoría</th>
                 <th>Precio</th>
                 <th>Stock</th>
+                <th>Vencimiento</th>
                 <th>Estado</th>
                 <th>Acciones</th>
               </tr>
             </thead>
             <tbody id="productsTableBody">
               <tr>
-                <td colspan="7">Cargando productos...</td>
+                <td colspan="8">Cargando productos...</td>
               </tr>
             </tbody>
           </table>

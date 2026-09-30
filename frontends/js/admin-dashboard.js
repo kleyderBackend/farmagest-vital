@@ -2,6 +2,64 @@ import { apiRequest, formatCurrency, formatDate, requireAdminSession } from "./a
 
 requireAdminSession();
 
+const EXPIRATION_ALERT_DAYS = 30;
+
+function parseDateOnly(value) {
+  if (!value) {
+    return null;
+  }
+
+  const dateText = String(value).slice(0, 10);
+  const [year, month, day] = dateText.split("-").map(Number);
+
+  if (!year || !month || !day) {
+    return null;
+  }
+
+  const date = new Date(year, month - 1, day);
+  date.setHours(0, 0, 0, 0);
+
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function getDaysUntilExpiration(value) {
+  const expirationDate = parseDateOnly(value);
+
+  if (!expirationDate) {
+    return null;
+  }
+
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  return Math.round((expirationDate - today) / (24 * 60 * 60 * 1000));
+}
+
+function getProductStatus(product) {
+  const daysUntilExpiration = getDaysUntilExpiration(product.expiration_date);
+
+  if (daysUntilExpiration !== null && daysUntilExpiration < 0) {
+    return { className: "expired", label: "Vencido" };
+  }
+
+  if (
+    daysUntilExpiration !== null &&
+    daysUntilExpiration <= EXPIRATION_ALERT_DAYS
+  ) {
+    return { className: "warning", label: "Por vencer" };
+  }
+
+  if (Number(product.current_stock) <= Number(product.minimum_stock)) {
+    return { className: "warning", label: "Stock bajo" };
+  }
+
+  if (!product.is_available) {
+    return { className: "inactive", label: "No disponible" };
+  }
+
+  return { className: "active", label: "Disponible" };
+}
+
 function renderRows(targetId, html, emptyColspan) {
   const target = document.getElementById(targetId);
 
@@ -48,24 +106,27 @@ async function loadDashboard() {
       "dashboardRecentProductsBody",
       products
         .slice(0, 5)
-        .map(
-          (product) => `
+        .map((product) => {
+          const status = getProductStatus(product);
+
+          return `
             <tr>
               <td>PRD-${String(product.product_id).padStart(3, "0")}</td>
               <td>${product.name}</td>
               <td>${product.category_name || "Sin categoría"}</td>
               <td>${product.current_stock}</td>
               <td>${formatCurrency(product.sale_price)}</td>
-              <td>${formatDate(product.created_at)}</td>
+              <td>${formatDate(product.expiration_date)}</td>
+              <td><span class="status ${status.className}">${status.label}</span></td>
             </tr>
-          `,
-        )
+          `;
+        })
         .join(""),
-      6,
+      7,
     );
   } catch {
     renderRows("dashboardLowStockBody", "", 3);
-    renderRows("dashboardRecentProductsBody", "", 6);
+    renderRows("dashboardRecentProductsBody", "", 7);
   }
 }
 

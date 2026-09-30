@@ -7,6 +7,82 @@ import {
 
 const page = document.body.dataset.page;
 let cachedProducts = [];
+const EXPIRATION_ALERT_DAYS = 30;
+
+function parseDateOnly(value) {
+  if (!value) {
+    return null;
+  }
+
+  const dateText = String(value).slice(0, 10);
+  const [year, month, day] = dateText.split("-").map(Number);
+
+  if (!year || !month || !day) {
+    return null;
+  }
+
+  const date = new Date(year, month - 1, day);
+  date.setHours(0, 0, 0, 0);
+
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function getTodayDateOnly() {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  return today;
+}
+
+function getDaysUntilExpiration(value) {
+  const expirationDate = parseDateOnly(value);
+
+  if (!expirationDate) {
+    return null;
+  }
+
+  const millisecondsPerDay = 24 * 60 * 60 * 1000;
+  return Math.round((expirationDate - getTodayDateOnly()) / millisecondsPerDay);
+}
+
+function getProductStatus(product) {
+  const daysUntilExpiration = getDaysUntilExpiration(product.expiration_date);
+
+  if (daysUntilExpiration !== null && daysUntilExpiration < 0) {
+    return { className: "expired", label: "Vencido" };
+  }
+
+  if (
+    daysUntilExpiration !== null &&
+    daysUntilExpiration <= EXPIRATION_ALERT_DAYS
+  ) {
+    return { className: "warning", label: "Por vencer" };
+  }
+
+  if (Number(product.current_stock) <= Number(product.minimum_stock)) {
+    return { className: "warning", label: "Stock bajo" };
+  }
+
+  if (!product.is_available) {
+    return { className: "inactive", label: "No disponible" };
+  }
+
+  return { className: "active", label: "Disponible" };
+}
+
+function preventPastExpirationDates() {
+  const input = document.getElementById("expirationDate");
+
+  if (!input) {
+    return;
+  }
+
+  const today = getTodayDateOnly();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+
+  input.min = `${year}-${month}-${day}`;
+}
 
 function showMessage(message, type = "success") {
   const messageBox = document.getElementById("adminMessage");
@@ -96,7 +172,7 @@ function renderProducts(products) {
   if (products.length === 0) {
     tableBody.innerHTML = `
       <tr>
-        <td colspan="7">No hay productos registrados.</td>
+        <td colspan="8">No hay productos registrados.</td>
       </tr>
     `;
     return;
@@ -104,10 +180,7 @@ function renderProducts(products) {
 
   tableBody.innerHTML = products
     .map((product) => {
-      const isLowStock =
-        Number(product.current_stock) <= Number(product.minimum_stock);
-      const statusClass = isLowStock ? "warning" : "active";
-      const statusLabel = isLowStock ? "Stock bajo" : "Disponible";
+      const status = getProductStatus(product);
 
       return `
         <tr>
@@ -116,7 +189,8 @@ function renderProducts(products) {
           <td>${product.category_name || "Sin categoría"}</td>
           <td>${formatCurrency(product.sale_price)}</td>
           <td>${product.current_stock}</td>
-          <td><span class="status ${statusClass}">${statusLabel}</span></td>
+          <td>${formatDate(product.expiration_date)}</td>
+          <td><span class="status ${status.className}">${status.label}</span></td>
           <td>
             <a class="table-action" href="./edit-product.html?id=${product.product_id}">Editar</a>
           </td>
@@ -139,11 +213,15 @@ function updateProductSummary(products) {
   const lowStockCount = products.filter(
     (product) => Number(product.current_stock) <= Number(product.minimum_stock),
   ).length;
+  const expireSoonCount = products.filter((product) => {
+    const days = getDaysUntilExpiration(product.expiration_date);
+    return days !== null && days >= 0 && days <= EXPIRATION_ALERT_DAYS;
+  }).length;
 
   total.textContent = products.length;
   available.textContent = products.filter((product) => product.is_available).length;
   lowStock.textContent = lowStockCount;
-  expireSoon.textContent = products.filter((product) => product.expiration_date).length;
+  expireSoon.textContent = expireSoonCount;
 }
 
 async function loadProductsPage() {
@@ -184,6 +262,20 @@ function applyProductFilters() {
     products = products.filter(
       (product) => Number(product.current_stock) <= Number(product.minimum_stock),
     );
+  }
+
+  if (status === "Por vencer") {
+    products = products.filter((product) => {
+      const days = getDaysUntilExpiration(product.expiration_date);
+      return days !== null && days >= 0 && days <= EXPIRATION_ALERT_DAYS;
+    });
+  }
+
+  if (status === "Vencidos") {
+    products = products.filter((product) => {
+      const days = getDaysUntilExpiration(product.expiration_date);
+      return days !== null && days < 0;
+    });
   }
 
   renderProducts(products);
@@ -278,10 +370,12 @@ if (page === "products") {
 }
 
 if (page === "create-product") {
+  preventPastExpirationDates();
   loadCategoriesSelect().catch((error) => showMessage(error.message, "error"));
 }
 
 if (page === "edit-product") {
+  preventPastExpirationDates();
   loadProductForEdit();
 }
 

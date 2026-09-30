@@ -1,6 +1,7 @@
 import { findCategoryById } from "../../categories/repositories/find-category.repository";
 import { createProduct } from "../repositories/create-product.repository";
 import type { CreateProductInput } from "../products.type";
+import { validateExpirationDate } from "../utils/validate-expiration-date";
 
 export async function createProductService(data: CreateProductInput) {
   const {
@@ -46,6 +47,10 @@ export async function createProductService(data: CreateProductInput) {
     throw new Error(
       "El stock minimo del producto debe ser un valor numerico y no puede ser negativo",
     );
+  }
+
+  if (expirationDate !== undefined) {
+    validateExpirationDate(expirationDate);
   }
 
   const category = await findCategoryById(categoryId);

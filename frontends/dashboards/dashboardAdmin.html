@@ -14,14 +14,14 @@
           placeholder="Buscar Productos, codigos o clientes..."
         />
         <div>
-          <img src="../imgs/admin.img" alt="imagen o logo de admin" />
+          <img src="../imgs/admin.img" alt="Administrador" />
         </div>
       </nav>
     </header>
     <main>
       <div>
         <div>
-          <img src="../imgs/logo.png" alt="logo de farmagest Vital" />
+          <img src="../imgs/logo.png" alt="Farmagest Vital" />
         </div>
         <aside>
           <div>
@@ -48,7 +48,6 @@
         <h1>Dashboard</h1>
         <p>Resumen General de tu farmacia</p>
         <div>
-          logo de Ventas
           <div>
             <p>Ventas</p>
             <span> $ 1,245,300 </span>
@@ -56,7 +55,6 @@
         </div>
 
         <div>
-          logo de ingresos
           <div>
             <p>Ingreso del dia</p>
             <span> $ 892,450</span>
@@ -64,7 +62,6 @@
         </div>
 
         <div>
-          logo de productos
           <div>
             <p>Productos</p>
             <span id="dashboardProductsCount">0</span>
@@ -72,7 +69,6 @@
         </div>
 
         <div>
-          logo de Inventario
           <div>
             <p>Inventario</p>
             <span>24,560</span>
@@ -86,7 +82,7 @@
       <section class="table-stock">
         <h2>Stock Bajo</h2>
         <div>
-          <a href="">Ver Todos</a>
+          <a href="./products/products.html">Ver Todos</a>
         </div>
         <div>
           <table>
@@ -108,7 +104,7 @@
       <section class="table-recient-products">
         <h2>Productos Recientes</h2>
         <div>
-          <a href="">Ver Todos</a>
+          <a href="./products/products.html">Ver Todos</a>
         </div>
         <div>
           <table>
@@ -119,12 +115,13 @@
                 <th>Categoría</th>
                 <th>Stock Actual</th>
                 <th>Precio</th>
-                <th>Fecha</th>
+                <th>Vencimiento</th>
+                <th>Estado</th>
               </tr>
             </thead>
             <tbody id="dashboardRecentProductsBody">
               <tr>
-                <td colspan="6">Cargando productos...</td>
+                <td colspan="7">Cargando productos...</td>
               </tr>
             </tbody>
           </table>
