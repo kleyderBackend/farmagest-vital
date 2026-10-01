@@ -1,42 +1,39 @@
-# Diagrama entidad-relacion de base de datos
+# Diagrama Entidad-Relacion De Base De Datos
 
-## Sistema web FarmaGest Vital
+## FarmaGest Vital
 
-## 1. Objetivo del diagrama
+## 1. Objetivo
 
-Definir la estructura de datos necesaria para la primera version de FarmaGest Vital, tomando como base la propuesta del proyecto y los modulos actuales del backend.
+Documentar el modelo relacional usado por FarmaGest Vital en PostgreSQL. Esta version refleja el script actual ubicado en `backends/src/db/db.sql`.
 
-Este modelo esta pensado para implementarse posteriormente en PostgreSQL mediante PgAdmin4. No se incluye `schema.sql`, porque la creacion fisica de las tablas se realizara directamente desde PgAdmin4.
+El backend usa el modulo `sales` para gestionar ventas, pero la base de datos conserva las tablas `orders` y `order_items` para almacenar la cabecera y el detalle de cada venta.
 
-Los nombres de tablas y campos se plantean en ingles para mantener consistencia tecnica con el backend.
-
-## 2. Alcance de base de datos
+## 2. Alcance
 
 | Incluido | Excluido |
 | --- | --- |
-| Usuarios administrativos | Proveedores |
+| Usuarios internos | Proveedores |
 | Categorias | Compras a proveedores |
 | Productos | Detalle de compras |
 | Clientes | Abastecimiento |
 | Carritos | Reportes de compras |
-| Pedidos | Gestion contable |
+| Ventas en `orders` y `order_items` | Contabilidad |
 | Movimientos de inventario | Costos avanzados |
 
-## 3. Modulos del backend considerados
+## 3. Modulos Y Tablas
 
-| Backend module | Main tables | Purpose |
+| Modulo backend | Tablas principales | Estado |
 | --- | --- | --- |
-| `auth` | `users` | Login, roles and access control. |
-| `users` | `users` | Administrative user management. |
-| `products` | `categories`, `products` | Product catalog and product information. |
-| `cart` | `carts`, `cart_items`, `products` | Temporary shopping cart before creating an order. |
-| `orders` | `customers`, `orders`, `order_items` | Customer orders from the ecommerce frontend. |
-| `inventory` | `products`, `inventory_movements` | Stock control, exits, adjustments and alerts. |
-| `reports` | `products`, `orders`, `inventory_movements` | Basic summaries and operational reports. |
+| `auth` | `users` | Implementado |
+| `categories` | `categories` | Implementado |
+| `products` | `products`, `categories` | Implementado |
+| `customers` | `customers` | Implementado |
+| `sales` | `customers`, `orders`, `order_items`, `products` | Implementado |
+| `cart` | `carts`, `cart_items` | Pendiente |
+| `inventory` | `inventory_movements`, `products`, `users` | Pendiente |
+| `reports` | `orders`, `products`, `inventory_movements` | Pendiente |
 
-## 4. Diagrama entidad-relacion
-
-### 4.1 Vista general compatible
+## 4. Vista General
 
 ```mermaid
 flowchart LR
@@ -61,237 +58,191 @@ flowchart LR
     USERS -- "1:N" --> INVENTORY_MOVEMENTS
 ```
 
-### 4.2 Vista entidad-relacion detallada
+## 5. Diagrama Detallado
 
 ```mermaid
 erDiagram
     USERS {
-        uuid user_id PK
+        int user_id PK
         string full_name
         string email
         string password_hash
         string role
         boolean is_active
-        datetime created_at
-        datetime updated_at
+        timestamp created_at
+        timestamp updated_at
     }
 
     CATEGORIES {
-        uuid category_id PK
+        int category_id PK
         string name
-        string description
+        text description
         boolean is_active
-        datetime created_at
-        datetime updated_at
+        timestamp created_at
+        timestamp updated_at
     }
 
     PRODUCTS {
-        uuid product_id PK
-        uuid category_id FK
+        int product_id PK
+        int category_id FK
         string name
         string presentation
-        string description
-        decimal sale_price
+        text description
+        numeric sale_price
         int current_stock
         int minimum_stock
         date expiration_date
-        string image_url
+        text image_url
         boolean is_available
         boolean is_active
-        datetime created_at
-        datetime updated_at
+        timestamp created_at
+        timestamp updated_at
     }
 
     CUSTOMERS {
-        uuid customer_id PK
+        int customer_id PK
         string full_name
         string phone
         string email
         string address
-        datetime created_at
-        datetime updated_at
+        timestamp created_at
+        timestamp updated_at
     }
 
     CARTS {
-        uuid cart_id PK
-        uuid customer_id FK
+        int cart_id PK
+        int customer_id FK
         string status
-        datetime created_at
-        datetime updated_at
+        timestamp created_at
+        timestamp updated_at
     }
 
     CART_ITEMS {
-        uuid cart_item_id PK
-        uuid cart_id FK
-        uuid product_id FK
+        int cart_item_id PK
+        int cart_id FK
+        int product_id FK
         int quantity
-        decimal unit_price
-        decimal subtotal
+        numeric unit_price
+        numeric subtotal
     }
 
     ORDERS {
-        uuid order_id PK
-        uuid customer_id FK
-        datetime order_date
-        decimal total
+        int order_id PK
+        int customer_id FK
+        timestamp order_date
+        numeric total
         string status
-        string notes
-        datetime created_at
-        datetime updated_at
+        text notes
+        timestamp created_at
+        timestamp updated_at
     }
 
     ORDER_ITEMS {
-        uuid order_item_id PK
-        uuid order_id FK
-        uuid product_id FK
+        int order_item_id PK
+        int order_id FK
+        int product_id FK
         int quantity
-        decimal unit_price
-        decimal subtotal
+        numeric unit_price
+        numeric subtotal
     }
 
     INVENTORY_MOVEMENTS {
-        uuid movement_id PK
-        uuid product_id FK
-        uuid user_id FK
+        int movement_id PK
+        int product_id FK
+        int user_id FK
         string movement_type
         int quantity
-        string reason
-        datetime movement_date
+        text reason
+        timestamp movement_date
     }
 
     CATEGORIES ||--o{ PRODUCTS : classifies
     CUSTOMERS ||--o{ CARTS : owns
     CARTS ||--o{ CART_ITEMS : contains
     PRODUCTS ||--o{ CART_ITEMS : added_to
-    CUSTOMERS ||--o{ ORDERS : places
+    CUSTOMERS ||--o{ ORDERS : creates
     ORDERS ||--o{ ORDER_ITEMS : contains
-    PRODUCTS ||--o{ ORDER_ITEMS : ordered_in
+    PRODUCTS ||--o{ ORDER_ITEMS : sold_in
     PRODUCTS ||--o{ INVENTORY_MOVEMENTS : generates
     USERS ||--o{ INVENTORY_MOVEMENTS : registers
 ```
 
-## 5. Descripcion de entidades
+## 6. Descripcion De Entidades
 
-| Table | Description |
+| Tabla | Descripcion |
 | --- | --- |
-| `users` | Guarda usuarios internos que pueden acceder al panel administrativo. |
-| `categories` | Clasifica los productos del catalogo. |
-| `products` | Guarda la informacion principal de cada producto de la farmacia. |
-| `customers` | Guarda datos basicos de clientes que generan pedidos. |
-| `carts` | Representa el carrito activo o finalizado de un cliente. |
-| `cart_items` | Guarda los productos agregados temporalmente al carrito. |
-| `orders` | Registra pedidos creados desde el catalogo en linea. |
-| `order_items` | Guarda productos, cantidades y subtotales de cada pedido. |
-| `inventory_movements` | Registra salidas, entradas manuales y ajustes de inventario. |
+| `users` | Usuarios internos para login administrativo. |
+| `categories` | Clasificacion de productos. |
+| `products` | Productos de la farmacia con precio, stock y vencimiento. |
+| `customers` | Datos basicos de clientes que compran. |
+| `carts` | Carritos persistentes pendientes de implementar en backend. |
+| `cart_items` | Productos asociados a un carrito. |
+| `orders` | Cabecera de venta. |
+| `order_items` | Detalle de productos vendidos. |
+| `inventory_movements` | Movimientos de stock pendientes de implementar. |
 
-## 6. Relaciones principales
+## 7. Reglas De Integridad
 
-| Relationship | Type | Explanation |
-| --- | --- | --- |
-| `categories` - `products` | One to many | Una categoria puede tener muchos productos. |
-| `customers` - `carts` | One to many | Un cliente puede tener varios carritos historicos. |
-| `carts` - `cart_items` | One to many | Un carrito puede contener varios productos. |
-| `products` - `cart_items` | One to many | Un producto puede aparecer en varios carritos. |
-| `customers` - `orders` | One to many | Un cliente puede realizar varios pedidos. |
-| `orders` - `order_items` | One to many | Un pedido puede contener varios productos. |
-| `products` - `order_items` | One to many | Un producto puede aparecer en muchos pedidos. |
-| `products` - `inventory_movements` | One to many | Un producto puede tener multiples movimientos de inventario. |
-| `users` - `inventory_movements` | One to many | Un usuario puede registrar varios movimientos de inventario. |
-
-## 7. Campos clave por modulo
-
-### 7.1 Products and inventory
-
-| Field | Use |
+| Regla | Descripcion |
 | --- | --- |
-| `sale_price` | Precio mostrado al cliente y usado en pedidos. |
-| `current_stock` | Cantidad disponible del producto. |
-| `minimum_stock` | Valor usado para alertas de bajo inventario. |
-| `expiration_date` | Fecha usada para alertas de vencimiento. |
-| `is_available` | Define si el producto puede mostrarse en el catalogo. |
-| `is_active` | Permite desactivar productos sin eliminarlos. |
+| Categoria requerida | Todo producto debe pertenecer a una categoria. |
+| Cliente requerido | Toda venta debe estar asociada a un cliente. |
+| Detalle requerido | Una venta valida debe tener al menos un item. |
+| Stock no negativo | `current_stock` no debe ser menor que cero. |
+| Cantidad positiva | `quantity` debe ser mayor que cero en carrito, ventas e inventario. |
+| Precio no negativo | `sale_price`, `unit_price`, `subtotal` y `total` no deben ser negativos. |
+| Email unico | `users.email` y `customers.email` son unicos. |
 
-### 7.2 Cart and orders
+## 8. Estados
 
-| Field | Use |
+### `user_role`
+
+| Valor | Uso |
 | --- | --- |
-| `status` | Controla el estado del carrito o pedido. |
-| `total` | Guarda el valor total del pedido. |
-| `notes` | Permite registrar observaciones. |
-| `unit_price` | Conserva el precio del producto al momento de crear el pedido. |
-| `subtotal` | Resultado de `quantity * unit_price`. |
+| `admin` | Administrador del sistema. |
+| `staff` | Personal operativo de farmacia. |
 
-### 7.3 Inventory movements
+### `order_status`
 
-| Field | Use |
+| Valor | Uso |
 | --- | --- |
-| `movement_type` | Indica si el movimiento es entrada manual, salida o ajuste. |
-| `quantity` | Cantidad afectada por el movimiento. |
-| `reason` | Motivo del ajuste o salida. |
-| `movement_date` | Fecha en que se registra el movimiento. |
+| `pending` | Venta o pedido recibido. |
+| `processing` | En revision. |
+| `completed` | Venta completada. |
+| `cancelled` | Venta cancelada. |
 
-## 8. Reglas de integridad
+### `cart_status`
 
-| Rule | Description |
+| Valor | Uso |
 | --- | --- |
-| Product category required | Todo producto debe pertenecer a una categoria existente. |
-| Customer order required | Todo pedido debe estar asociado a un cliente. |
-| Order items required | No debe existir un pedido confirmado sin productos asociados. |
-| Non-negative stock | El inventario de un producto no debe quedar por debajo de cero. |
-| Inventory traceability | Toda salida, entrada manual o ajuste debe quedar registrado. |
-| Responsible user | Los movimientos administrativos deben registrar el usuario responsable. |
+| `active` | Carrito en uso. |
+| `converted` | Carrito convertido en venta. |
+| `abandoned` | Carrito abandonado. |
 
-## 9. Estados recomendados
+### `inventory_movement_type`
 
-### 9.1 `orders.status`
-
-| Status | Description |
+| Valor | Uso |
 | --- | --- |
-| `pending` | Pedido recibido, aun sin atender. |
-| `processing` | Pedido revisado por la farmacia. |
-| `completed` | Pedido atendido correctamente. En este estado puede descontarse inventario. |
-| `cancelled` | Pedido anulado. |
+| `in` | Entrada de stock. |
+| `out` | Salida de stock. |
+| `adjustment` | Ajuste manual. |
 
-### 9.2 `carts.status`
-
-| Status | Description |
-| --- | --- |
-| `active` | Carrito disponible para seguir agregando productos. |
-| `converted` | Carrito convertido en pedido. |
-| `abandoned` | Carrito abandonado o no finalizado. |
-
-### 9.3 `inventory_movements.movement_type`
-
-| Type | Description |
-| --- | --- |
-| `in` | Aumenta stock por entrada manual o ajuste positivo. |
-| `out` | Disminuye stock por pedido completado o ajuste negativo. |
-| `adjustment` | Corrige el inventario por conteo fisico u otra razon administrativa. |
-
-## 10. Orden recomendado para crear las tablas en PgAdmin4
+## 9. Orden De Creacion
 
 1. `users`
 2. `categories`
-3. `customers`
-4. `products`
+3. `products`
+4. `customers`
 5. `carts`
 6. `cart_items`
 7. `orders`
 8. `order_items`
 9. `inventory_movements`
 
-## 11. Observaciones para implementacion en PgAdmin4
+## 10. Observaciones
 
-- Usar `uuid` como tipo de dato para los campos terminados en `_id`.
-- Activar la extension `pgcrypto` en PostgreSQL con `CREATE EXTENSION IF NOT EXISTS pgcrypto;`.
-- Usar `DEFAULT gen_random_uuid()` para que PostgreSQL genere automaticamente los identificadores.
-- Usar claves foraneas para mantener relaciones entre tablas.
-- Usar `numeric` o `decimal` para precios, totales y subtotales.
-- Usar `boolean` para campos como `is_active` e `is_available`.
-- Usar `timestamp` para fechas con hora como `created_at`, `updated_at`, `order_date` y `movement_date`.
-- Evitar eliminar registros importantes; es mejor desactivarlos para conservar historial.
-- Mantener los nombres en ingles en la base de datos y en el backend.
-
-## 12. Resultado esperado
-
-Este modelo permite soportar los modulos necesarios de la primera version: autenticacion, usuarios, catalogo, carrito, pedidos, inventario y reportes basicos. La estructura queda preparada para implementarse manualmente en PostgreSQL desde PgAdmin4 y conectarse despues con el backend.
+- Los IDs actuales usan `INT GENERATED ALWAYS AS IDENTITY`.
+- Las ventas se trabajan desde el modulo `sales`, aunque la tabla se llame `orders`.
+- El checkout publico crea o reutiliza clientes por email.
+- La venta descuenta stock dentro de una transaccion.
+- Inventario y reportes tienen base de datos preparada, pero sus modulos aun estan pendientes.

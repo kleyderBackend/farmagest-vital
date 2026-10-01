@@ -1,86 +1,76 @@
-# Diagrama de flujo del cliente
+# Diagrama De Flujo Del Cliente
 
-## Sistema web FarmaGest Vital
+## FarmaGest Vital
 
-## 1. Objetivo del diagrama
+## 1. Objetivo
 
-Representar el recorrido principal que realiza un cliente dentro del sistema web, desde el ingreso al catalogo hasta la generacion del pedido. El diagrama muestra las acciones del usuario, las validaciones basicas del sistema y los posibles retornos al catalogo o al carrito.
+Representar el recorrido del cliente desde el catalogo hasta el checkout publico. El cliente no crea cuenta ni inicia sesion; sus datos se capturan al finalizar la compra.
 
-## 2. Diagrama de flujo
+## 2. Diagrama
 
 ```mermaid
 flowchart TD
-    A([Inicio]) --> B[Ingresar al sitio web]
-    B --> C[Visualizar pagina principal]
-    C --> D[Entrar al catalogo de productos]
-    D --> E{Desea filtrar por categoria?}
-
+    A([Inicio]) --> B[Ingresar al sitio]
+    B --> C[Ver pagina principal]
+    C --> D[Entrar al catalogo]
+    D --> E{Filtrar por categoria?}
     E -->|Si| F[Seleccionar categoria]
     F --> G[Mostrar productos filtrados]
     E -->|No| H[Mostrar productos disponibles]
-
     G --> I[Seleccionar producto]
     H --> I
-    I --> J[Ver detalle del producto]
-    J --> K{Producto disponible?}
-
-    K -->|No| L[Informar que no esta disponible]
+    I --> J[Ver detalle]
+    J --> K{Producto disponible y con stock?}
+    K -->|No| L[Mostrar no disponible]
     L --> D
-
     K -->|Si| M[Seleccionar cantidad]
     M --> N{Cantidad valida?}
     N -->|No| M
-    N -->|Si| O[Agregar producto al carrito]
-
-    O --> P{Desea agregar mas productos?}
+    N -->|Si| O[Agregar al carrito]
+    O --> P{Agregar mas productos?}
     P -->|Si| D
     P -->|No| Q[Ir al carrito]
-
-    Q --> R[Revisar productos del carrito]
-    R --> S{Desea modificar el carrito?}
-    S -->|Cambiar cantidad| T[Actualizar cantidad]
+    Q --> R[Revisar productos y total]
+    R --> S{Modificar carrito?}
+    S -->|Si| T[Actualizar cantidades o eliminar item]
     T --> R
-    S -->|Eliminar producto| U[Eliminar producto]
-    U --> R
-    S -->|Continuar| V{Carrito con productos?}
-
-    V -->|No| D
-    V -->|Si| W[Ingresar datos del pedido]
-    W --> X{Datos completos?}
-    X -->|No| W
-    X -->|Si| Y[Confirmar pedido]
-    Y --> Z[Registrar pedido pendiente]
-    Z --> AA[Mostrar resumen del pedido]
-    AA --> AB([Fin])
+    S -->|No| U[Ingresar datos de cliente]
+    U --> V{Datos completos?}
+    V -->|No| U
+    V -->|Si| W[Confirmar checkout]
+    W --> X[Enviar a POST /api/sales/checkout]
+    X --> Y{Venta valida?}
+    Y -->|No| Z[Mostrar error]
+    Z --> R
+    Y -->|Si| AA[Registrar venta y descontar stock]
+    AA --> AB[Mostrar resumen]
+    AB --> AC([Fin])
 ```
 
-## 3. Descripcion del flujo
+## 3. Descripcion
 
 | Paso | Accion | Resultado |
 | --- | --- | --- |
-| 1 | El cliente ingresa al sitio web. | Se muestra la pagina principal. |
-| 2 | El cliente entra al catalogo. | Se muestran productos disponibles o destacados. |
-| 3 | El cliente filtra por categoria, si lo desea. | Se actualiza el listado de productos. |
-| 4 | El cliente selecciona un producto. | Se muestra el detalle del producto. |
-| 5 | El sistema valida disponibilidad. | Si el producto no esta disponible, el cliente vuelve al catalogo. |
-| 6 | El cliente selecciona cantidad. | El sistema valida que no supere el stock. |
-| 7 | El cliente agrega el producto al carrito. | El carrito se actualiza. |
-| 8 | El cliente decide si agrega mas productos. | Puede volver al catalogo o pasar al carrito. |
-| 9 | El cliente revisa el carrito. | Puede modificar cantidades, eliminar productos o continuar. |
-| 10 | El cliente ingresa sus datos. | El sistema valida que la informacion este completa. |
-| 11 | El cliente confirma el pedido. | El sistema registra el pedido con estado pendiente. |
-| 12 | El sistema muestra el resumen. | El cliente visualiza el numero o resumen del pedido. |
+| 1 | Cliente entra al sitio. | Se muestra inicio y catalogo. |
+| 2 | Consulta productos. | Ve productos disponibles. |
+| 3 | Revisa detalle. | Confirma precio, presentacion y disponibilidad. |
+| 4 | Agrega productos al carrito. | El carrito visual se actualiza. |
+| 5 | Revisa carrito. | Puede ajustar cantidades o eliminar productos. |
+| 6 | Ingresa datos. | Nombre, telefono, correo y direccion opcional. |
+| 7 | Confirma compra. | El frontend envia checkout al backend. |
+| 8 | Backend valida venta. | Crea o reutiliza cliente, valida stock y vencimiento. |
+| 9 | Backend registra venta. | Crea `orders`, `order_items` y descuenta stock. |
 
-## 4. Validaciones principales
+## 4. Validaciones
 
 | Validacion | Descripcion |
 | --- | --- |
-| Producto disponible | El producto debe tener stock y estar activo. |
-| Cantidad valida | La cantidad solicitada no debe superar el stock disponible. |
-| Carrito con productos | No se puede confirmar un pedido si el carrito esta vacio. |
-| Datos completos | El cliente debe ingresar la informacion requerida para generar el pedido. |
-| Pedido pendiente | Todo pedido confirmado queda registrado inicialmente como pendiente. |
+| Datos de cliente | Nombre, telefono y correo son obligatorios. |
+| Producto activo | El producto debe estar activo y disponible. |
+| Producto no vencido | No se vende un producto con fecha vencida. |
+| Stock suficiente | La cantidad solicitada no puede superar el stock. |
+| Venta atomica | Si falla un item, se revierte toda la operacion. |
 
-## 5. Resultado esperado
+## 5. Resultado Esperado
 
-El cliente puede consultar productos, revisar detalles, agregar articulos al carrito, modificar su seleccion y generar un pedido. Al finalizar, el pedido queda registrado con estado pendiente para que sea revisado por la farmacia.
+El cliente completa una compra sin registrarse. El sistema guarda o reutiliza sus datos por email, registra la venta y actualiza stock.

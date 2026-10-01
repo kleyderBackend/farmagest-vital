@@ -1,51 +1,50 @@
-# Diagrama de arquitectura del sistema
+# Diagrama De Arquitectura Del Sistema
 
-## Sistema web FarmaGest Vital
+## FarmaGest Vital
 
-## 1. Objetivo del diagrama
+## 1. Objetivo
 
-Representar la estructura general de FarmaGest Vital, mostrando la relacion entre usuarios, frontend, backend, base de datos y modulos principales de la primera version.
+Representar la arquitectura actual de FarmaGest Vital, separando usuarios, frontend, API backend y base de datos PostgreSQL.
 
-La arquitectura excluye proveedores, compras a proveedores, detalle de compras, abastecimiento y gestion contable, porque esos procesos no son necesarios para demostrar el flujo principal del proyecto.
-
-## 2. Diagrama de arquitectura
+## 2. Diagrama
 
 ```mermaid
 flowchart TD
-    subgraph Users["Usuarios del sistema"]
+    subgraph Users["Usuarios"]
         U1[Cliente]
         U2[Administrador]
-        U3[Personal de farmacia]
+        U3[Staff]
     end
 
     subgraph Frontend["Frontend web"]
-        F1[Pagina de inicio]
-        F2[Catalogo de productos]
-        F3[Detalle de producto]
-        F4[Carrito]
-        F5[Panel administrativo]
+        F1[Inicio]
+        F2[Catalogo]
+        F3[Detalle producto]
+        F4[Carrito visual]
+        F5[Checkout]
+        F6[Panel admin]
     end
 
-    subgraph Backend["Backend / API"]
-        B1[Auth API]
-        B2[Products API]
-        B3[Categories API]
-        B4[Cart API]
-        B5[Orders API]
-        B6[Inventory API]
-        B7[Users API]
-        B8[Reports API]
+    subgraph API["Backend Express API"]
+        A1[Auth module]
+        A2[Categories module]
+        A3[Products module]
+        A4[Customers module]
+        A5[Sales module]
+        A6[Cart module pendiente]
+        A7[Inventory module pendiente]
+        A8[Reports module pendiente]
     end
 
-    subgraph Database["Base de datos"]
+    subgraph DB["PostgreSQL"]
         D1[(users)]
         D2[(categories)]
         D3[(products)]
         D4[(customers)]
-        D5[(carts)]
-        D6[(cart_items)]
-        D7[(orders)]
-        D8[(order_items)]
+        D5[(orders)]
+        D6[(order_items)]
+        D7[(carts)]
+        D8[(cart_items)]
         D9[(inventory_movements)]
     end
 
@@ -53,102 +52,93 @@ flowchart TD
     U1 --> F2
     U1 --> F3
     U1 --> F4
+    U1 --> F5
+    U2 --> F6
+    U3 --> F6
 
-    U2 --> F5
-    U3 --> F5
+    F2 --> A2
+    F2 --> A3
+    F3 --> A3
+    F5 --> A5
+    F6 --> A1
+    F6 --> A2
+    F6 --> A3
+    F6 --> A4
+    F6 --> A5
 
-    F1 --> F2
-    F2 --> B2
-    F2 --> B3
-    F3 --> B2
-    F4 --> B4
-    F4 --> B5
-    F5 --> B1
-    F5 --> B2
-    F5 --> B3
-    F5 --> B5
-    F5 --> B6
-    F5 --> B7
-    F5 --> B8
-
-    B1 --> D1
-    B2 --> D2
-    B2 --> D3
-    B3 --> D2
-    B4 --> D4
-    B4 --> D5
-    B4 --> D6
-    B4 --> D3
-    B5 --> D4
-    B5 --> D7
-    B5 --> D8
-    B5 --> D3
-    B6 --> D3
-    B6 --> D9
-    B7 --> D1
-    B8 --> D3
-    B8 --> D7
-    B8 --> D9
+    A1 --> D1
+    A2 --> D2
+    A3 --> D2
+    A3 --> D3
+    A4 --> D4
+    A5 --> D3
+    A5 --> D4
+    A5 --> D5
+    A5 --> D6
+    A6 --> D7
+    A6 --> D8
+    A7 --> D3
+    A7 --> D9
+    A8 --> D3
+    A8 --> D5
+    A8 --> D9
 ```
 
-## 3. Capas del sistema
+## 3. Capas
 
-| Capa | Descripcion | Responsabilidad |
-| --- | --- | --- |
-| Usuarios | Personas que interactuan con el sistema. | Consultar productos, generar pedidos y administrar informacion basica de la farmacia. |
-| Frontend web | Interfaz visible del sistema. | Mostrar pantallas, capturar acciones y consumir la API. |
-| Backend / API | Servidor encargado de procesar la logica del sistema. | Validar datos, aplicar reglas de negocio y comunicarse con la base de datos. |
-| Base de datos | Almacenamiento central de informacion. | Guardar productos, categorias, clientes, carritos, pedidos, inventario y usuarios. |
-
-## 4. Componentes principales
-
-| Componente | Funcion |
+| Capa | Responsabilidad |
 | --- | --- |
-| Pagina de inicio | Presenta la marca, categorias y acceso al catalogo. |
-| Catalogo de productos | Muestra productos disponibles y permite filtrarlos. |
-| Detalle de producto | Presenta informacion ampliada de cada producto. |
-| Carrito | Permite administrar productos seleccionados y generar pedidos. |
-| Panel administrativo | Permite gestionar productos, categorias, inventario, pedidos, clientes, usuarios y reportes. |
-| Auth API | Valida acceso al panel administrativo. |
-| Products API | Permite consultar, crear, actualizar o desactivar productos. |
-| Categories API | Administra categorias de productos. |
-| Cart API | Administra productos seleccionados antes de crear el pedido. |
-| Orders API | Registra pedidos generados por clientes y permite gestionarlos. |
-| Inventory API | Controla stock, ajustes y alertas. |
-| Users API | Administra usuarios internos. |
-| Reports API | Consulta informacion resumida sobre productos, pedidos e inventario. |
+| Cliente web | Navega catalogo, carrito y checkout sin cuenta. |
+| Panel admin | Administra productos, categorias, clientes y ventas. |
+| API Express | Valida datos, aplica reglas de negocio y expone rutas. |
+| PostgreSQL | Persiste usuarios, productos, clientes, ventas e inventario. |
 
-## 5. Flujo de informacion
+## 4. Modulos Backend
+
+| Modulo | Estado | Responsabilidad |
+| --- | --- | --- |
+| `auth` | Implementado | Autenticacion, registro, login y JWT. |
+| `categories` | Implementado | CRUD de categorias. |
+| `products` | Implementado | CRUD de productos, stock y vencimientos. |
+| `customers` | Implementado | Gestion administrativa de clientes. |
+| `sales` | Implementado | Checkout publico, venta interna, detalle, stock e historial. |
+| `cart` | Pendiente | Persistencia de carrito. |
+| `inventory` | Pendiente | Movimientos y ajustes de inventario. |
+| `reports` | Pendiente | Reportes y metricas. |
+
+## 5. Flujo Publico
 
 | Paso | Descripcion |
 | --- | --- |
-| 1 | El usuario ingresa al sistema desde el navegador. |
-| 2 | El frontend muestra las pantallas correspondientes segun el tipo de usuario. |
-| 3 | Cuando el usuario realiza una accion, el frontend envia una solicitud al backend. |
-| 4 | El backend valida la solicitud y aplica reglas de negocio. |
-| 5 | El backend consulta o actualiza la informacion en la base de datos. |
-| 6 | La base de datos devuelve la informacion solicitada. |
-| 7 | El backend responde al frontend. |
-| 8 | El frontend muestra el resultado al usuario. |
+| 1 | El cliente consulta catalogo y detalle. |
+| 2 | Agrega productos al carrito visual. |
+| 3 | En checkout ingresa nombre, telefono, correo y direccion opcional. |
+| 4 | El frontend envia la solicitud a `/api/sales/checkout`. |
+| 5 | El backend crea o reutiliza el cliente por email. |
+| 6 | El backend crea venta, detalle y descuenta stock. |
+| 7 | El cliente recibe resumen de compra. |
 
-## 6. Responsabilidades por usuario
+## 6. Flujo Administrativo
 
-| Usuario | Acceso principal | Funciones |
-| --- | --- | --- |
-| Cliente | Area publica | Consultar catalogo, ver detalles, agregar productos al carrito y generar pedidos. |
-| Administrador | Panel administrativo | Gestionar productos, categorias, inventario, pedidos, clientes, usuarios y reportes. |
-| Personal de farmacia | Panel administrativo | Consultar inventario, atender pedidos y registrar ajustes operativos. |
+| Paso | Descripcion |
+| --- | --- |
+| 1 | Admin o staff inicia sesion y recibe JWT. |
+| 2 | El frontend consume rutas protegidas. |
+| 3 | El usuario gestiona categorias, productos, clientes y ventas. |
+| 4 | El sistema valida roles `admin` y `staff`. |
+| 5 | Las operaciones se guardan en PostgreSQL. |
 
-## 7. Consideraciones tecnicas
+## 7. Consideraciones Tecnicas
 
 | Consideracion | Descripcion |
 | --- | --- |
-| Separacion de responsabilidades | El frontend muestra interfaces y el backend concentra la logica del negocio. |
-| Persistencia de datos | La informacion debe guardarse en PostgreSQL para no depender del navegador. |
-| Seguridad | El panel administrativo debe estar protegido por autenticacion. |
-| Mantenibilidad | La separacion por modulos facilita corregir errores y agregar funciones. |
-| Alcance controlado | Se priorizan los modulos necesarios para completar una version funcional y presentable. |
+| Seguridad | Rutas administrativas protegidas por JWT. |
+| Checkout publico | No requiere token para no obligar al cliente a registrarse. |
+| Transacciones | La venta se crea en transaccion para evitar registros parciales. |
+| Stock | El stock se bloquea y descuenta en la venta. |
+| Vencimiento | Productos vencidos no pueden venderse. |
+| Modularidad | Cada modulo separa rutas, controllers, services y repositories. |
 
-## 8. Resultado esperado
+## 8. Resultado Esperado
 
-El sistema funciona como una aplicacion web organizada por capas. El cliente interactua con el catalogo y el carrito, mientras que el administrador y el personal de farmacia gestionan productos, pedidos e inventario desde el panel administrativo.
+La arquitectura permite operar el flujo principal de farmacia: administrar catalogo, vender productos, registrar clientes y consultar ventas. Los modulos pendientes pueden agregarse sin romper la estructura actual.

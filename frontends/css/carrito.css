@@ -191,17 +191,38 @@
 	line-height: 1.5;
 }
 
+.cart-checkout,
 .cart-summary > button {
 	width: 100%;
 	min-height: 42px;
 	padding: 0.65rem 0.8rem;
-	border: 1px solid var(--line);
 	border-radius: 8px;
+	font-weight: 700;
+	transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.cart-checkout {
+	display: inline-flex;
+	align-items: center;
+	justify-content: center;
+	margin-bottom: 0.7rem;
+	border: 0;
+	background: var(--primary);
+	color: #fff;
+	text-decoration: none;
+	box-shadow: 0 10px 18px rgba(15, 143, 100, 0.16);
+}
+
+.cart-checkout:hover {
+	transform: translateY(-1px);
+	background: var(--primary-dark);
+}
+
+.cart-summary > button {
+	border: 1px solid var(--line);
 	background: #fff;
 	color: var(--text);
-	font-weight: 700;
 	cursor: pointer;
-	transition: background 0.2s ease, transform 0.2s ease;
 }
 
 .cart-summary > button:hover {

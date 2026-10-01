@@ -1,138 +1,178 @@
-import { products } from "./products.js?v=3";
-import { addToCart, updateCartBadges } from "./cart.js?v=1";
+import {
+  createProductImage,
+  formatProductPrice,
+  getAvailableProducts,
+  getCategories,
+} from "./catalog-api.js";
+import { addToCart, updateCartBadges } from "./cart.js?v=2";
+
 const productsContainer = document.getElementById("products-container");
 const productsHeading = document.getElementById("products-heading");
 const categoryMenu = document.getElementById("category-menu");
 const categoriesContainer = document.getElementById("categorias");
 
 if (!productsContainer || !productsHeading || !categoryMenu || !categoriesContainer) {
-    throw new Error("Faltan contenedores necesarios para mostrar el catálogo.");
+  throw new Error("Faltan contenedores necesarios para mostrar el catálogo.");
 }
 
-const categoryLabels = {
-    Medicines: "Medicamentos",
-    Vitamins: "Vitaminas",
-    "Personal Care": "Cuidado personal",
-    Baby: "Bebés",
-    Hygiene: "Higiene",
-    Beauty: "Belleza",
+let products = [];
+let categories = [];
+
+const iconByCategory = {
+  medicamento: "fa-pills",
+  vitamina: "fa-capsules",
+  cuidado: "fa-pump-soap",
+  bebe: "fa-baby",
+  bebé: "fa-baby",
+  higiene: "fa-soap",
+  belleza: "fa-spa",
 };
 
-const getCategoryLabel = (category) => categoryLabels[category] ?? category;
+const getCategoryIcon = (name) => {
+  const normalizedName = name.toLowerCase();
+  const matchedKey = Object.keys(iconByCategory).find((key) =>
+    normalizedName.includes(key),
+  );
 
-const createProductImage = (product) => {
-  const svg = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520">
-            <defs>
-                <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
-                    <stop offset="0%" stop-color="#dff9f0"/>
-                    <stop offset="100%" stop-color="#ebf7ff"/>
-                </linearGradient>
-            </defs>
-            <rect width="800" height="520" rx="36" fill="url(#bg)"/>
-            <circle cx="650" cy="120" r="90" fill="#9ee7c5" opacity="0.8"/>
-            <circle cx="180" cy="420" r="120" fill="#b6e0ff" opacity="0.8"/>
-            <rect x="120" y="170" width="560" height="180" rx="32" fill="rgba(255,255,255,0.8)"/>
-            <text x="50%" y="46%" text-anchor="middle" font-size="24" font-family="Segoe UI, Arial, sans-serif" font-weight="700" fill="#1f2d3d">${product.category}</text>
-            <text x="50%" y="58%" text-anchor="middle" font-size="36" font-family="Segoe UI, Arial, sans-serif" font-weight="800" fill="#0f8f64">${product.name}</text>
-        </svg>
-    `;
-
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
+  return iconByCategory[matchedKey] ?? "fa-prescription-bottle-medical";
 };
 
-const featuredProducts = products
-  .filter((product) => product.featured)
-  .slice(0, 4);
+const renderLoading = () => {
+  productsContainer.innerHTML = `
+    <article class="product-card">
+      <h3>Cargando productos...</h3>
+      <p>Estamos consultando el catálogo disponible.</p>
+    </article>
+  `;
+};
 
-const categories = [...new Set(products.map((product) => product.category))];
+const renderError = (message) => {
+  productsContainer.innerHTML = `
+    <article class="product-card">
+      <h3>No se pudo cargar el catálogo</h3>
+      <p>${message}</p>
+    </article>
+  `;
+};
 
-categoryMenu.innerHTML = [
-    `<li><a href="#productos" data-category="">Productos destacados</a></li>`,
-    ...categories.map(
-        (category) =>
-            `<li><a href="#productos" data-category="${category}">${getCategoryLabel(category)}</a></li>`,
+const renderCategoryControls = () => {
+  const options = categories.filter((category) =>
+    products.some((product) => product.categoryId === category.id),
+  );
+
+  categoryMenu.innerHTML = [
+    `<li><a href="#productos" data-category-id="">Productos destacados</a></li>`,
+    ...options.map(
+      (category) =>
+        `<li><a href="#productos" data-category-id="${category.id}">${category.name}</a></li>`,
     ),
-].join("");
+  ].join("");
 
-const createProductCard = (product) => {
-  const imageSrc = createProductImage(product);
-
-    return `
-        <article class="product-card">
-
-            <img 
-                src="${imageSrc}" 
-                alt="${product.name}"
-            >
-
-            <h3>${product.name}</h3>
-
-            <small>${product.category}</small>
-
-            <p>${product.description}</p>
-
-            <strong>$${product.price.toLocaleString("es-CO")}</strong>
-
-            <div class="actions">
-                <a href="./ecommerce/details.html?id=${product.id}">
-                    <button>Detalles</button>
-                </a>
-                <button type="button" data-add-to-cart="${product.id}">
-                    Añadir al carrito
-                </button>
-            </div>
-
-        </article>
-    `;
+  categoriesContainer.innerHTML = options
+    .map(
+      (category) => `
+        <a href="#productos" class="categorie" data-category-id="${category.id}">
+          <i class="fa-solid ${getCategoryIcon(category.name)}"></i>
+          <span>${category.name}</span>
+        </a>
+      `,
+    )
+    .join("");
 };
 
-const renderProducts = (category = "") => {
-    const visibleProducts = category
-        ? products.filter((product) => product.category === category)
-        : featuredProducts;
+const createProductCard = (product) => `
+  <article class="product-card">
+    <img src="${createProductImage(product)}" alt="${product.name}" />
+    <h3>${product.name}</h3>
+    <small>${product.category}</small>
+    <p>${product.description}</p>
+    <strong>${formatProductPrice(product.price)}</strong>
+    <div class="actions">
+      <a href="./ecommerce/details.html?id=${product.id}">
+        <button type="button">Detalles</button>
+      </a>
+      <button type="button" data-add-to-cart="${product.id}">
+        Añadir al carrito
+      </button>
+    </div>
+  </article>
+`;
 
-    productsHeading.textContent = category
-        ? getCategoryLabel(category)
-        : "Productos destacados";
-    productsContainer.innerHTML = visibleProducts.map(createProductCard).join("");
+const renderProducts = (categoryId = "") => {
+  const selectedCategoryId = Number(categoryId);
+  const visibleProducts = categoryId
+    ? products.filter((product) => product.categoryId === selectedCategoryId)
+    : products.slice(0, 4);
 
-    document.querySelectorAll("[data-category]").forEach((link) => {
-        if (link.dataset.category === category) {
-            link.setAttribute("aria-current", "true");
-        } else {
-            link.removeAttribute("aria-current");
-        }
-    });
+  const selectedCategory = categories.find(
+    (category) => category.id === selectedCategoryId,
+  );
+
+  productsHeading.textContent = selectedCategory?.name ?? "Productos destacados";
+  productsContainer.innerHTML =
+    visibleProducts.length > 0
+      ? visibleProducts.map(createProductCard).join("")
+      : `<article class="product-card"><h3>No hay productos disponibles</h3><p>Esta categoría no tiene productos activos por ahora.</p></article>`;
+
+  document.querySelectorAll("[data-category-id]").forEach((link) => {
+    if (link.dataset.categoryId === String(categoryId)) {
+      link.setAttribute("aria-current", "true");
+    } else {
+      link.removeAttribute("aria-current");
+    }
+  });
 };
 
 const bindCategoryFilter = (container) => {
-    container.addEventListener("click", (event) => {
-        const link = event.target.closest("a[data-category]");
+  container.addEventListener("click", (event) => {
+    const link = event.target.closest("a[data-category-id]");
 
-        if (!link) return;
+    if (!link) return;
 
-        renderProducts(link.dataset.category);
+    renderProducts(link.dataset.categoryId);
 
-        const dropdown = categoryMenu.closest("details");
-        if (dropdown) dropdown.open = false;
-    });
+    const dropdown = categoryMenu.closest("details");
+    if (dropdown) dropdown.open = false;
+  });
+};
+
+const loadCatalog = async () => {
+  renderLoading();
+
+  try {
+    const [backendProducts, backendCategories] = await Promise.all([
+      getAvailableProducts(),
+      getCategories(),
+    ]);
+
+    products = backendProducts;
+    categories = backendCategories;
+
+    renderCategoryControls();
+    renderProducts();
+  } catch (error) {
+    renderError(error.message);
+  }
 };
 
 bindCategoryFilter(categoryMenu);
 bindCategoryFilter(categoriesContainer);
-renderProducts();
+updateCartBadges();
+loadCatalog();
 
 productsContainer.addEventListener("click", (event) => {
-    const button = event.target.closest("[data-add-to-cart]");
-    if (!button) return;
+  const button = event.target.closest("[data-add-to-cart]");
+  if (!button) return;
 
-    const added = addToCart(button.dataset.addToCart);
-    if (!added) return;
+  const product = products.find(
+    (item) => item.id === Number(button.dataset.addToCart),
+  );
+  const added = addToCart(product);
+  if (!added) return;
 
-    button.textContent = "Añadido";
-    updateCartBadges();
-    window.setTimeout(() => {
-        if (button.isConnected) button.textContent = "Añadir al carrito";
-    }, 1200);
+  button.textContent = "Añadido";
+  updateCartBadges();
+  window.setTimeout(() => {
+    if (button.isConnected) button.textContent = "Añadir al carrito";
+  }, 1200);
 });

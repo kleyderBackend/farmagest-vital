@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Finalizar compra | Farmagest Vital</title>
+    <link rel="stylesheet" href="../css/style.css?v=1" />
+    <link rel="stylesheet" href="../css/checkout.css?v=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="../index.html#inicio">
+          <img src="/frontends/imgs/logo.png" alt="Farmagest Vital" />
+        </a>
+        <ul>
+          <li><a href="../index.html#inicio">Inicio</a></li>
+          <li><a href="../index.html#productos">Productos</a></li>
+          <li>
+            <a class="cart-nav-link" href="./carrito.html">
+              <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+              <span>Carrito</span>
+              <span class="cart-count" data-cart-count hidden>0</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main class="checkout-page">
+      <div class="checkout-heading">
+        <div>
+          <p>Finalizar compra</p>
+          <h1>Datos para completar tu pedido</h1>
+        </div>
+        <a href="./carrito.html">
+          <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
+          Volver al carrito
+        </a>
+      </div>
+
+      <div class="checkout-layout">
+        <form action="" id="formShop" class="checkout-form">
+          <p class="checkout-message" id="checkoutMessage" hidden></p>
+
+          <section class="checkout-card">
+            <div class="section-title">
+              <span><i class="fa-regular fa-user" aria-hidden="true"></i></span>
+              <div>
+                <h2>Datos del cliente</h2>
+                <p>Usaremos esta información para confirmar la compra.</p>
+              </div>
+            </div>
+
+            <div class="form-grid three-columns">
+              <div class="field-group">
+                <label for="fullNameId">Nombre completo</label>
+                <input
+                  type="text"
+                  name="fullName"
+                  id="fullNameId"
+                  required
+                  autocomplete="name"
+                  placeholder="Juan Pérez"
+                />
+              </div>
+
+              <div class="field-group">
+                <label for="emailClientId">Correo electrónico</label>
+                <input
+                  type="email"
+                  name="email"
+                  id="emailClientId"
+                  required
+                  autocomplete="email"
+                  placeholder="juanperez@gmail.com"
+                />
+              </div>
+
+              <div class="field-group">
+                <label for="phoneClientId">Teléfono</label>
+                <input
+                  type="tel"
+                  name="phone"
+                  id="phoneClientId"
+                  required
+                  autocomplete="tel"
+                  inputmode="tel"
+                  placeholder="300 000 0000"
+                />
+              </div>
+            </div>
+          </section>
+
+          <section class="checkout-card">
+            <div class="section-title">
+              <span><i class="fa-solid fa-location-dot" aria-hidden="true"></i></span>
+              <div>
+                <h2>Datos de entrega</h2>
+                <p>Indica dónde debemos llevar tu pedido.</p>
+              </div>
+            </div>
+
+            <div class="form-grid">
+              <div class="field-group full-width">
+                <label for="addressClientId">Dirección</label>
+                <input
+                  type="text"
+                  name="address"
+                  id="addressClientId"
+                  required
+                  autocomplete="street-address"
+                  placeholder="Calle 10 # 20-30"
+                />
+              </div>
+
+              <div class="field-group">
+                <label for="neighborhoodClientId">Barrio</label>
+                <input
+                  type="text"
+                  name="neighborhood"
+                  id="neighborhoodClientId"
+                  required
+                  placeholder="Barrio"
+                />
+              </div>
+
+              <div class="field-group">
+                <label for="cityClientId">Ciudad</label>
+                <input
+                  type="text"
+                  name="city"
+                  id="cityClientId"
+                  required
+                  autocomplete="address-level2"
+                  placeholder="Ciudad"
+                />
+              </div>
+
+              <div class="field-group full-width">
+                <label for="deliveryNoteId">Nota para la entrega</label>
+                <textarea
+                  name="deliveryNote"
+                  id="deliveryNoteId"
+                  rows="4"
+                  placeholder="Ejemplo: entregar en portería o llamar antes de llegar."
+                ></textarea>
+              </div>
+            </div>
+          </section>
+
+          <section class="checkout-card">
+            <div class="section-title">
+              <span><i class="fa-regular fa-credit-card" aria-hidden="true"></i></span>
+              <div>
+                <h2>Método de pago</h2>
+                <p>Selecciona cómo deseas pagar tu pedido.</p>
+              </div>
+            </div>
+
+            <div class="payment-options">
+              <label class="payment-option">
+                <input type="radio" name="paymentMethod" value="cash" checked />
+                <span>
+                  <strong>Contra entrega</strong>
+                  <small>Paga al recibir tu pedido.</small>
+                </span>
+              </label>
+
+              <label class="payment-option">
+                <input type="radio" name="paymentMethod" value="transfer" />
+                <span>
+                  <strong>Transferencia</strong>
+                  <small>Recibirás los datos de pago al confirmar.</small>
+                </span>
+              </label>
+            </div>
+          </section>
+
+          <div class="checkout-actions">
+            <a href="./carrito.html">Editar carrito</a>
+            <button type="submit" id="btnCreateSale">
+              <i class="fa-solid fa-lock" aria-hidden="true"></i>
+              Finalizar compra
+            </button>
+          </div>
+        </form>
+
+        <aside class="checkout-summary" aria-label="Resumen de compra">
+          <div class="summary-header">
+            <span><i class="fa-solid fa-receipt" aria-hidden="true"></i></span>
+            <div>
+              <h2>Resumen de compra</h2>
+              <p>Verifica tu pedido antes de confirmar.</p>
+            </div>
+          </div>
+
+          <div class="summary-products" id="checkoutSummaryProducts">
+            <p class="summary-empty">Los productos del carrito aparecerán aquí.</p>
+          </div>
+
+          <div class="summary-totals">
+            <div>
+              <span>Subtotal</span>
+              <strong id="checkoutSubtotal">$0</strong>
+            </div>
+            <div>
+              <span>Domicilio</span>
+              <strong id="checkoutDelivery">$0</strong>
+            </div>
+            <div class="summary-total">
+              <span>Total</span>
+              <strong id="checkoutTotal">$0</strong>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </main>
+
+    <script type="module" src="../js/checkout.js?v=1"></script>
+  </body>
+</html>

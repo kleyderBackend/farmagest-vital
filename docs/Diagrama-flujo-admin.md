@@ -1,119 +1,96 @@
-# Diagrama de flujo del administrador
+# Diagrama De Flujo Del Administrador
 
-## Sistema web FarmaGest Vital
+## FarmaGest Vital
 
-## 1. Objetivo del diagrama
+## 1. Objetivo
 
-Representar el recorrido principal que realiza el administrador o personal de farmacia dentro del sistema. El flujo se enfoca en los modulos necesarios para esta version: productos, categorias, inventario, pedidos, clientes, usuarios y reportes basicos.
+Representar el flujo administrativo actual: autenticacion, gestion de categorias, productos, clientes y ventas. Inventario avanzado y reportes quedan como siguientes modulos.
 
-Los modulos de proveedores, compras a proveedores, detalle de compras y abastecimiento no forman parte de esta version.
-
-## 2. Diagrama de flujo
+## 2. Diagrama
 
 ```mermaid
 flowchart TD
-    A([Inicio]) --> B[Ingresar al panel administrativo]
+    A([Inicio]) --> B[Ingresar al login admin]
     B --> C{Credenciales validas?}
-
-    C -->|No| D[Mostrar error de acceso]
+    C -->|No| D[Mostrar error]
     D --> B
-
-    C -->|Si| E[Mostrar panel administrativo]
+    C -->|Si| E[Guardar token y abrir dashboard]
     E --> F{Seleccionar modulo}
 
-    F -->|Productos| G[Gestionar productos]
-    G --> G1{Accion sobre producto}
-    G1 -->|Registrar| G2[Crear producto]
-    G1 -->|Editar| G3[Actualizar producto]
-    G1 -->|Desactivar| G4[Desactivar producto]
-    G2 --> H[Actualizar catalogo]
-    G3 --> H
-    G4 --> H
-    H --> E
+    F -->|Categorias| G[Gestionar categorias]
+    G --> G1[Crear, editar, listar o desactivar]
+    G1 --> E
 
-    F -->|Categorias| I[Gestionar categorias]
-    I --> I1[Crear o editar categoria]
+    F -->|Productos| H[Gestionar productos]
+    H --> H1[Crear o actualizar producto]
+    H1 --> H2{Fecha vencida?}
+    H2 -->|Si| H3[Rechazar operacion]
+    H2 -->|No| H4[Guardar producto]
+    H3 --> H
+    H4 --> E
+
+    F -->|Clientes| I[Consultar clientes]
+    I --> I1[Crear o actualizar cliente]
     I1 --> E
 
-    F -->|Inventario| J[Consultar inventario]
-    J --> J1{Existe bajo stock o vencimiento?}
-    J1 -->|Si| J2[Mostrar alerta]
-    J1 -->|No| J3[Mostrar inventario normal]
-    J2 --> J4{Registrar ajuste?}
-    J3 --> J4
-    J4 -->|Si| J5[Guardar movimiento de inventario]
-    J4 -->|No| E
-    J5 --> E
+    F -->|Ventas| J[Consultar ventas]
+    J --> J1{Accion?}
+    J1 -->|Buscar por ID| J2[Ver detalle de venta]
+    J1 -->|Buscar por fecha| J3[Listar ventas del dia]
+    J1 -->|Total vendido| J4[Consultar total vendido]
+    J1 -->|Venta interna| J5[Crear venta con customerId]
+    J2 --> E
+    J3 --> E
+    J4 --> E
+    J5 --> J6[Validar stock y descontar]
+    J6 --> E
 
-    F -->|Pedidos| K[Consultar pedidos]
-    K --> K1[Ver detalle del pedido]
-    K1 --> K2{Actualizar estado?}
-    K2 -->|Si| K3[Cambiar estado del pedido]
-    K2 -->|No| E
-    K3 --> K4{Pedido completado?}
-    K4 -->|Si| K5[Descontar stock]
-    K4 -->|No| E
-    K5 --> E
+    F -->|Inventario pendiente| K[Movimientos y ajustes]
+    K --> E
 
-    F -->|Clientes| L[Consultar clientes]
-    L --> L1[Ver historial basico de pedidos]
-    L1 --> E
+    F -->|Reportes pendiente| L[Reportes operativos]
+    L --> E
 
-    F -->|Usuarios| M[Gestionar usuarios internos]
-    M --> M1[Crear, editar o desactivar usuario]
-    M1 --> E
-
-    F -->|Reportes| N[Consultar reportes basicos]
-    N --> N1[Mostrar resumen de productos, pedidos e inventario]
-    N1 --> E
-
-    E --> O{Cerrar sesion?}
-    O -->|No| F
-    O -->|Si| P([Fin])
+    E --> M{Cerrar sesion?}
+    M -->|No| F
+    M -->|Si| N([Fin])
 ```
 
-## 3. Descripcion del flujo
+## 3. Flujo Administrativo
 
 | Paso | Accion | Resultado |
 | --- | --- | --- |
-| 1 | El administrador ingresa al panel administrativo. | El sistema solicita o valida las credenciales. |
-| 2 | El sistema valida el acceso. | Si las credenciales son correctas, muestra el panel administrativo. |
-| 3 | El administrador selecciona un modulo. | El sistema abre la seccion correspondiente. |
-| 4 | En productos, registra, edita o desactiva productos. | El catalogo queda actualizado. |
-| 5 | En categorias, organiza los productos. | Las categorias quedan disponibles para el catalogo. |
-| 6 | En inventario, consulta existencias y alertas. | El sistema muestra stock normal, bajo stock o vencimientos. |
-| 7 | En inventario, puede registrar ajustes manuales. | El movimiento queda guardado para trazabilidad. |
-| 8 | En pedidos, revisa solicitudes de clientes. | Puede consultar el detalle y cambiar el estado. |
-| 9 | Al completar un pedido, el sistema descuenta stock. | El inventario queda actualizado. |
-| 10 | En clientes, consulta informacion asociada a pedidos. | El administrador puede dar seguimiento basico. |
-| 11 | En usuarios, administra accesos internos. | El sistema mantiene control de acceso al panel. |
-| 12 | En reportes, consulta resumenes. | El sistema muestra informacion basica de productos, pedidos e inventario. |
+| 1 | Admin o staff inicia sesion. | Recibe token JWT. |
+| 2 | Entra al dashboard. | Consulta resumen y navegacion. |
+| 3 | Gestiona categorias. | Organiza catalogo. |
+| 4 | Gestiona productos. | Crea, edita, desactiva y valida vencimientos. |
+| 5 | Gestiona clientes. | Consulta o actualiza clientes. |
+| 6 | Gestiona ventas. | Consulta historial, detalle, fecha y total vendido. |
+| 7 | Crea venta interna. | Usa cliente existente o datos de cliente y descuenta stock. |
 
-## 4. Validaciones principales
+## 4. Validaciones
 
 | Validacion | Descripcion |
 | --- | --- |
-| Acceso administrativo | Solo usuarios autorizados pueden ingresar al panel. |
-| Datos de producto | No se deben registrar productos incompletos. |
-| Categoria requerida | Todo producto debe pertenecer a una categoria. |
-| Stock minimo | El sistema debe identificar productos con bajo inventario. |
-| Fecha de vencimiento | El sistema debe detectar productos proximos a vencer. |
-| Estado de pedido | Los pedidos deben tener estados claros: pendiente, en proceso, completado o cancelado. |
-| Stock en pedido | No se debe completar un pedido si no hay stock suficiente. |
-| Movimiento de inventario | Todo ajuste debe registrar cantidad, motivo y usuario responsable. |
+| Token requerido | Las rutas administrativas requieren JWT. |
+| Roles validos | Solo `admin` y `staff` acceden a clientes y ventas. |
+| Producto valido | Producto debe tener categoria, precio, stock y fecha valida. |
+| Producto no vencido | No se vende producto vencido. |
+| Stock suficiente | La venta interna no puede dejar stock negativo. |
+| Cliente valido | La venta interna debe asociarse a un cliente. |
 
-## 5. Modulos administrativos incluidos
+## 5. Modulos Administrativos
 
-| Modulo | Funcion principal |
+| Modulo | Estado |
 | --- | --- |
-| Productos | Registrar, editar, consultar y desactivar productos. |
-| Categorias | Organizar productos para catalogo y filtros. |
-| Inventario | Controlar stock, bajo inventario, vencimientos y ajustes. |
-| Pedidos | Revisar y actualizar pedidos generados por clientes. |
-| Clientes | Consultar informacion basica asociada a pedidos. |
-| Usuarios | Administrar usuarios internos del sistema. |
-| Reportes | Consultar resumenes basicos del negocio. |
+| Auth | Implementado |
+| Categorias | Implementado |
+| Productos | Implementado |
+| Clientes | Implementado |
+| Ventas | Implementado |
+| Inventario | Pendiente |
+| Reportes | Pendiente |
 
-## 6. Resultado esperado
+## 6. Resultado Esperado
 
-El administrador puede controlar las operaciones principales de esta version desde un panel interno, sin agregar complejidad innecesaria. El sistema se concentra en productos, inventario, pedidos y seguimiento basico, que son los procesos necesarios para demostrar el funcionamiento de FarmaGest Vital.
+El personal interno puede administrar el flujo principal de la farmacia: productos, categorias, clientes y ventas. Los modulos de inventario y reportes se agregaran despues sobre la misma base.

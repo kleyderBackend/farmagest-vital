@@ -1,145 +1,130 @@
-# Analisis de requerimientos
+# Analisis De Requerimientos
 
-## Sistema web de gestion de inventario y pedidos para farmacia
+## FarmaGest Vital
 
 ## 1. Introduccion
 
-Este documento define los requerimientos iniciales de FarmaGest Vital, una solucion web orientada a la gestion de productos, inventario basico, catalogo en linea, carrito y pedidos para una farmacia.
+FarmaGest Vital es un sistema web para la gestion operativa de una farmacia. La primera version se enfoca en catalogo publico, administracion de productos y categorias, clientes, ventas, stock y alertas basicas.
 
-El alcance se ajusta a una primera version realista del proyecto. Por esta razon no se incluyen modulos de proveedores, compras a proveedores, detalle de compras, abastecimiento ni gestion contable avanzada. Esos procesos pueden considerarse una mejora futura si el sistema crece.
+El proyecto excluye proveedores, compras a proveedores, detalle de compras, abastecimiento, costos avanzados y contabilidad. Esos procesos no son necesarios para demostrar el flujo principal del sistema.
 
-## 2. Problema identificado
+## 2. Problema Identificado
 
-Muchas farmacias pequenas y medianas controlan productos y existencias de forma manual o con herramientas poco especializadas. Esto puede generar errores de inventario, dificultad para consultar productos, falta de alertas por bajo stock y perdida de medicamentos por vencimiento.
+Muchas farmacias pequenas controlan sus productos, vencimientos y existencias con procesos manuales. Esto puede generar errores de stock, perdida de productos vencidos, dificultad para consultar disponibilidad y poca visibilidad para los clientes.
 
-Ademas, la ausencia de un catalogo digital limita que los clientes consulten productos, precios y disponibilidad desde internet. FarmaGest Vital busca resolver ese flujo principal mediante una plataforma sencilla, ordenada y funcional.
+FarmaGest Vital busca centralizar el catalogo, el panel administrativo y el flujo de venta en una plataforma clara y mantenible.
 
-## 3. Objetivo de la fase
-
-Identificar y organizar las necesidades funcionales y no funcionales del sistema, definiendo usuarios, modulos, procesos, datos principales y criterios de aceptacion que guiaran el desarrollo.
-
-## 4. Usuarios del sistema
+## 3. Usuarios Del Sistema
 
 | Usuario | Descripcion |
 | --- | --- |
-| Administrador | Usuario interno encargado de gestionar productos, categorias, inventario, pedidos, usuarios y reportes basicos. |
-| Personal de farmacia | Usuario operativo que consulta inventario, revisa disponibilidad y atiende pedidos generados por clientes. |
-| Cliente | Usuario externo que consulta el catalogo, revisa productos, agrega articulos al carrito y genera pedidos. |
+| Cliente | Usuario externo que consulta productos y finaliza una compra sin crear cuenta. |
+| Administrador | Usuario interno con acceso al panel para administrar productos, categorias, clientes, ventas y reportes. |
+| Personal de farmacia | Usuario interno que puede atender ventas, consultar clientes e inventario. |
 
-## 5. Alcance funcional
+## 4. Alcance Actual
 
-| Area | Alcance incluido |
-| --- | --- |
-| Area publica | Catalogo de productos, detalle de producto, filtros por categoria, carrito y generacion de pedidos. |
-| Area administrativa | Gestion de productos, categorias, inventario basico, pedidos, clientes, usuarios y reportes basicos. |
-| Base de datos | Almacenamiento de productos, categorias, clientes, carritos, pedidos, inventario, usuarios y ventas/pedidos atendidos. |
+| Area | Incluido actualmente | Pendiente |
+| --- | --- | --- |
+| Autenticacion | Register, login, JWT y roles `admin`/`staff`. | Administracion completa de usuarios internos. |
+| Productos | CRUD, busqueda, stock, vencimiento y disponibilidad. | Carga de imagenes y filtros avanzados. |
+| Categorias | CRUD y estado activo/inactivo. | Mejoras de ordenamiento. |
+| Clientes | Gestion administrativa y creacion automatica en checkout. | Historial visual en frontend. |
+| Ventas | Checkout publico, venta interna, detalle, descuento de stock, historial y total vendido. | Vista completa en frontend admin. |
+| Carrito | Carrito visual en frontend. | Persistencia backend del carrito. |
+| Inventario | Stock en productos y descuento por venta. | Movimientos de inventario y ajustes manuales. |
+| Reportes | Total vendido desde ventas. | Reportes de productos mas vendidos, vencidos y bajo stock. |
 
-## 6. Requerimientos funcionales
+## 5. Requerimientos Funcionales
 
-| Codigo | Requerimiento | Descripcion | Prioridad |
+| Codigo | Requerimiento | Descripcion | Estado |
 | --- | --- | --- | --- |
-| RF01 | Gestion de productos | El sistema debe permitir registrar, consultar, editar y desactivar productos de la farmacia. | Alta |
-| RF02 | Gestion de categorias | El sistema debe permitir organizar los productos por categorias. | Alta |
-| RF03 | Consulta de catalogo | El sistema debe mostrar un catalogo en linea con productos disponibles para clientes. | Alta |
-| RF04 | Filtrado por categorias | El sistema debe permitir filtrar productos por categoria. | Alta |
-| RF05 | Detalle de producto | El sistema debe permitir consultar informacion detallada de cada producto. | Alta |
-| RF06 | Carrito de compras | El sistema debe permitir agregar productos al carrito, modificar cantidades, eliminar productos y visualizar total. | Alta |
-| RF07 | Generacion de pedidos | El sistema debe permitir crear un pedido a partir del carrito. | Alta |
-| RF08 | Gestion de pedidos | El administrador debe poder revisar pedidos y actualizar su estado. | Alta |
-| RF09 | Control de inventario | El sistema debe controlar stock actual, entradas, salidas y ajustes basicos. | Alta |
-| RF10 | Alertas de bajo inventario | El sistema debe identificar productos con stock menor o igual al minimo definido. | Media |
-| RF11 | Alertas por vencimiento | El sistema debe identificar productos proximos a vencer. | Media |
-| RF12 | Gestion de clientes | El sistema debe registrar los datos basicos del cliente al generar un pedido. | Media |
-| RF13 | Gestion de usuarios | El sistema debe permitir usuarios internos con roles administrativos basicos. | Media |
-| RF14 | Reportes basicos | El sistema debe mostrar resumenes de productos, pedidos, bajo stock y productos proximos a vencer. | Baja |
+| RF01 | Autenticacion administrativa | El sistema debe permitir login y control por roles para el panel. | Implementado |
+| RF02 | Gestion de categorias | El sistema debe permitir crear, listar, buscar, actualizar y desactivar categorias. | Implementado |
+| RF03 | Gestion de productos | El sistema debe permitir crear, listar, buscar, actualizar y desactivar productos. | Implementado |
+| RF04 | Validacion de vencimiento | El sistema debe impedir registrar productos con fecha vencida y alertar productos vencidos o por vencer. | Implementado |
+| RF05 | Gestion de clientes | El sistema debe permitir consultar, crear y actualizar clientes desde el panel. | Implementado |
+| RF06 | Checkout publico | El cliente debe poder finalizar compra sin registrarse, ingresando datos basicos. | Implementado en backend |
+| RF07 | Creacion de venta | El sistema debe crear venta, detalle, total y descontar stock. | Implementado |
+| RF08 | Historial de ventas | El personal debe poder consultar ventas registradas. | Implementado |
+| RF09 | Busqueda de ventas | El sistema debe permitir buscar ventas por ID y fecha. | Implementado |
+| RF10 | Total vendido | El sistema debe calcular total vendido general o por rango de fechas. | Implementado |
+| RF11 | Carrito persistente | El sistema debe guardar carrito y sus items antes del checkout. | Pendiente |
+| RF12 | Movimientos de inventario | El sistema debe registrar entradas, salidas y ajustes. | Pendiente |
+| RF13 | Reportes operativos | El sistema debe mostrar reportes de stock bajo, vencimientos y ventas. | Pendiente |
+| RF14 | Dashboard administrativo | El panel debe mostrar metricas generales. | Parcial |
 
-## 7. Requerimientos no funcionales
+## 6. Requerimientos No Funcionales
 
-| Codigo | Requerimiento | Descripcion | Prioridad |
-| --- | --- | --- | --- |
-| RNF01 | Usabilidad | La interfaz debe ser clara, ordenada y facil de usar para clientes y personal de farmacia. | Alta |
-| RNF02 | Diseno responsive | El sistema debe adaptarse a computador, tablet y telefono movil. | Alta |
-| RNF03 | Rendimiento | Las pantallas principales deben cargar de forma rapida y permitir interaccion fluida. | Media |
-| RNF04 | Consistencia visual | El sistema debe mantener identidad visual coherente en botones, formularios, tablas y tarjetas. | Alta |
-| RNF05 | Seguridad basica | El sistema debe proteger el panel administrativo y evitar modificaciones no autorizadas. | Media |
-| RNF06 | Integridad de datos | El sistema debe evitar registros incompletos o inconsistentes en productos, stock, clientes y pedidos. | Alta |
-| RNF07 | Mantenibilidad | El codigo debe organizarse por modulos para facilitar mejoras e integracion con base de datos. | Media |
+| Codigo | Requerimiento | Descripcion |
+| --- | --- | --- |
+| RNF01 | Seguridad | Las rutas administrativas deben requerir JWT y roles. |
+| RNF02 | Integridad | Las ventas deben ejecutarse en transaccion para evitar ventas parciales. |
+| RNF03 | Usabilidad | La interfaz debe ser clara para cliente y personal administrativo. |
+| RNF04 | Responsive | Las pantallas deben adaptarse a movil y escritorio. |
+| RNF05 | Mantenibilidad | El backend debe organizarse por modulos, controllers, services y repositories. |
+| RNF06 | Consistencia | La documentacion, base de datos y backend deben usar nombres coherentes. |
 
-## 8. Modulos principales
-
-| Modulo | Descripcion |
-| --- | --- |
-| Catalogo | Muestra productos disponibles al cliente. |
-| Detalle de producto | Presenta informacion ampliada del producto. |
-| Carrito | Permite administrar productos seleccionados antes de generar un pedido. |
-| Pedidos | Registra y permite gestionar pedidos de clientes. |
-| Productos | Permite administrar el catalogo desde el panel. |
-| Categorias | Organiza los productos. |
-| Inventario | Controla stock, ajustes y alertas. |
-| Clientes | Guarda datos basicos asociados a pedidos. |
-| Usuarios | Permite acceso administrativo. |
-| Reportes | Presenta informacion basica para seguimiento del negocio. |
-
-## 9. Datos principales
-
-| Entidad | Datos principales |
-| --- | --- |
-| Producto | Identificador, categoria, nombre, presentacion, descripcion, precio, stock, stock minimo, fecha de vencimiento, disponibilidad. |
-| Categoria | Identificador, nombre, descripcion y estado. |
-| Cliente | Nombre, telefono, correo y direccion opcional. |
-| Carrito | Cliente, estado, productos seleccionados, cantidades y total temporal. |
-| Pedido | Cliente, productos solicitados, cantidades, total, fecha y estado. |
-| Usuario | Nombre, correo, rol, clave protegida y estado. |
-| Movimiento de inventario | Producto, tipo de movimiento, cantidad, motivo, fecha y usuario responsable. |
-
-## 10. Reglas de negocio
+## 7. Reglas De Negocio
 
 | Regla | Descripcion |
 | --- | --- |
-| Stock disponible | Un producto no debe agregarse al carrito si no tiene stock disponible. |
-| Cantidad valida | La cantidad agregada al carrito no debe superar el stock existente. |
-| Pedido con productos | Todo pedido debe tener al menos un producto. |
-| Total actualizado | El total del carrito debe actualizarse al modificar cantidades o eliminar productos. |
-| Producto visible | Los productos inactivos o no disponibles no deben mostrarse como disponibles en el catalogo. |
-| Bajo inventario | Un producto debe generar alerta cuando su stock sea menor o igual al minimo definido. |
-| Vencimiento | Los productos proximos a vencer deben identificarse para revision del personal. |
-| Trazabilidad | Los ajustes de inventario deben quedar registrados como movimientos. |
+| Cliente sin cuenta | El cliente publico no crea usuario ni usa token; sus datos se capturan en checkout. |
+| Cliente por email | En checkout, si el email ya existe, se reutiliza el cliente. |
+| Producto vendible | Un producto debe estar activo, disponible, con stock y no vencido para venderse. |
+| Stock suficiente | La cantidad vendida no puede superar el stock actual. |
+| Venta transaccional | Si falla un producto, cliente, stock o detalle, se revierte toda la venta. |
+| Precio historico | El detalle de venta guarda el precio unitario usado al momento de vender. |
+| Bajo stock | Un producto esta en alerta si `current_stock <= minimum_stock`. |
+| Fecha vencida | No se permite crear o actualizar productos con fecha de vencimiento anterior a hoy. |
 
-## 11. Fuera de alcance en esta version
+## 8. Modulos Del Backend
+
+| Modulo | Estado | Responsabilidad |
+| --- | --- | --- |
+| `auth` | Implementado | Login, registro, JWT y roles. |
+| `categories` | Implementado | Gestion de categorias. |
+| `products` | Implementado | Gestion de productos, stock y vencimientos. |
+| `customers` | Implementado | Gestion administrativa de clientes. |
+| `sales` | Implementado | Checkout, ventas, detalle, stock e historial. |
+| `cart` | Pendiente | Persistir carrito antes del checkout. |
+| `inventory` | Pendiente | Movimientos y ajustes de inventario. |
+| `reports` | Pendiente | Reportes administrativos. |
+
+## 9. Fuera De Alcance
 
 | Elemento excluido | Motivo |
 | --- | --- |
-| Proveedores | Aumenta el alcance administrativo y no es necesario para demostrar el flujo principal. |
-| Compras a proveedores | Requiere flujo de abastecimiento, costos y validaciones adicionales. |
-| Detalle de compras | Depende del modulo de compras, por lo tanto se excluye. |
-| Reportes de compras | No aplica sin modulo de compras. |
-| Gestion contable | Supera el objetivo academico y funcional de esta primera version. |
-| Costos avanzados | No son necesarios para catalogo, pedidos e inventario basico. |
+| Proveedores | No es necesario para el flujo principal. |
+| Compras a proveedores | Aumenta el alcance y requiere abastecimiento. |
+| Detalle de compras | Depende del modulo de compras. |
+| Reportes de compras | No aplica sin compras. |
+| Gestion contable | Supera la primera version academica. |
+| Costos avanzados | No son necesarios para catalogo, ventas e inventario basico. |
+| Pagos en linea | Puede agregarse en una version futura. |
 
-## 12. Criterios de aceptacion
+## 10. Criterios De Aceptacion
 
 | Criterio | Resultado esperado |
 | --- | --- |
-| Catalogo | El cliente puede visualizar productos organizados por categoria. |
-| Detalle | El cliente puede consultar informacion completa de un producto. |
-| Carrito | El cliente puede agregar, modificar y eliminar productos del carrito. |
-| Pedido | El cliente puede generar un pedido desde el carrito. |
-| Productos | El administrador puede registrar y actualizar productos. |
-| Inventario | El sistema permite consultar stock y alertas basicas. |
-| Pedidos admin | El administrador puede revisar y cambiar estados de pedidos. |
-| Responsive | La interfaz se visualiza correctamente en computador y dispositivos moviles. |
+| Login | Un admin o staff puede iniciar sesion y recibir token. |
+| Productos | El admin puede crear y editar productos validando categoria, precio, stock y vencimiento. |
+| Categorias | El admin puede organizar productos por categorias. |
+| Checkout | Un cliente puede finalizar compra con datos basicos sin token. |
+| Venta | El sistema crea venta, detalle y descuenta stock correctamente. |
+| Clientes | El sistema guarda o reutiliza clientes por email. |
+| Historial | El personal puede consultar ventas por ID, fecha y rango. |
+| Seguridad | Las rutas administrativas no responden sin token valido. |
 
-## 13. Prioridad de desarrollo
+## 11. Prioridad De Desarrollo
 
 | Prioridad | Elementos |
 | --- | --- |
-| Alta | Catalogo, detalle de producto, carrito, pedidos, productos, categorias e inventario basico. |
-| Media | Clientes, usuarios, alertas de bajo stock y vencimiento. |
-| Baja | Reportes basicos y estadisticas simples. |
-| Futuro | Proveedores, compras, abastecimiento, reportes de compras, pagos en linea y contabilidad. |
+| Alta | Conectar checkout frontend, completar carrito backend, vistas admin de ventas/clientes. |
+| Media | Inventario con movimientos, dashboard API y reportes basicos. |
+| Baja | Mejoras visuales, filtros avanzados, exportaciones. |
+| Futuro | Pagos, proveedores, compras, contabilidad. |
 
-## 14. Conclusion
+## 12. Conclusion
 
-El analisis de requerimientos establece una version inicial clara y alcanzable de FarmaGest Vital. El proyecto se enfoca en resolver el flujo principal: mostrar productos, permitir pedidos de clientes y administrar productos e inventario desde un panel interno.
-
-Este alcance es mas adecuado para completar el sistema con calidad, evitar modulos innecesarios y mantener coherencia entre documentacion, base de datos, backend y frontend.
+La documentacion queda alineada con el desarrollo actual: el sistema ya tiene base funcional para autenticacion, productos, categorias, clientes y ventas. El siguiente paso logico es completar carrito, inventario, reportes y la conexion visual del checkout con el backend.

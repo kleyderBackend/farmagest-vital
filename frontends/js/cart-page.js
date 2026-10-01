@@ -5,7 +5,7 @@ import {
   removeFromCart,
   setCartQuantity,
   updateCartBadges,
-} from "./cart.js?v=1";
+} from "./cart.js?v=2";
 
 const cartRoot = document.getElementById("cart-root");
 
@@ -63,6 +63,7 @@ const renderCart = () => {
         <div><span>Presentaciones</span><strong>${itemCount}</strong></div>
         <div class="cart-total"><span>Total</span><strong>${formatPrice(total)}</strong></div>
         <p>El total se actualiza al cambiar las cantidades.</p>
+        <a class="cart-checkout" href="./formularyOfShoip.html">Continuar compra</a>
         <button type="button" data-clear-cart>Vaciar carrito</button>
       </aside>
     </div>
