@@ -1,49 +1,25 @@
-CREATE TYPE user_role AS ENUM (
-    'admin',
-    'staff'
-);
-
-CREATE TYPE cart_status AS ENUM (
-    'active',
-    'converted',
-    'abandoned'
-);
-
-CREATE TYPE order_status AS ENUM (
-    'pending',
-    'processing',
-    'completed',
-    'cancelled'
-);
-
-CREATE TYPE inventory_movement_type AS ENUM (
-    'in',
-    'out',
-    'adjustment'
-);
-
 CREATE TABLE users (
-    user_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    user_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(200) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
-    role user_role NOT NULL DEFAULT 'staff',
+    role ENUM('admin', 'staff') NOT NULL DEFAULT 'staff',
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE categories (
-    category_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    category_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(100) NOT NULL,
     description TEXT,
     is_active BOOLEAN NOT NULL DEFAULT TRUE,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE products (
-    product_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    product_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     category_id INT NOT NULL,
     name VARCHAR(200) NOT NULL,
     presentation VARCHAR(100),
@@ -70,32 +46,32 @@ CREATE TABLE products (
 
     CONSTRAINT chk_products_minimum_stock
         CHECK (minimum_stock >= 0)
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE customers (
-    customer_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    customer_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     full_name VARCHAR(200) NOT NULL,
     phone VARCHAR(20) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     address VARCHAR(150),
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE carts (
-    cart_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    cart_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     customer_id INT NOT NULL,
-    status cart_status NOT NULL DEFAULT 'active',
+    status ENUM('active', 'converted', 'abandoned') NOT NULL DEFAULT 'active',
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT fk_carts_customers
         FOREIGN KEY (customer_id)
         REFERENCES customers(customer_id)
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE cart_items (
-    cart_item_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    cart_item_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     cart_id INT NOT NULL,
     product_id INT NOT NULL,
     quantity INT NOT NULL,
@@ -115,14 +91,14 @@ CREATE TABLE cart_items (
 
     CONSTRAINT chk_cart_items_prices
         CHECK (unit_price >= 0 AND subtotal >= 0)
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE orders (
-    order_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    order_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     customer_id INT NOT NULL,
     order_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     total NUMERIC(10, 2) NOT NULL DEFAULT 0,
-    status order_status NOT NULL DEFAULT 'pending',
+    status ENUM('pending', 'processing', 'completed', 'cancelled') NOT NULL DEFAULT 'pending',
     notes TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -133,10 +109,10 @@ CREATE TABLE orders (
 
     CONSTRAINT chk_orders_total
         CHECK (total >= 0)
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE order_items (
-    order_item_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    order_item_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     order_id INT NOT NULL,
     product_id INT NOT NULL,
     quantity INT NOT NULL,
@@ -156,13 +132,13 @@ CREATE TABLE order_items (
 
     CONSTRAINT chk_order_items_prices
         CHECK (unit_price >= 0 AND subtotal >= 0)
-);
+) ENGINE=InnoDB;
 
 CREATE TABLE inventory_movements (
-    movement_id INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+    movement_id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     product_id INT NOT NULL,
     user_id INT NOT NULL,
-    movement_type inventory_movement_type NOT NULL,
+    movement_type ENUM('in', 'out', 'adjustment') NOT NULL,
     quantity INT NOT NULL,
     reason TEXT,
     movement_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -177,4 +153,4 @@ CREATE TABLE inventory_movements (
 
     CONSTRAINT chk_inventory_movements_quantity
         CHECK (quantity > 0)
-);
+) ENGINE=InnoDB;
