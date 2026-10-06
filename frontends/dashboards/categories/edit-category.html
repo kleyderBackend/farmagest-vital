@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editar categoría | Farmagest Vital</title>
+    <link rel="stylesheet" href="../css/dashboard-general.css" />
+    <link rel="stylesheet" href="../css/products-admin.css" />
+    <link rel="stylesheet" href="../css/categories-admin.css" />
+  </head>
+  <body data-page="edit-category">
+    <header>
+      <nav>
+        <input type="search" placeholder="Buscar categorías..." />
+        <div>
+          <img src="../../imgs/admin.img" alt="imagen o logo de admin" />
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <div>
+        <div>
+          <img src="../../imgs/logo.png" alt="logo de Farmagest Vital" />
+        </div>
+        <aside>
+          <div>
+            <ul>
+              <li><a href="../dashboardAdmin.html">Dashboard</a></li>
+              <li><a href="../products/products.html">Productos</a></li>
+              <li><a href="./categories.html">Categorías</a></li>
+              <li><a href="">Ventas</a></li>
+              <li><a href="">Inventario</a></li>
+              <li><a href="">Stock</a></li>
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <li><a href="">Clientes</a></li>
+              <li><a href="">Reportes</a></li>
+              <li><a href="">Configuración</a></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+
+      <section class="admin-page-header">
+        <div>
+          <span>Categorías</span>
+          <h1>Editar categoría</h1>
+          <p>Actualiza la información y estado de la categoría seleccionada.</p>
+        </div>
+        <a class="secondary-action" href="./categories.html">Volver al listado</a>
+      </section>
+
+      <section class="product-form-card category-form-card">
+        <div id="adminMessage" class="admin-message" aria-live="polite"></div>
+        <form id="categoryForm">
+          <div class="form-grid">
+            <div>
+              <label for="name">Nombre de la categoría</label>
+              <input id="name" name="name" type="text" required />
+            </div>
+            <div class="form-full">
+              <label for="description">Descripción</label>
+              <textarea id="description" name="description" rows="4"></textarea>
+            </div>
+            <label class="toggle-row">
+              <input type="checkbox" name="isActive" checked />
+              Categoría activa
+            </label>
+          </div>
+          <div class="form-actions danger-zone">
+            <button type="button" id="deactivateCategory" class="danger-action">
+              Desactivar categoría
+            </button>
+            <div>
+              <a class="secondary-action" href="./categories.html">Cancelar</a>
+              <button type="submit">Guardar cambios</button>
+            </div>
+          </div>
+        </form>
+      </section>
+    </main>
+    <script type="module" src="../../js/admin-categories.js"></script>
+  </body>
+</html>

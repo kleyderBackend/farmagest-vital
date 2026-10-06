@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Editar producto | Farmagest Vital</title>
+    <link rel="stylesheet" href="../css/dashboard-general.css" />
+    <link rel="stylesheet" href="../css/products-admin.css" />
+  </head>
+  <body data-page="edit-product">
+    <header>
+      <nav>
+        <input type="search" placeholder="Buscar productos..." />
+        <div>
+          <img src="../../imgs/admin.img" alt="imagen o logo de admin" />
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <div>
+        <div>
+          <img src="../../imgs/logo.png" alt="logo de Farmagest Vital" />
+        </div>
+        <aside>
+          <div>
+            <ul>
+              <li><a href="../dashboardAdmin.html">Dashboard</a></li>
+              <li><a href="./products.html">Productos</a></li>
+              <li><a href="../categories/categories.html">Categorías</a></li>
+              <li><a href="">Ventas</a></li>
+              <li><a href="">Inventario</a></li>
+              <li><a href="">Stock</a></li>
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <li><a href="">Clientes</a></li>
+              <li><a href="">Reportes</a></li>
+              <li><a href="">Configuración</a></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+
+      <section class="admin-page-header">
+        <div>
+          <span>Productos</span>
+          <h1>Editar producto</h1>
+          <p>Actualiza la información comercial e inventario del producto.</p>
+        </div>
+        <a class="secondary-action" href="./products.html">Volver al listado</a>
+      </section>
+
+      <section class="product-form-card">
+        <div id="adminMessage" class="admin-message" aria-live="polite"></div>
+        <form id="productForm">
+          <div class="form-grid">
+            <div>
+              <label for="categoryId">Categoría</label>
+              <select
+                id="categoryId"
+                name="categoryId"
+                data-categories-select
+                required
+              >
+                <option value="">Selecciona una categoría</option>
+              </select>
+            </div>
+            <div>
+              <label for="name">Nombre del producto</label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                placeholder="Acetaminofen 500 mg"
+              />
+            </div>
+            <div>
+              <label for="presentation">Presentación</label>
+              <input
+                id="presentation"
+                name="presentation"
+                type="text"
+                placeholder="Caja x 20 tabletas"
+              />
+            </div>
+            <div>
+              <label for="salePrice">Precio de venta</label>
+              <input
+                id="salePrice"
+                name="salePrice"
+                type="number"
+                min="1"
+                required
+                placeholder="8500"
+              />
+            </div>
+            <div>
+              <label for="currentStock">Stock actual</label>
+              <input
+                id="currentStock"
+                name="currentStock"
+                type="number"
+                min="0"
+                placeholder="50"
+              />
+            </div>
+            <div>
+              <label for="minimumStock">Stock mínimo</label>
+              <input
+                id="minimumStock"
+                name="minimumStock"
+                type="number"
+                min="0"
+                placeholder="10"
+              />
+            </div>
+            <div>
+              <label for="expirationDate">Fecha de vencimiento</label>
+              <input
+                id="expirationDate"
+                name="expirationDate"
+                type="date"
+              />
+            </div>
+            <div>
+              <label for="imageUrl">Imagen URL</label>
+              <input
+                id="imageUrl"
+                name="imageUrl"
+                type="url"
+                placeholder="https://..."
+              />
+            </div>
+            <div class="form-full">
+              <label for="description">Descripción</label>
+              <textarea id="description" name="description" rows="4"></textarea>
+            </div>
+            <label class="toggle-row">
+              <input type="checkbox" name="isAvailable" checked />
+              Producto disponible para venta
+            </label>
+          </div>
+          <div class="form-actions danger-zone">
+            <button type="button" id="deactivateProduct" class="danger-action">
+              Desactivar producto
+            </button>
+            <div>
+              <a class="secondary-action" href="./products.html">Cancelar</a>
+              <button type="submit">Guardar cambios</button>
+            </div>
+          </div>
+        </form>
+      </section>
+    </main>
+    <script type="module" src="../../js/admin-products.js"></script>
+  </body>
+</html>

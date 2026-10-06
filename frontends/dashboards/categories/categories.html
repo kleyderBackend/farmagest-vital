@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Categorías | Farmagest Vital</title>
+    <link rel="stylesheet" href="../css/dashboard-general.css" />
+    <link rel="stylesheet" href="../css/products-admin.css" />
+    <link rel="stylesheet" href="../css/categories-admin.css" />
+  </head>
+  <body data-page="categories">
+    <header>
+      <nav>
+        <input type="search" placeholder="Buscar categorías..." />
+        <div>
+          <img src="../../imgs/admin.img" alt="imagen o logo de admin" />
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <div>
+        <div>
+          <img src="../../imgs/logo.png" alt="logo de Farmagest Vital" />
+        </div>
+        <aside>
+          <div>
+            <ul>
+              <li><a href="../dashboardAdmin.html">Dashboard</a></li>
+              <li><a href="../products/products.html">Productos</a></li>
+              <li><a href="./categories.html">Categorías</a></li>
+              <li><a href="">Ventas</a></li>
+              <li><a href="">Inventario</a></li>
+              <li><a href="">Stock</a></li>
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <li><a href="">Clientes</a></li>
+              <li><a href="">Reportes</a></li>
+              <li><a href="">Configuración</a></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+
+      <section class="admin-page-header">
+        <div>
+          <span>Inventario</span>
+          <h1>Categorías</h1>
+          <p>Organiza los productos para facilitar búsqueda, control y reportes.</p>
+        </div>
+        <a class="primary-action" href="./create-category.html">Nueva categoría</a>
+      </section>
+
+      <section class="products-summary">
+        <article>
+          <span>Total categorías</span>
+          <strong id="totalCategories">0</strong>
+          <small>Registradas</small>
+        </article>
+        <article>
+          <span>Activas</span>
+          <strong id="activeCategories">0</strong>
+          <small>Disponibles para productos</small>
+        </article>
+        <article>
+          <span>Inactivas</span>
+          <strong id="inactiveCategories">0</strong>
+          <small>Ocultas del flujo principal</small>
+        </article>
+      </section>
+
+      <section class="products-table">
+        <div class="section-title">
+          <h2>Listado de categorías</h2>
+          <span>Administración de clasificación de productos</span>
+        </div>
+        <div id="adminMessage" class="admin-message" aria-live="polite"></div>
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>Código</th>
+                <th>Nombre</th>
+                <th>Descripción</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="categoriesTableBody">
+              <tr>
+                <td colspan="5">Cargando categorías...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="../../js/admin-categories.js"></script>
+  </body>
+</html>
