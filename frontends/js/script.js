@@ -1,104 +1,89 @@
-import { products } from "./products.js?v=3";
-import { addToCart, updateCartBadges } from "./cart.js?v=1";
+import {
+    createProductImage,
+    formatProductPrice,
+    getAvailableProducts,
+    getCategories,
+} from "./catalog-api.js";
+import { addToCart, setCatalogProducts, updateCartBadges } from "./cart.js?v=2";
+
 const productsContainer = document.getElementById("products-container");
 const productsHeading = document.getElementById("products-heading");
 const categoryMenu = document.getElementById("category-menu");
 const categoriesContainer = document.getElementById("categorias");
+const categoryIcons = [
+    "fa-pills",
+    "fa-pump-soap",
+    "fa-capsules",
+    "fa-baby",
+    "fa-soap",
+    "fa-spa",
+];
 
 if (!productsContainer || !productsHeading || !categoryMenu || !categoriesContainer) {
     throw new Error("Faltan contenedores necesarios para mostrar el catálogo.");
 }
 
-const categoryLabels = {
-    Medicines: "Medicamentos",
-    Vitamins: "Vitaminas",
-    "Personal Care": "Cuidado personal",
-    Baby: "Bebés",
-    Hygiene: "Higiene",
-    Beauty: "Belleza",
+const escapeHtml = (value) =>
+    String(value ?? "").replace(/[&<>"']/g, (character) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        '"': "&quot;",
+        "'": "&#39;",
+    })[character]);
+
+let products = [];
+let categories = [];
+let selectedCategory = "";
+
+const renderCategories = () => {
+    const categoryLinks = categories.map((category, index) => {
+        const id = String(category.id);
+        const name = escapeHtml(category.name);
+        const icon = categoryIcons[index % categoryIcons.length];
+
+        return {
+            tile: `<a href="#productos" class="categorie" data-category="${id}"><i class="fa-solid ${icon}" aria-hidden="true"></i><span>${name}</span></a>`,
+            menu: `<li><a href="#productos" data-category="${id}">${name}</a></li>`,
+        };
+    });
+
+    categoriesContainer.innerHTML = categoryLinks.map(({ tile }) => tile).join("");
+    categoryMenu.innerHTML = [
+        `<li><a href="#productos" data-category="">Productos destacados</a></li>`,
+        ...categoryLinks.map(({ menu }) => menu),
+    ].join("");
 };
 
-const getCategoryLabel = (category) => categoryLabels[category] ?? category;
+const createProductCard = (product) => `
+    <article class="product-card">
+        <img src="${escapeHtml(createProductImage(product))}" alt="${escapeHtml(product.name)}" loading="lazy">
+        <h3>${escapeHtml(product.name)}</h3>
+        <small>${escapeHtml(product.category)}</small>
+        <p>${escapeHtml(product.description)}</p>
+        <strong>${formatProductPrice(product.price)}</strong>
+        <div class="actions">
+            <a href="./ecommerce/details.html?id=${product.id}">Detalles</a>
+            <button type="button" data-add-to-cart="${product.id}">Añadir al carrito</button>
+        </div>
+    </article>
+`;
 
-const createProductImage = (product) => {
-  const svg = `
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 520">
-            <defs>
-                <linearGradient id="bg" x1="0" x2="1" y1="0" y2="1">
-                    <stop offset="0%" stop-color="#dff9f0"/>
-                    <stop offset="100%" stop-color="#ebf7ff"/>
-                </linearGradient>
-            </defs>
-            <rect width="800" height="520" rx="36" fill="url(#bg)"/>
-            <circle cx="650" cy="120" r="90" fill="#9ee7c5" opacity="0.8"/>
-            <circle cx="180" cy="420" r="120" fill="#b6e0ff" opacity="0.8"/>
-            <rect x="120" y="170" width="560" height="180" rx="32" fill="rgba(255,255,255,0.8)"/>
-            <text x="50%" y="46%" text-anchor="middle" font-size="24" font-family="Segoe UI, Arial, sans-serif" font-weight="700" fill="#1f2d3d">${product.category}</text>
-            <text x="50%" y="58%" text-anchor="middle" font-size="36" font-family="Segoe UI, Arial, sans-serif" font-weight="800" fill="#0f8f64">${product.name}</text>
-        </svg>
-    `;
+const renderProducts = () => {
+    const visibleProducts = selectedCategory
+        ? products.filter((product) => String(product.categoryId) === selectedCategory)
+        : products.slice(0, 4);
+    const selectedCategoryName = categories.find(
+        (category) => String(category.id) === selectedCategory,
+    )?.name;
 
-  return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`;
-};
-
-const featuredProducts = products
-  .filter((product) => product.featured)
-  .slice(0, 4);
-
-const categories = [...new Set(products.map((product) => product.category))];
-
-categoryMenu.innerHTML = [
-    `<li><a href="#productos" data-category="">Productos destacados</a></li>`,
-    ...categories.map(
-        (category) =>
-            `<li><a href="#productos" data-category="${category}">${getCategoryLabel(category)}</a></li>`,
-    ),
-].join("");
-
-const createProductCard = (product) => {
-  const imageSrc = createProductImage(product);
-
-    return `
-        <article class="product-card">
-
-            <img 
-                src="${imageSrc}" 
-                alt="${product.name}"
-            >
-
-            <h3>${product.name}</h3>
-
-            <small>${product.category}</small>
-
-            <p>${product.description}</p>
-
-            <strong>$${product.price.toLocaleString("es-CO")}</strong>
-
-            <div class="actions">
-                <a href="./ecommerce/details.html?id=${product.id}">
-                    <button>Detalles</button>
-                </a>
-                <button type="button" data-add-to-cart="${product.id}">
-                    Añadir al carrito
-                </button>
-            </div>
-
-        </article>
-    `;
-};
-
-const renderProducts = (category = "") => {
-    const visibleProducts = category
-        ? products.filter((product) => product.category === category)
-        : featuredProducts;
-
-    productsHeading.textContent = category
-        ? getCategoryLabel(category)
-        : "Productos destacados";
-    productsContainer.innerHTML = visibleProducts.map(createProductCard).join("");
+    productsHeading.textContent = selectedCategoryName || "Productos destacados";
+    productsContainer.innerHTML = visibleProducts.length
+        ? visibleProducts.map(createProductCard).join("")
+        : `<p role="status">No hay productos disponibles en esta categoría.</p>`;
 
     document.querySelectorAll("[data-category]").forEach((link) => {
-        if (link.dataset.category === category) {
+        if (link.dataset.category === selectedCategory) {
             link.setAttribute("aria-current", "true");
         } else {
             link.removeAttribute("aria-current");
@@ -109,10 +94,10 @@ const renderProducts = (category = "") => {
 const bindCategoryFilter = (container) => {
     container.addEventListener("click", (event) => {
         const link = event.target.closest("a[data-category]");
-
         if (!link) return;
 
-        renderProducts(link.dataset.category);
+        selectedCategory = link.dataset.category;
+        renderProducts();
 
         const dropdown = categoryMenu.closest("details");
         if (dropdown) dropdown.open = false;
@@ -121,14 +106,13 @@ const bindCategoryFilter = (container) => {
 
 bindCategoryFilter(categoryMenu);
 bindCategoryFilter(categoriesContainer);
-renderProducts();
 
 productsContainer.addEventListener("click", (event) => {
     const button = event.target.closest("[data-add-to-cart]");
     if (!button) return;
 
-    const added = addToCart(button.dataset.addToCart);
-    if (!added) return;
+    const product = products.find((item) => item.id === Number(button.dataset.addToCart));
+    if (!addToCart(button.dataset.addToCart, 1, product)) return;
 
     button.textContent = "Añadido";
     updateCartBadges();
@@ -136,3 +120,24 @@ productsContainer.addEventListener("click", (event) => {
         if (button.isConnected) button.textContent = "Añadir al carrito";
     }, 1200);
 });
+
+const loadCatalog = async () => {
+    productsHeading.textContent = "Cargando catálogo...";
+    productsContainer.innerHTML = `<p role="status">Consultando productos disponibles...</p>`;
+
+    try {
+        [products, categories] = await Promise.all([
+            getAvailableProducts(),
+            getCategories(),
+        ]);
+        setCatalogProducts(products);
+        renderCategories();
+        renderProducts();
+    } catch (error) {
+        productsHeading.textContent = "Catálogo no disponible";
+        productsContainer.innerHTML = `<p role="alert">${escapeHtml(error.message || "No se pudo conectar con el backend.")}</p>`;
+    }
+};
+
+updateCartBadges();
+loadCatalog();

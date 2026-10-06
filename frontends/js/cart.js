@@ -1,6 +1,7 @@
-import { products } from "./products.js?v=3";
+import { getProductById } from "./catalog-api.js";
 
 const storageKey = "farmagest-vital-cart";
+const productCache = new Map();
 
 const readCart = () => {
   try {
@@ -11,8 +12,7 @@ const readCart = () => {
       (item) =>
         Number.isInteger(item.productId) &&
         Number.isInteger(item.quantity) &&
-        item.quantity > 0 &&
-        products.some((product) => product.id === item.productId),
+        item.quantity > 0,
     );
   } catch {
     return [];
@@ -27,21 +27,55 @@ const saveCart = (cart) => {
 
 export const getCartItems = () =>
   readCart().flatMap((entry) => {
-    const product = products.find((item) => item.id === entry.productId);
+    const product = productCache.get(entry.productId) ?? entry.product;
     return product ? [{ ...product, quantity: entry.quantity }] : [];
   });
+
+export const setCatalogProducts = (products) => {
+  products.forEach((product) => productCache.set(product.id, product));
+};
+
+export const hydrateCart = async () => {
+  const cart = readCart();
+
+  await Promise.all(
+    cart.map(async (entry) => {
+      if (productCache.has(entry.productId)) return;
+
+      try {
+        const product = await getProductById(entry.productId);
+        productCache.set(product.id, product);
+        entry.product = product;
+      } catch {
+        if (entry.product) productCache.set(entry.productId, entry.product);
+        return;
+      }
+    }),
+  );
+
+  const validCart = cart.filter(
+    (entry) => productCache.has(entry.productId) || entry.product,
+  );
+  localStorage.setItem(storageKey, JSON.stringify(validCart));
+  return getCartItems();
+};
 
 export const getCartCount = () =>
   readCart().reduce((total, item) => total + item.quantity, 0);
 
-export const addToCart = (productId, quantity = 1) => {
-  const product = products.find((item) => item.id === Number(productId));
+export const addToCart = (productId, quantity = 1, catalogProduct) => {
+  const id = Number(productId);
+  const product = catalogProduct ?? productCache.get(id);
   const amount = Math.max(1, Math.floor(Number(quantity) || 1));
 
-  if (!product || !product.available || product.stock < 1) return false;
+  if (!product || product.id !== id || !product.available || product.stock < 1) {
+    return false;
+  }
+
+  productCache.set(id, product);
 
   const cart = readCart();
-  const existingItem = cart.find((item) => item.productId === product.id);
+  const existingItem = cart.find((item) => item.productId === id);
   const newQuantity = Math.min(
     product.stock,
     (existingItem?.quantity ?? 0) + amount,
@@ -49,8 +83,9 @@ export const addToCart = (productId, quantity = 1) => {
 
   if (existingItem) {
     existingItem.quantity = newQuantity;
+    existingItem.product = product;
   } else {
-    cart.push({ productId: product.id, quantity: newQuantity });
+    cart.push({ productId: id, quantity: newQuantity, product });
   }
 
   saveCart(cart);
@@ -58,18 +93,20 @@ export const addToCart = (productId, quantity = 1) => {
 };
 
 export const setCartQuantity = (productId, quantity) => {
-  const product = products.find((item) => item.id === Number(productId));
+  const id = Number(productId);
   const cart = readCart();
-  const item = cart.find((entry) => entry.productId === Number(productId));
+  const item = cart.find((entry) => entry.productId === id);
+  const product = productCache.get(id) ?? item?.product;
   const amount = Math.floor(Number(quantity));
 
   if (!item || !product) return;
   if (amount < 1) {
-    saveCart(cart.filter((entry) => entry.productId !== product.id));
+    saveCart(cart.filter((entry) => entry.productId !== id));
     return;
   }
 
   item.quantity = Math.min(amount, product.stock);
+  item.product = product;
   saveCart(cart);
 };
 

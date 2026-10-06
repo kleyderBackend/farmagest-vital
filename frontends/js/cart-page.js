@@ -2,10 +2,11 @@ import {
   clearCart,
   formatPrice,
   getCartItems,
+  hydrateCart,
   removeFromCart,
   setCartQuantity,
   updateCartBadges,
-} from "./cart.js?v=1";
+} from "./cart.js?v=2";
 
 const cartRoot = document.getElementById("cart-root");
 
@@ -105,4 +106,4 @@ window.addEventListener("cartchange", renderCart);
 window.addEventListener("storage", (event) => {
   if (event.key === "farmagest-vital-cart") renderCart();
 });
-renderCart();
+hydrateCart().then(renderCart);

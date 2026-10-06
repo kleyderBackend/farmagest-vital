@@ -2,6 +2,7 @@ import { apiRequest, formatCurrency } from "./api.js";
 import {
   clearCart,
   getCartItems,
+  hydrateCart,
   updateCartBadges,
 } from "./cart.js?v=2";
 
@@ -105,6 +106,7 @@ const buildCheckoutPayload = (formData) => {
 
 const handleCheckout = async (event) => {
   event.preventDefault();
+  await hydrateCart();
 
   const items = getCartItems();
 
@@ -141,5 +143,7 @@ window.addEventListener("storage", (event) => {
   if (event.key === "farmagest-vital-cart") renderSummary();
 });
 
-renderSummary();
-updateCartBadges();
+hydrateCart().then(() => {
+  renderSummary();
+  updateCartBadges();
+});
