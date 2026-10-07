@@ -4,113 +4,191 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Panel de administración | Farmagest Vital</title>
-    <link rel="stylesheet" href="./css/dashboard-general.css" />
+    <link rel="stylesheet" href="./css/dashboard-general.css?v=20261007-admin-redesign" />
   </head>
   <body data-page="dashboard">
-    <header>
-      <nav>
+    <header class="topbar">
+      <nav class="topbar__nav" aria-label="Barra superior">
         <input
           type="search"
-          placeholder="Buscar Productos, codigos o clientes..."
+          placeholder="Buscar productos, codigos o clientes..."
+          aria-label="Buscar productos, codigos o clientes"
         />
-        <div>
-          <img src="../imgs/admin.img" alt="imagen o logo de admin" />
+        <button
+          class="theme-toggle"
+          type="button"
+          aria-label="Cambiar a tema claro"
+          data-theme-toggle
+        >
+          <span aria-hidden="true">☾</span>
+        </button>
+        <div class="account-menu" data-account-menu>
+          <button
+            class="topbar__profile"
+            type="button"
+            aria-label="Abrir menu de usuario"
+            aria-expanded="false"
+            data-account-toggle
+          >
+            <span data-account-initials>AD</span>
+          </button>
+          <div class="account-menu__panel" data-account-panel>
+            <div class="account-menu__header">
+              <div class="account-menu__avatar" data-account-initials>AD</div>
+              <div>
+                <strong data-account-name>Administrador</strong>
+                <span data-account-role>Panel administrativo</span>
+              </div>
+            </div>
+            <div class="account-menu__options">
+              <button type="button">Mi perfil</button>
+              <button type="button">Configuracion</button>
+              <button type="button" class="account-menu__logout" data-logout-button>
+                Cerrar sesion
+              </button>
+            </div>
+          </div>
         </div>
       </nav>
     </header>
-    <main>
-      <div>
-        <div>
-          <img src="../imgs/logo.png" alt="logo de farmagest Vital" />
+    <main class="dashboard-shell">
+      <div class="sidebar">
+        <div class="sidebar__brand">
+          <div class="brand-mark">
+            <img src="../imgs/logo.png" alt="logo de farmagest Vital" />
+          </div>
+          <div class="brand-copy">
+            <strong>FarmaGest</strong>
+            <span>Vital Admin</span>
+          </div>
         </div>
-        <aside>
-          <div>
+        <aside class="sidebar__content">
+          <div class="sidebar__group">
+            <p>Operacion</p>
             <ul>
-              <li><a href="./dashboardAdmin.html">Dashboard</a></li>
+              <li class="is-active"><a href="./dashboardAdmin.html">Dashboard</a></li>
               <li><a href="./products/products.html">Productos</a></li>
-              <li><a href="./categories/categories.html">Categorías</a></li>
-              <li>Ventas</li>
-              <li>Inventario</li>
-              <li>Stock</li>
+              <li><a href="./categories/categories.html">Categorias</a></li>
+              <li><span>Ventas</span></li>
+              <li><span>Inventario</span></li>
+              <li><span>Stock</span></li>
             </ul>
           </div>
-          <div>
+          <div class="sidebar__group sidebar__group--secondary">
+            <p>Gestion</p>
             <ul>
-              <li>Clientes</li>
-              <li>Reportes</li>
-              <li>Configuración</li>
+              <li><span>Clientes</span></li>
+              <li><span>Reportes</span></li>
+              <li><span>Configuracion</span></li>
             </ul>
           </div>
         </aside>
       </div>
 
-      <section class="card-minireport">
-        <h1>Dashboard</h1>
-        <p>Resumen General de tu farmacia</p>
+      <section class="dashboard-hero" aria-labelledby="dashboardTitle">
         <div>
-          logo de Ventas
+          <p class="eyebrow">Panel administrativo</p>
+          <h1 id="dashboardTitle">Panel Principal</h1>
+        </div>
+      </section>
+
+      <section class="metric-grid" aria-label="Resumen general">
+        <article class="metric-card metric-card--sales">
           <div>
             <p>Ventas</p>
-            <span> $ 1,245,300 </span>
+            <span>$ 1,245,300</span>
           </div>
-        </div>
+          <div class="metric-card__icon" aria-hidden="true">$</div>
+        </article>
 
-        <div>
-          logo de ingresos
+        <article class="metric-card metric-card--income">
           <div>
             <p>Ingreso del dia</p>
-            <span> $ 892,450</span>
+            <span>$ 892,450</span>
           </div>
-        </div>
+          <div class="metric-card__icon" aria-hidden="true">≋</div>
+        </article>
 
-        <div>
-          logo de productos
+        <article class="metric-card metric-card--products">
           <div>
             <p>Productos</p>
             <span id="dashboardProductsCount">0</span>
           </div>
-        </div>
+          <div class="metric-card__icon" aria-hidden="true">□</div>
+        </article>
 
-        <div>
-          logo de Inventario
+        <article class="metric-card metric-card--inventory">
           <div>
             <p>Inventario</p>
-            <span>24,560</span>
+            <span>$ 4,560</span>
           </div>
+          <div class="metric-card__icon" aria-hidden="true">▣</div>
+        </article>
+      </section>
+
+      <section class="panel chart-panel">
+        <div class="panel__header">
+          <div>
+            <h2>Ingreso del dia</h2>
+          </div>
+        </div>
+        <div class="line-chart" aria-hidden="true">
+          <svg viewBox="0 0 720 250" role="img">
+            <defs>
+              <linearGradient id="chartFill" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#5f8edb" stop-opacity="0.35" />
+                <stop offset="100%" stop-color="#5f8edb" stop-opacity="0" />
+              </linearGradient>
+            </defs>
+            <path
+              class="line-chart__area"
+              d="M18 204 C110 160 132 126 214 118 C294 110 315 134 390 120 C480 102 516 54 610 38 C660 30 688 24 704 18 L704 230 L18 230 Z"
+            />
+            <path
+              class="line-chart__line"
+              d="M18 204 C110 160 132 126 214 118 C294 110 315 134 390 120 C480 102 516 54 610 38 C660 30 688 24 704 18"
+            />
+            <g class="line-chart__points">
+              <circle cx="18" cy="204" r="4" />
+              <circle cx="214" cy="118" r="4" />
+              <circle cx="390" cy="120" r="4" />
+              <circle cx="610" cy="38" r="4" />
+              <circle cx="704" cy="18" r="4" />
+            </g>
+            <g class="line-chart__labels">
+              <text x="18" y="188">$072k</text>
+              <text x="214" y="102">$892k</text>
+              <text x="390" y="104">$832k</text>
+              <text x="610" y="22">$892k</text>
+              <text x="650" y="18">$892k</text>
+              <text x="18" y="238">08:00</text>
+              <text x="214" y="238">10:00</text>
+              <text x="390" y="238">14:00</text>
+              <text x="610" y="238">16:00</text>
+              <text x="686" y="238">18:00</text>
+            </g>
+          </svg>
         </div>
       </section>
 
-      <section class="graficsDashboard">
-        <h2>Ingreso del dia</h2>
-      </section>
-      <section class="table-stock">
-        <h2>Stock Bajo</h2>
-        <div>
-          <a href="">Ver Todos</a>
+      <section class="panel table-stock">
+        <div class="panel__header">
+          <div>
+            <h2>Stock bajo</h2>
+          </div>
         </div>
-        <div>
-          <table>
-            <thead>
-              <tr>
-                <th>Producto</th>
-                <th>Stock Actual</th>
-                <th>Stock Minimo</th>
-              </tr>
-            </thead>
-            <tbody id="dashboardLowStockBody">
-              <tr>
-                <td colspan="3">Cargando stock...</td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="stock-list" id="dashboardLowStockBody">
+          <article class="stock-card is-empty">Cargando stock...</article>
         </div>
       </section>
-      <section class="table-recient-products">
-        <h2>Productos Recientes</h2>
-        <div>
-          <a href="">Ver Todos</a>
+
+      <section class="panel table-recient-products">
+        <div class="panel__header">
+          <div>
+            <h2>Catalogo</h2>
+          </div>
         </div>
-        <div>
+        <div class="table-wrap">
           <table>
             <thead>
               <tr>

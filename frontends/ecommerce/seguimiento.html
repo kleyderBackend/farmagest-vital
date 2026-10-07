@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Seguimiento de compra | Farmagest Vital</title>
+    <link rel="stylesheet" href="../css/style.css?v=1" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+  </head>
+  <body>
+    <header>
+      <nav>
+        <a href="../index.html#inicio">
+          <img src="/frontends/imgs/logo.png" alt="Logo de Farmagest Vital" />
+        </a>
+        <ul>
+          <li><a href="../index.html#inicio">Inicio</a></li>
+          <li><a href="../index.html#productos">Productos</a></li>
+          <li>
+            <a class="cart-nav-link" href="./carrito.html">
+              <i class="fa-solid fa-cart-shopping" aria-hidden="true"></i>
+              <span>Carrito</span>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </header>
+
+    <main>
+      <section class="tracking-page" aria-labelledby="trackingTitle">
+        <div>
+          <p>Seguimiento</p>
+          <h1 id="trackingTitle">Consulta el estado de tu compra</h1>
+          <span>
+            Pronto podrás revisar el avance de tu pedido usando el número de
+            compra entregado al finalizar.
+          </span>
+        </div>
+
+        <form class="tracking-card">
+          <label for="trackingCode">Número de pedido</label>
+          <div>
+            <input
+              id="trackingCode"
+              type="text"
+              placeholder="Ej: FV-000123"
+              disabled
+            />
+            <button type="button" disabled>Consultar</button>
+          </div>
+          <small>Módulo preparado para conectarse al historial de ventas.</small>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>
