@@ -105,7 +105,7 @@ function setupAccountMenu() {
     logoutButton.addEventListener("click", () => {
       localStorage.removeItem("token");
       localStorage.removeItem("user");
-      window.location.href = "/frontends/dashboards/auth/login.html";
+      window.location.href = new URL("../dashboards/auth/login.html", import.meta.url).href;
     });
   }
 }
