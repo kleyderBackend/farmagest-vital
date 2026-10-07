@@ -10,6 +10,11 @@ const productsContainer = document.getElementById("products-container");
 const productsHeading = document.getElementById("products-heading");
 const categoryMenu = document.getElementById("category-menu");
 const categoriesContainer = document.getElementById("categorias");
+const productDetailsUrl = (id) => {
+    const url = new URL("../ecommerce/details.html", import.meta.url);
+    url.searchParams.set("id", id);
+    return url.href;
+};
 const categoryIcons = [
     "fa-pills",
     "fa-pump-soap",
@@ -63,7 +68,7 @@ const createProductCard = (product) => `
         <p>${escapeHtml(product.description)}</p>
         <strong>${formatProductPrice(product.price)}</strong>
         <div class="actions">
-            <a href="./ecommerce/details.html?id=${product.id}">Detalles</a>
+            <a href="${escapeHtml(productDetailsUrl(product.id))}">Detalles</a>
             <button type="button" data-add-to-cart="${product.id}">Añadir al carrito</button>
         </div>
     </article>
