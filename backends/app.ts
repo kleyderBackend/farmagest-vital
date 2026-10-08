@@ -12,7 +12,25 @@ import { routes as routerSales } from "./src/modules/sales/sales.route";
 
 export const app: Express = express();
 
-app.use(cors());
+const allowedOrigins = new Set([
+  "http://localhost:3000",
+  "http://localhost:5173",
+  "http://127.0.0.1:5500",
+  "https://kleyderbackend.github.io",
+]);
+
+app.use(
+  cors({
+    origin(origin, callback) {
+      if (!origin || allowedOrigins.has(origin)) {
+        callback(null, true);
+        return;
+      }
+
+      callback(new Error(`Origen no permitido por CORS: ${origin}`));
+    },
+  }),
+);
 app.use(express.json());
 
 app.use("/api/auth", routesUser);
