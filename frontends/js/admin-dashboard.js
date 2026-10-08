@@ -163,15 +163,57 @@ function renderStockCards(products) {
     .join("");
 }
 
+function getLocalDateString(date = new Date()) {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
+function setText(id, value) {
+  const target = document.getElementById(id);
+
+  if (target) {
+    target.textContent = value;
+  }
+}
+
+function calculateInventoryValue(products) {
+  return products.reduce(
+    (total, product) =>
+      total + Number(product.sale_price || 0) * Number(product.current_stock || 0),
+    0,
+  );
+}
+
+async function loadSalesMetrics() {
+  const today = getLocalDateString();
+
+  try {
+    const [salesTotalResponse, incomeTodayResponse] = await Promise.all([
+      apiRequest("/sales/total-sold"),
+      apiRequest(`/sales/total-sold?startDate=${today}&endDate=${today}`),
+    ]);
+
+    const salesTotal = salesTotalResponse.data?.totalSold?.total_sold || 0;
+    const incomeToday = incomeTodayResponse.data?.totalSold?.total_sold || 0;
+
+    setText("dashboardSalesTotal", formatCurrency(salesTotal));
+    setText("dashboardIncomeToday", formatCurrency(incomeToday));
+  } catch {
+    setText("dashboardSalesTotal", formatCurrency(0));
+    setText("dashboardIncomeToday", formatCurrency(0));
+  }
+}
+
 async function loadDashboard() {
   try {
     const response = await apiRequest("/products", { auth: false });
     const products = response.data?.products || [];
 
-    const productsCount = document.getElementById("dashboardProductsCount");
-    if (productsCount) {
-      productsCount.textContent = products.length;
-    }
+    setText("dashboardProductsCount", products.length);
+    setText("dashboardInventoryValue", formatCurrency(calculateInventoryValue(products)));
 
     const lowStockProducts = products
       .filter((product) => Number(product.current_stock) <= Number(product.minimum_stock))
@@ -206,4 +248,5 @@ async function loadDashboard() {
 
 setupThemeToggle();
 setupAccountMenu();
+loadSalesMetrics();
 loadDashboard();
