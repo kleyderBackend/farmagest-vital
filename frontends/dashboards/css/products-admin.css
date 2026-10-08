@@ -168,7 +168,7 @@ aside div:first-child li:nth-child(2)::after {
 }
 
 label {
-  color: #344760;
+  color: #cbd6e4;
   font-size: 0.9rem;
   font-weight: 800;
 }
@@ -182,13 +182,28 @@ textarea {
   border: 1px solid var(--border);
   border-radius: var(--radius);
   outline: none;
-  background: #fbfdfd;
-  color: var(--text);
+  background: #ffffff;
+  color: #172033;
   font: inherit;
   transition:
     border-color 180ms ease,
     box-shadow 180ms ease,
     background-color 180ms ease;
+}
+
+select {
+  appearance: auto;
+  cursor: pointer;
+}
+
+select option {
+  background: #ffffff;
+  color: #172033;
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: #64748b;
 }
 
 textarea {
@@ -202,6 +217,10 @@ select:focus,
 textarea:focus {
   border-color: var(--primary);
   box-shadow: 0 0 0 4px rgba(8, 127, 115, 0.12);
+}
+
+body[data-theme="light"] label {
+  color: #344760;
 }
 
 .products-table,
