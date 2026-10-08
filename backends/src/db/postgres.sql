@@ -143,3 +143,127 @@ CREATE TABLE IF NOT EXISTS inventory_movements (
     CONSTRAINT chk_inventory_movements_type
         CHECK (movement_type IN ('in', 'out', 'adjustment'))
 );
+
+INSERT INTO categories (name, description)
+SELECT 'Medicamentos', 'Productos farmacéuticos de uso general'
+WHERE NOT EXISTS (SELECT 1 FROM categories WHERE LOWER(name) = LOWER('Medicamentos'));
+
+INSERT INTO categories (name, description)
+SELECT 'Cuidado personal', 'Artículos para higiene y cuidado diario'
+WHERE NOT EXISTS (SELECT 1 FROM categories WHERE LOWER(name) = LOWER('Cuidado personal'));
+
+INSERT INTO categories (name, description)
+SELECT 'Vitaminas', 'Suplementos y vitaminas para bienestar'
+WHERE NOT EXISTS (SELECT 1 FROM categories WHERE LOWER(name) = LOWER('Vitaminas'));
+
+INSERT INTO categories (name, description)
+SELECT 'Bebés', 'Productos básicos para cuidado infantil'
+WHERE NOT EXISTS (SELECT 1 FROM categories WHERE LOWER(name) = LOWER('Bebés'));
+
+INSERT INTO products (
+    category_id,
+    name,
+    presentation,
+    description,
+    sale_price,
+    current_stock,
+    minimum_stock,
+    expiration_date,
+    image_url,
+    is_available
+)
+SELECT
+    c.category_id,
+    'Acetaminofén 500mg',
+    'Caja x 20 tabletas',
+    'Analgésico de uso común para malestares leves.',
+    8500,
+    40,
+    8,
+    CURRENT_DATE + INTERVAL '18 months',
+    NULL,
+    TRUE
+FROM categories c
+WHERE LOWER(c.name) = LOWER('Medicamentos')
+  AND NOT EXISTS (SELECT 1 FROM products WHERE LOWER(name) = LOWER('Acetaminofén 500mg'));
+
+INSERT INTO products (
+    category_id,
+    name,
+    presentation,
+    description,
+    sale_price,
+    current_stock,
+    minimum_stock,
+    expiration_date,
+    image_url,
+    is_available
+)
+SELECT
+    c.category_id,
+    'Alcohol antiséptico',
+    'Frasco 700ml',
+    'Solución para limpieza externa y desinfección básica.',
+    7200,
+    28,
+    6,
+    CURRENT_DATE + INTERVAL '24 months',
+    NULL,
+    TRUE
+FROM categories c
+WHERE LOWER(c.name) = LOWER('Cuidado personal')
+  AND NOT EXISTS (SELECT 1 FROM products WHERE LOWER(name) = LOWER('Alcohol antiséptico'));
+
+INSERT INTO products (
+    category_id,
+    name,
+    presentation,
+    description,
+    sale_price,
+    current_stock,
+    minimum_stock,
+    expiration_date,
+    image_url,
+    is_available
+)
+SELECT
+    c.category_id,
+    'Vitamina C',
+    'Frasco x 60 tabletas',
+    'Suplemento para apoyo nutricional diario.',
+    18500,
+    22,
+    5,
+    CURRENT_DATE + INTERVAL '20 months',
+    NULL,
+    TRUE
+FROM categories c
+WHERE LOWER(c.name) = LOWER('Vitaminas')
+  AND NOT EXISTS (SELECT 1 FROM products WHERE LOWER(name) = LOWER('Vitamina C'));
+
+INSERT INTO products (
+    category_id,
+    name,
+    presentation,
+    description,
+    sale_price,
+    current_stock,
+    minimum_stock,
+    expiration_date,
+    image_url,
+    is_available
+)
+SELECT
+    c.category_id,
+    'Pañitos húmedos',
+    'Paquete x 80 unidades',
+    'Pañitos suaves para limpieza y cuidado del bebé.',
+    11900,
+    35,
+    10,
+    CURRENT_DATE + INTERVAL '16 months',
+    NULL,
+    TRUE
+FROM categories c
+WHERE LOWER(c.name) = LOWER('Bebés')
+  AND NOT EXISTS (SELECT 1 FROM products WHERE LOWER(name) = LOWER('Pañitos húmedos'));

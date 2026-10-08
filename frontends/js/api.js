@@ -1,5 +1,6 @@
 export const API_BASE_URL =
-  localStorage.getItem("farmagestApiUrl") || "http://localhost:3000/api";
+  localStorage.getItem("farmagestApiUrl") ||
+  "https://farmagest-vital-backend.onrender.com/api";
 
 export function getToken() {
   return localStorage.getItem("token");
