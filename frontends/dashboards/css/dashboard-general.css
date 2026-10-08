@@ -547,8 +547,14 @@ body[data-page="categories"] aside div:first-child li:nth-child(3)::after {
 
 .sidebar__group li a,
 .sidebar__group li span,
-body > main aside li a {
+body > main aside li a,
+body > main aside li span {
   width: 100%;
+}
+
+body > main aside li .nav-disabled {
+  color: var(--muted);
+  cursor: default;
 }
 
 .sidebar__group--secondary,

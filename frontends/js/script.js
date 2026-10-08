@@ -11,9 +11,11 @@ const productsHeading = document.getElementById("products-heading");
 const categoryMenu = document.getElementById("category-menu");
 const categoriesContainer = document.getElementById("categorias");
 const productDetailsUrl = (id) => {
-    const url = new URL("../ecommerce/details.html", import.meta.url);
-    url.searchParams.set("id", id);
-    return url.href;
+    const pathPrefix = window.location.pathname.includes("/frontends/")
+        ? "./ecommerce"
+        : "./frontends/ecommerce";
+
+    return `${pathPrefix}/details.html?id=${encodeURIComponent(id)}`;
 };
 const categoryIcons = [
     "fa-pills",
