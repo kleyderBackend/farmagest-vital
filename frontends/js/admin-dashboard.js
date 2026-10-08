@@ -1,7 +1,8 @@
 import {
-  apiRequest,
+  API_BASE_URL,
   formatCurrency,
   formatDate,
+  getToken,
   getUser,
   requireAdminSession,
 } from "./api.js";
@@ -187,14 +188,39 @@ function calculateInventoryValue(products) {
   );
 }
 
+async function fetchDashboardJson(path, options = {}) {
+  const headers = {
+    "Content-Type": "application/json",
+  };
+  const token = getToken();
+
+  if (options.auth !== false && token) {
+    headers.Authorization = `Bearer ${token}`;
+  }
+
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    ...options,
+    headers,
+  });
+  const data = await response.json().catch(() => null);
+
+  if (!response.ok) {
+    const message =
+      data?.error || data?.message || "No se pudo consultar el backend";
+    throw new Error(message);
+  }
+
+  return data;
+}
+
 async function loadSalesMetrics() {
   const today = getLocalDateString();
 
   try {
-    const [salesTotalResponse, incomeTodayResponse] = await Promise.all([
-      apiRequest("/sales/total-sold"),
-      apiRequest(`/sales/total-sold?startDate=${today}&endDate=${today}`),
-    ]);
+    const salesTotalResponse = await fetchDashboardJson("/sales/total-sold");
+    const incomeTodayResponse = await fetchDashboardJson(
+      `/sales/total-sold?startDate=${today}&endDate=${today}`,
+    );
 
     const salesTotal = salesTotalResponse.data?.totalSold?.total_sold || 0;
     const incomeToday = incomeTodayResponse.data?.totalSold?.total_sold || 0;
@@ -209,7 +235,7 @@ async function loadSalesMetrics() {
 
 async function loadDashboard() {
   try {
-    const response = await apiRequest("/products", { auth: false });
+    const response = await fetchDashboardJson("/products", { auth: false });
     const products = response.data?.products || [];
 
     setText("dashboardProductsCount", products.length);
