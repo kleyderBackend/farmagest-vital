@@ -15,14 +15,22 @@ export async function createSale(
       customer_id,
       total,
       status,
+      delivery_address,
+      delivery_neighborhood,
+      delivery_city,
+      delivery_note,
       notes
     )
-    VALUES (?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
     `,
     [
       data.customerId,
       data.total ?? 0,
-      data.status ?? "completed",
+      data.status ?? "pending",
+      data.deliveryAddress ?? null,
+      data.deliveryNeighborhood ?? null,
+      data.deliveryCity ?? null,
+      data.deliveryNote ?? null,
       data.notes ?? null,
     ],
   );
@@ -35,6 +43,10 @@ export async function createSale(
       order_date,
       total,
       status,
+      delivery_address,
+      delivery_neighborhood,
+      delivery_city,
+      delivery_note,
       notes,
       created_at,
       updated_at
@@ -113,6 +125,10 @@ export async function updateSaleTotal(
       order_date,
       total,
       status,
+      delivery_address,
+      delivery_neighborhood,
+      delivery_city,
+      delivery_note,
       notes,
       created_at,
       updated_at

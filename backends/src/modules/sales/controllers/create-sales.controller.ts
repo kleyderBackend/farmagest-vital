@@ -11,7 +11,7 @@ function mapSaleItems(items: any[]) {
 
 export async function checkoutSaleController(req: Request, res: Response) {
   try {
-    const { customer, notes, items } = req.body;
+    const { customer, delivery, notes, items } = req.body;
 
     if (!customer || typeof customer !== "object") {
       return res.status(400).json({
@@ -31,6 +31,10 @@ export async function checkoutSaleController(req: Request, res: Response) {
       customer,
       items: mapSaleItems(items),
     };
+
+    if (delivery !== undefined) {
+      saleData.delivery = delivery;
+    }
 
     if (notes !== undefined) {
       saleData.notes = notes;
@@ -54,7 +58,7 @@ export async function checkoutSaleController(req: Request, res: Response) {
 
 export async function createSaleController(req: Request, res: Response) {
   try {
-    const { customerId, customer, notes, items } = req.body;
+    const { customerId, customer, delivery, notes, items } = req.body;
 
     if (!Array.isArray(items) || items.length === 0) {
       return res.status(400).json({
@@ -82,6 +86,10 @@ export async function createSaleController(req: Request, res: Response) {
 
     if (customer !== undefined) {
       saleData.customer = customer;
+    }
+
+    if (delivery !== undefined) {
+      saleData.delivery = delivery;
     }
 
     if (saleData.customerId === undefined && saleData.customer === undefined) {

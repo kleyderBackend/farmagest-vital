@@ -1,4 +1,11 @@
-export type SaleStatus = "pending" | "processing" | "completed" | "cancelled";
+export type SaleStatus =
+  | "pending"
+  | "processing"
+  | "preparing"
+  | "on_the_way"
+  | "completed"
+  | "delivered"
+  | "cancelled";
 
 export interface QueryExecutor {
   query(sql: string, values?: any[]): Promise<[any, any]>;
@@ -8,6 +15,10 @@ export interface CreateSaleInput {
   customerId: number;
   total?: number;
   status?: SaleStatus;
+  deliveryAddress?: string;
+  deliveryNeighborhood?: string;
+  deliveryCity?: string;
+  deliveryNote?: string;
   notes?: string;
 }
 
@@ -26,6 +37,12 @@ export interface CheckoutCustomerInput {
 export interface CreateSaleServiceInput {
   customerId?: number;
   customer?: CheckoutCustomerInput;
+  delivery?: {
+    address?: string;
+    neighborhood?: string;
+    city?: string;
+    note?: string;
+  };
   notes?: string;
   items: CreateSaleServiceItemInput[];
 }

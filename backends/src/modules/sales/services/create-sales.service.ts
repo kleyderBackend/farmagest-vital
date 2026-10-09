@@ -36,7 +36,7 @@ function validateProductExpiration(product: SaleProductRow) {
 }
 
 export async function createSaleService(data: CreateSaleServiceInput) {
-  const { customerId, customer: customerData, items, notes } = data;
+  const { customerId, customer: customerData, delivery, items, notes } = data;
 
   if (!customerId && !customerData) {
     throw new Error("Los datos del cliente son obligatorios");
@@ -87,8 +87,26 @@ export async function createSaleService(data: CreateSaleServiceInput) {
 
     const saleData: CreateSaleInput = {
       customerId: customer.customer_id,
-      status: "completed",
+      status: "pending",
     };
+
+    if (delivery?.address !== undefined) {
+      saleData.deliveryAddress = delivery.address;
+    } else if (customerData?.address !== undefined) {
+      saleData.deliveryAddress = customerData.address;
+    }
+
+    if (delivery?.neighborhood !== undefined) {
+      saleData.deliveryNeighborhood = delivery.neighborhood;
+    }
+
+    if (delivery?.city !== undefined) {
+      saleData.deliveryCity = delivery.city;
+    }
+
+    if (delivery?.note !== undefined) {
+      saleData.deliveryNote = delivery.note;
+    }
 
     if (notes !== undefined) {
       saleData.notes = notes;

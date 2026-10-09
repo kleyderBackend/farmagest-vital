@@ -13,7 +13,11 @@ import {
   listSalesByDateRangeController,
   listSalesController,
 } from "./controllers/list-sales.controller";
-import { getTotalSoldController } from "./controllers/sales-report.controller";
+import {
+  getIncomeByDayController,
+  getIncomeByHourController,
+  getTotalSoldController,
+} from "./controllers/sales-report.controller";
 
 export const routes: Router = Router();
 
@@ -23,6 +27,8 @@ routes.use(authMiddleware, roleMiddleware(["admin", "staff"]));
 routes.get("/", listSalesController);
 routes.get("/range", listSalesByDateRangeController);
 routes.get("/total-sold", getTotalSoldController);
+routes.get("/daily-income", getIncomeByDayController);
+routes.get("/hourly-income", getIncomeByHourController);
 routes.get("/date/:date", findSalesByDateController);
 routes.get("/:id", findSaleByIdController);
 routes.post("/created-sale", createSaleController);
