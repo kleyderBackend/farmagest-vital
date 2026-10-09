@@ -4,4 +4,4 @@ dist/
 backends/data/*.json
 backends/data/*.tmp
 .pnpm-store/
-docs/entregables/pdf-preview/
+docs/entregables/
