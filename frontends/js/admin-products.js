@@ -7,6 +7,8 @@ import {
 
 const page = document.body.dataset.page;
 let cachedProducts = [];
+const allowedImageTypes = ["image/png", "image/jpeg", "image/webp"];
+const maxImageSize = 1024 * 1024;
 
 function showMessage(message, type = "success") {
   const messageBox = document.getElementById("adminMessage");
@@ -20,7 +22,66 @@ function showMessage(message, type = "success") {
   messageBox.className = `admin-message ${type}`;
 }
 
-function getProductPayload(form) {
+function fileToDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+
+    reader.addEventListener("load", () => resolve(reader.result));
+    reader.addEventListener("error", () =>
+      reject(new Error("No se pudo leer la imagen seleccionada")),
+    );
+    reader.readAsDataURL(file);
+  });
+}
+
+function updateImagePreview(source) {
+  const preview = document.getElementById("imagePreview");
+
+  if (!preview) {
+    return;
+  }
+
+  if (!source) {
+    preview.hidden = true;
+    preview.removeAttribute("src");
+    return;
+  }
+
+  preview.src = source;
+  preview.hidden = false;
+}
+
+async function syncSelectedImage() {
+  const fileInput = document.getElementById("imageFile");
+  const imageUrlInput = document.getElementById("imageUrl");
+  const file = fileInput?.files?.[0];
+
+  if (!file) {
+    return;
+  }
+
+  if (!allowedImageTypes.includes(file.type)) {
+    fileInput.value = "";
+    throw new Error("La imagen debe estar en formato PNG, JPG o WEBP");
+  }
+
+  if (file.size > maxImageSize) {
+    fileInput.value = "";
+    throw new Error("La imagen no debe superar 1 MB");
+  }
+
+  const imageDataUrl = await fileToDataUrl(file);
+
+  if (imageUrlInput) {
+    imageUrlInput.value = imageDataUrl;
+  }
+
+  updateImagePreview(imageDataUrl);
+}
+
+async function getProductPayload(form) {
+  await syncSelectedImage();
+
   const formData = new FormData(form);
   const payload = {
     categoryId: Number(formData.get("categoryId")),
@@ -32,7 +93,6 @@ function getProductPayload(form) {
     "presentation",
     "description",
     "expirationDate",
-    "imageUrl",
   ];
 
   optionalFields.forEach((field) => {
@@ -41,6 +101,12 @@ function getProductPayload(form) {
       payload[field] = value;
     }
   });
+
+  const imageUrl = String(formData.get("imageUrl") || "").trim();
+
+  if (imageUrl) {
+    payload.imageUrl = imageUrl;
+  }
 
   const currentStock = formData.get("currentStock");
   const minimumStock = formData.get("minimumStock");
@@ -212,6 +278,7 @@ async function loadProductForEdit() {
       ? product.expiration_date.slice(0, 10)
       : "";
     document.getElementById("imageUrl").value = product.image_url || "";
+    updateImagePreview(product.image_url || "");
     document.getElementById("description").value = product.description || "";
     document.querySelector('[name="isAvailable"]').checked =
       product.is_available;
@@ -224,9 +291,10 @@ async function handleProductForm(event) {
   event.preventDefault();
 
   const form = event.currentTarget;
-  const payload = getProductPayload(form);
 
   try {
+    const payload = await getProductPayload(form);
+
     if (page === "edit-product") {
       const productId = new URLSearchParams(window.location.search).get("id");
       await apiRequest(`/products/${productId}`, {
@@ -243,6 +311,7 @@ async function handleProductForm(event) {
     });
     showMessage("Producto creado con éxito");
     form.reset();
+    updateImagePreview("");
   } catch (error) {
     showMessage(error.message, "error");
   }
@@ -296,3 +365,12 @@ document
 document
   .getElementById("applyProductFilters")
   ?.addEventListener("click", applyProductFilters);
+
+document.getElementById("imageFile")?.addEventListener("change", async () => {
+  try {
+    await syncSelectedImage();
+  } catch (error) {
+    showMessage(error.message, "error");
+    updateImagePreview(document.getElementById("imageUrl")?.value || "");
+  }
+});

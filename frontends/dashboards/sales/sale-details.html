@@ -1,0 +1,117 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalle de venta | Farmagest Vital</title>
+    <link rel="stylesheet" href="../css/dashboard-general.css" />
+    <link rel="stylesheet" href="../css/products-admin.css" />
+    <link rel="stylesheet" href="../css/sales-admin.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+  </head>
+  <body data-page="sale-details" data-theme="light">
+    <header>
+      <nav>
+        <input type="search" placeholder="Buscar ventas..." aria-label="Buscar ventas" />
+        <div>
+          <img src="../../imgs/admin.img" alt="imagen o logo de admin" />
+        </div>
+      </nav>
+    </header>
+
+    <main>
+      <div>
+        <div>
+          <img src="../../imgs/logo.png" alt="logo de Farmagest Vital" />
+        </div>
+        <aside>
+          <div>
+            <ul>
+              <li><a href="../dashboardAdmin.html"><i class="fa-solid fa-chart-line" aria-hidden="true"></i>Dashboard</a></li>
+              <li><a href="../products/products.html"><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i>Productos</a></li>
+              <li><a href="../categories/categories.html"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>Categorías</a></li>
+              <li><a href="./sales.html"><i class="fa-solid fa-receipt" aria-hidden="true"></i>Ventas</a></li>
+              <li><span class="nav-disabled"><i class="fa-solid fa-warehouse" aria-hidden="true"></i>Inventario</span></li>
+              <li><span class="nav-disabled"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>Stock</span></li>
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <li><span class="nav-disabled"><i class="fa-solid fa-users" aria-hidden="true"></i>Clientes</span></li>
+              <li><span class="nav-disabled"><i class="fa-solid fa-file-lines" aria-hidden="true"></i>Reportes</span></li>
+              <li><span class="nav-disabled"><i class="fa-solid fa-gear" aria-hidden="true"></i>Configuración</span></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+
+      <section class="admin-page-header">
+        <div>
+          <span>Ventas</span>
+          <h1 id="saleTitle">Detalle de venta</h1>
+          <p>Consulta los datos del cliente y los productos del pedido.</p>
+        </div>
+        <a class="secondary-action" href="./sales.html">Volver a ventas</a>
+      </section>
+
+      <div id="adminMessage" class="admin-message" aria-live="polite"></div>
+
+      <section class="sale-details-grid" id="saleDetails" hidden>
+        <article class="sale-detail-card">
+          <h2>Información de la venta</h2>
+          <dl>
+            <div><dt>Estado</dt><dd id="saleStatus"></dd></div>
+            <div><dt>Fecha</dt><dd id="saleDate"></dd></div>
+            <div><dt>Total</dt><dd id="saleTotal"></dd></div>
+            <div><dt>Notas</dt><dd id="saleNotes"></dd></div>
+          </dl>
+          <form id="saleStatusForm" class="sale-status-form">
+            <label for="saleStatusSelect">Cambiar estado del pedido</label>
+            <div>
+              <select id="saleStatusSelect" name="status" required>
+                <option value="pending">Pendiente</option>
+                <option value="preparing">Preparando</option>
+                <option value="on_the_way">En camino</option>
+                <option value="delivered">Entregado</option>
+                <option value="cancelled">Cancelado</option>
+              </select>
+              <button type="submit" id="updateSaleStatus">Actualizar estado</button>
+            </div>
+          </form>
+        </article>
+        <article class="sale-detail-card">
+          <h2>Cliente</h2>
+          <dl>
+            <div><dt>Nombre</dt><dd id="customerName"></dd></div>
+            <div><dt>Correo</dt><dd id="customerEmail"></dd></div>
+            <div><dt>Teléfono</dt><dd id="customerPhone"></dd></div>
+          </dl>
+        </article>
+      </section>
+
+      <section class="products-table" id="saleItemsSection" hidden>
+        <div class="section-title">
+          <h2>Productos de la venta</h2>
+        </div>
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Presentación</th>
+                <th>Cantidad</th>
+                <th>Precio unitario</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody id="saleItemsBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="../../js/admin-sales.js"></script>
+  </body>
+</html>

@@ -35,25 +35,36 @@
           <p>Seguimiento</p>
           <h1 id="trackingTitle">Consulta el estado de tu compra</h1>
           <span>
-            Pronto podrás revisar el avance de tu pedido usando el número de
-            compra entregado al finalizar.
+            Ingresa el número de pedido que recibiste al finalizar la compra
+            para revisar su estado, productos y valor total.
           </span>
         </div>
 
-        <form class="tracking-card">
+        <form class="tracking-card" id="trackingForm">
           <label for="trackingCode">Número de pedido</label>
           <div>
             <input
               id="trackingCode"
+              name="trackingCode"
               type="text"
               placeholder="Ej: FV-000123"
-              disabled
+              autocomplete="off"
+              required
             />
-            <button type="button" disabled>Consultar</button>
+            <button type="submit" id="trackingButton">Consultar</button>
           </div>
-          <small>Módulo preparado para conectarse al historial de ventas.</small>
+          <small>También puedes escribir solo el número, por ejemplo 123.</small>
+          <p class="tracking-message" id="trackingMessage" hidden></p>
         </form>
+
+        <section
+          class="tracking-result"
+          id="trackingResult"
+          aria-live="polite"
+          hidden
+        ></section>
       </section>
     </main>
+    <script type="module" src="../js/orders.js"></script>
   </body>
 </html>

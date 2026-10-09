@@ -16,6 +16,8 @@ const messageBox = document.getElementById("checkoutMessage");
 
 const deliveryCost = 0;
 
+const formatOrderCode = (orderId) => `FV-${String(orderId).padStart(6, "0")}`;
+
 const showMessage = (message, type = "success") => {
   if (!messageBox) return;
 
@@ -91,6 +93,12 @@ const buildCheckoutPayload = (formData) => {
       phone,
       address: [address, neighborhood, city].filter(Boolean).join(", "),
     },
+    delivery: {
+      address,
+      neighborhood,
+      city,
+      note: deliveryNote,
+    },
     notes: [
       deliveryNote && `Entrega: ${deliveryNote}`,
       `Método de pago: ${paymentMethod === "cash" ? "Contra entrega" : "Transferencia"}`,
@@ -119,17 +127,28 @@ const handleCheckout = async (event) => {
 
   try {
     setSubmitState(true);
-    await apiRequest("/sales/checkout", {
+    const response = await apiRequest("/sales/checkout", {
       method: "POST",
       auth: false,
       body: JSON.stringify(payload),
     });
 
+    const orderId = response?.data?.sale?.order_id;
+    const orderCode = orderId ? formatOrderCode(orderId) : "";
+
+    if (orderCode) {
+      localStorage.setItem("farmagest-last-order", orderCode);
+    }
+
     clearCart();
     renderSummary();
     updateCartBadges();
     form.reset();
-    showMessage("Compra finalizada con éxito. Nos comunicaremos contigo para confirmar la entrega.");
+    showMessage(
+      orderCode
+        ? `Compra finalizada con éxito. Tu número de pedido es ${orderCode}.`
+        : "Compra finalizada con éxito. Nos comunicaremos contigo para confirmar la entrega.",
+    );
   } catch (error) {
     showMessage(error.message, "error");
   } finally {

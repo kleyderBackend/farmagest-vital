@@ -1,3 +1,45 @@
+.catalog-hero {
+	overflow: hidden;
+	margin-bottom: 2rem;
+	padding: clamp(2rem, 4vw, 3rem);
+	border: 1px solid var(--line);
+	border-radius: 26px;
+	background:
+		linear-gradient(135deg, rgba(15, 143, 100, 0.12), rgba(29, 90, 117, 0.08)),
+		#ffffff;
+	box-shadow: 0 14px 34px rgba(15, 23, 42, 0.055);
+}
+
+.catalog-hero-content {
+	max-width: 760px;
+}
+
+.catalog-hero span {
+	display: inline-flex;
+	margin-bottom: 0.75rem;
+	color: var(--primary-dark);
+	font-size: 0.76rem;
+	font-weight: 800;
+	letter-spacing: 0.08em;
+	text-transform: uppercase;
+}
+
+.catalog-hero h1 {
+	margin: 0 0 0.75rem;
+	color: var(--text);
+	font-size: clamp(2.2rem, 5vw, 4.2rem);
+	line-height: 1;
+	letter-spacing: 0;
+}
+
+.catalog-hero p {
+	max-width: 620px;
+	margin: 0;
+	color: var(--muted);
+	font-size: 1rem;
+	line-height: 1.7;
+}
+
 .destact-products {
 	margin-top: 2rem;
 }

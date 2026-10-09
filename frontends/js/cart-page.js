@@ -64,6 +64,10 @@ const renderCart = () => {
         <div><span>Presentaciones</span><strong>${itemCount}</strong></div>
         <div class="cart-total"><span>Total</span><strong>${formatPrice(total)}</strong></div>
         <p>El total se actualiza al cambiar las cantidades.</p>
+        <a class="cart-checkout" href="./formularyOfShoip.html">
+          <i class="fa-solid fa-credit-card" aria-hidden="true"></i>
+          Finalizar compra
+        </a>
         <button type="button" data-clear-cart>Vaciar carrito</button>
       </aside>
     </div>

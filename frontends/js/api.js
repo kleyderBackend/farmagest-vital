@@ -1,6 +1,13 @@
+const localApiUrl = "http://localhost:3000/api";
+const productionApiUrl = "https://farmagest-vital-backend.onrender.com/api";
+const isLocalFrontend =
+  window.location.protocol === "file:" ||
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
+
 export const API_BASE_URL =
   localStorage.getItem("farmagestApiUrl") ||
-  "https://farmagest-vital-backend.onrender.com/api";
+  (isLocalFrontend ? localApiUrl : productionApiUrl);
 
 export function getToken() {
   return localStorage.getItem("token");
@@ -34,10 +41,18 @@ export async function apiRequest(path, options = {}) {
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
-    headers,
-  });
+  let response;
+
+  try {
+    response = await fetch(`${API_BASE_URL}${path}`, {
+      ...options,
+      headers,
+    });
+  } catch {
+    throw new Error(
+      `No se pudo conectar con el servidor. Verifica que el backend este activo en ${API_BASE_URL}`,
+    );
+  }
 
   const data = await response.json().catch(() => null);
 

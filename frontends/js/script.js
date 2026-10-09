@@ -10,10 +10,14 @@ const productsContainer = document.getElementById("products-container");
 const productsHeading = document.getElementById("products-heading");
 const categoryMenu = document.getElementById("category-menu");
 const categoriesContainer = document.getElementById("categorias");
+const isProductsPage = document.body.dataset.catalogPage === "products";
 const productDetailsUrl = (id) => {
-    const pathPrefix = window.location.pathname.includes("/frontends/")
-        ? "./ecommerce"
-        : "./frontends/ecommerce";
+    const currentPath = window.location.pathname.replace(/\\/g, "/");
+    const pathPrefix = currentPath.includes("/frontends/ecommerce/")
+        ? "."
+        : currentPath.includes("/frontends/")
+            ? "./ecommerce"
+            : "./frontends/ecommerce";
 
     return `${pathPrefix}/details.html?id=${encodeURIComponent(id)}`;
 };
@@ -57,7 +61,7 @@ const renderCategories = () => {
 
     categoriesContainer.innerHTML = categoryLinks.map(({ tile }) => tile).join("");
     categoryMenu.innerHTML = [
-        `<li><a href="#productos" data-category="">Productos destacados</a></li>`,
+        `<li><a href="#productos" data-category="">${isProductsPage ? "Todos los productos" : "Productos destacados"}</a></li>`,
         ...categoryLinks.map(({ menu }) => menu),
     ].join("");
 };
@@ -79,12 +83,14 @@ const createProductCard = (product) => `
 const renderProducts = () => {
     const visibleProducts = selectedCategory
         ? products.filter((product) => String(product.categoryId) === selectedCategory)
-        : products.slice(0, 4);
+        : isProductsPage
+            ? products
+            : products.slice(0, 4);
     const selectedCategoryName = categories.find(
         (category) => String(category.id) === selectedCategory,
     )?.name;
 
-    productsHeading.textContent = selectedCategoryName || "Productos destacados";
+    productsHeading.textContent = selectedCategoryName || (isProductsPage ? "Todos los productos" : "Productos destacados");
     productsContainer.innerHTML = visibleProducts.length
         ? visibleProducts.map(createProductCard).join("")
         : `<p role="status">No hay productos disponibles en esta categoría.</p>`;

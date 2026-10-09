@@ -3,19 +3,19 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Categorías | Farmagest Vital</title>
+    <title>Ventas | Farmagest Vital</title>
     <link rel="stylesheet" href="../css/dashboard-general.css" />
     <link rel="stylesheet" href="../css/products-admin.css" />
-    <link rel="stylesheet" href="../css/categories-admin.css" />
+    <link rel="stylesheet" href="../css/sales-admin.css" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
     />
   </head>
-  <body data-page="categories" data-theme="light">
+  <body data-page="sales" data-theme="light">
     <header>
       <nav>
-        <input type="search" placeholder="Buscar categorías..." />
+        <input type="search" placeholder="Buscar ventas..." aria-label="Buscar ventas" />
         <div>
           <img src="../../imgs/admin.img" alt="imagen o logo de admin" />
         </div>
@@ -32,8 +32,8 @@
             <ul>
               <li><a href="../dashboardAdmin.html"><i class="fa-solid fa-chart-line" aria-hidden="true"></i>Dashboard</a></li>
               <li><a href="../products/products.html"><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i>Productos</a></li>
-              <li><a href="./categories.html"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>Categorías</a></li>
-              <li><a href="../sales/sales.html"><i class="fa-solid fa-receipt" aria-hidden="true"></i>Ventas</a></li>
+              <li><a href="../categories/categories.html"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>Categorías</a></li>
+              <li><a href="./sales.html"><i class="fa-solid fa-receipt" aria-hidden="true"></i>Ventas</a></li>
               <li><span class="nav-disabled"><i class="fa-solid fa-warehouse" aria-hidden="true"></i>Inventario</span></li>
               <li><span class="nav-disabled"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>Stock</span></li>
             </ul>
@@ -50,57 +50,69 @@
 
       <section class="admin-page-header">
         <div>
-          <span>Inventario</span>
-          <h1>Categorías</h1>
-          <p>Organiza los productos para facilitar búsqueda, control y reportes.</p>
+          <span>Administración</span>
+          <h1>Ventas</h1>
+          <p>Consulta pedidos, sus estados y el total vendido.</p>
         </div>
-        <a class="primary-action" href="./create-category.html">Nueva categoría</a>
       </section>
 
       <section class="products-summary">
         <article>
-          <span>Total categorías</span>
-          <strong id="totalCategories">0</strong>
-          <small>Registradas</small>
+          <span>Ventas registradas</span>
+          <strong id="totalSales">0</strong>
+          <small>En el período seleccionado</small>
         </article>
         <article>
-          <span>Activas</span>
-          <strong id="activeCategories">0</strong>
-          <small>Disponibles para productos</small>
+          <span>Total vendido</span>
+          <strong id="totalSold">$ 0</strong>
+          <small>Sin incluir ventas canceladas</small>
         </article>
         <article>
-          <span>Inactivas</span>
-          <strong id="inactiveCategories">0</strong>
-          <small>Ocultas del flujo principal</small>
+          <span>En proceso</span>
+          <strong id="pendingSales">0</strong>
+          <small>Pendientes de completar</small>
         </article>
+      </section>
+
+      <section class="products-toolbar sales-filters">
+        <div>
+          <label for="startDate">Desde</label>
+          <input id="startDate" type="date" />
+        </div>
+        <div>
+          <label for="endDate">Hasta</label>
+          <input id="endDate" type="date" />
+        </div>
+        <button type="button" id="applySalesFilters">Filtrar ventas</button>
       </section>
 
       <section class="products-table">
         <div class="section-title">
-          <h2>Listado de categorías</h2>
-          <span>Administración de clasificación de productos</span>
+          <h2>Listado de ventas</h2>
+          <span>Selecciona una venta para consultar sus productos y datos</span>
         </div>
         <div id="adminMessage" class="admin-message" aria-live="polite"></div>
         <div>
           <table>
             <thead>
               <tr>
-                <th>Código</th>
-                <th>Nombre</th>
-                <th>Descripción</th>
+                <th>Venta</th>
+                <th>Cliente</th>
+                <th>Fecha</th>
+                <th>Total</th>
                 <th>Estado</th>
-                <th>Acciones</th>
+                <th>Detalle</th>
               </tr>
             </thead>
-            <tbody id="categoriesTableBody">
+            <tbody id="salesTableBody">
               <tr>
-                <td colspan="5">Cargando categorías...</td>
+                <td colspan="6">Cargando ventas...</td>
               </tr>
             </tbody>
           </table>
         </div>
       </section>
     </main>
-    <script type="module" src="../../js/admin-categories.js"></script>
+    <script type="module" src="../../js/admin-sales.js"></script>
   </body>
 </html>

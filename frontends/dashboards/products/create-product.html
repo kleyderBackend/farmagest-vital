@@ -6,8 +6,12 @@
     <title>Crear producto | Farmagest Vital</title>
     <link rel="stylesheet" href="../css/dashboard-general.css" />
     <link rel="stylesheet" href="../css/products-admin.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
   </head>
-  <body data-page="create-product">
+  <body data-page="create-product" data-theme="light">
     <header>
       <nav>
         <input type="search" placeholder="Buscar productos..." />
@@ -25,19 +29,19 @@
         <aside>
           <div>
             <ul>
-              <li><a href="../dashboardAdmin.html">Dashboard</a></li>
-              <li><a href="./products.html">Productos</a></li>
-              <li><a href="../categories/categories.html">Categorías</a></li>
-              <li><span class="nav-disabled">Ventas</span></li>
-              <li><span class="nav-disabled">Inventario</span></li>
-              <li><span class="nav-disabled">Stock</span></li>
+              <li><a href="../dashboardAdmin.html"><i class="fa-solid fa-chart-line" aria-hidden="true"></i>Dashboard</a></li>
+              <li><a href="./products.html"><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i>Productos</a></li>
+              <li><a href="../categories/categories.html"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>Categorías</a></li>
+              <li><a href="../sales/sales.html"><i class="fa-solid fa-receipt" aria-hidden="true"></i>Ventas</a></li>
+              <li><span class="nav-disabled"><i class="fa-solid fa-warehouse" aria-hidden="true"></i>Inventario</span></li>
+              <li><span class="nav-disabled"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>Stock</span></li>
             </ul>
           </div>
           <div>
             <ul>
-              <li><span class="nav-disabled">Clientes</span></li>
-              <li><span class="nav-disabled">Reportes</span></li>
-              <li><span class="nav-disabled">Configuración</span></li>
+              <li><span class="nav-disabled"><i class="fa-solid fa-users" aria-hidden="true"></i>Clientes</span></li>
+              <li><span class="nav-disabled"><i class="fa-solid fa-file-lines" aria-hidden="true"></i>Reportes</span></li>
+              <li><span class="nav-disabled"><i class="fa-solid fa-gear" aria-hidden="true"></i>Configuración</span></li>
             </ul>
           </div>
         </aside>
@@ -122,12 +126,23 @@
               <input id="expirationDate" name="expirationDate" type="date" />
             </div>
             <div>
-              <label for="imageUrl">Imagen URL</label>
+              <label for="imageFile">Imagen del producto</label>
+              <input id="imageUrl" name="imageUrl" type="hidden" />
+              <label class="image-file-field" for="imageFile">
+                <span>Seleccionar imagen</span>
+                <small>PNG, JPG o WEBP</small>
+              </label>
               <input
-                id="imageUrl"
-                name="imageUrl"
-                type="url"
-                placeholder="https://..."
+                id="imageFile"
+                name="imageFile"
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+              />
+              <img
+                id="imagePreview"
+                class="image-preview"
+                alt="Vista previa del producto"
+                hidden
               />
             </div>
             <div class="form-full">
