@@ -184,6 +184,23 @@ function getDateRange(days = 7) {
   };
 }
 
+function isSameLocalDate(value, expectedDate) {
+  if (!value) {
+    return false;
+  }
+
+  return getLocalDateString(new Date(value)) === expectedDate;
+}
+
+function isDateInRange(value, startDate, endDate) {
+  if (!value) {
+    return false;
+  }
+
+  const date = getLocalDateString(new Date(value));
+  return date >= startDate && date <= endDate;
+}
+
 function setText(id, value) {
   const target = document.getElementById(id);
 
@@ -252,6 +269,28 @@ function buildDailyIncomeRows(rows, startDate, endDate) {
   return result;
 }
 
+function buildDailyIncomeRowsFromSales(sales, startDate, endDate) {
+  const totalsByDate = new Map();
+
+  sales
+    .filter((sale) => sale.status !== "cancelled")
+    .filter((sale) => isDateInRange(sale.order_date, startDate, endDate))
+    .forEach((sale) => {
+      const date = getLocalDateString(new Date(sale.order_date));
+      const current = totalsByDate.get(date) || {
+        sale_date: date,
+        total_sold: 0,
+        sales_count: 0,
+      };
+
+      current.total_sold += Number(sale.total || 0);
+      current.sales_count += 1;
+      totalsByDate.set(date, current);
+    });
+
+  return buildDailyIncomeRows([...totalsByDate.values()], startDate, endDate);
+}
+
 function renderIncomeChart(rows) {
   const target = document.getElementById("dashboardIncomeChart");
 
@@ -259,8 +298,8 @@ function renderIncomeChart(rows) {
     return;
   }
 
-  if (!rows.length) {
-    target.innerHTML = `<p class="line-chart__empty">No hay ingresos registrados hoy.</p>`;
+  if (!rows.length || rows.every((row) => Number(row.total_sold || 0) === 0)) {
+    target.innerHTML = `<p class="line-chart__empty">No hay ingresos registrados en los últimos 7 días.</p>`;
     return;
   }
 
@@ -352,22 +391,20 @@ async function loadSalesMetrics() {
   const { startDate, endDate } = getDateRange(7);
 
   try {
-    const salesTotalResponse = await fetchDashboardJson("/sales/total-sold");
-    const incomeTodayResponse = await fetchDashboardJson(
-      `/sales/total-sold?startDate=${today}&endDate=${today}`,
+    const salesResponse = await fetchDashboardJson("/sales");
+    const sales = salesResponse.data?.sales || [];
+    const validSales = sales.filter((sale) => sale.status !== "cancelled");
+    const salesToday = validSales.filter((sale) =>
+      isSameLocalDate(sale.order_date, today),
     );
-    const dailyIncomeResponse = await fetchDashboardJson(
-      `/sales/daily-income?startDate=${startDate}&endDate=${endDate}`,
+    const incomeToday = salesToday.reduce(
+      (total, sale) => total + Number(sale.total || 0),
+      0,
     );
 
-    const salesCount = salesTotalResponse.data?.totalSold?.sales_count || 0;
-    const incomeToday = incomeTodayResponse.data?.totalSold?.total_sold || 0;
-
-    setText("dashboardSalesTotal", Number(salesCount));
+    setText("dashboardSalesTotal", validSales.length);
     setText("dashboardIncomeToday", formatCurrency(incomeToday));
-    renderIncomeChart(
-      buildDailyIncomeRows(dailyIncomeResponse.data?.dailyIncome || [], startDate, endDate),
-    );
+    renderIncomeChart(buildDailyIncomeRowsFromSales(validSales, startDate, endDate));
   } catch {
     setText("dashboardSalesTotal", 0);
     setText("dashboardIncomeToday", formatCurrency(0));
