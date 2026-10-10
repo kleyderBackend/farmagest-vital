@@ -56,23 +56,35 @@ export async function createCheckoutCustomer(
   },
   db: QueryExecutor = pool,
 ) {
-  await db.query(
-    `
-    INSERT INTO customers (
-      full_name,
-      phone,
-      email,
-      address
-    )
-    VALUES (?, ?, ?, ?)
-    ON DUPLICATE KEY UPDATE
-      full_name = VALUES(full_name),
-      phone = VALUES(phone),
-      address = COALESCE(VALUES(address), customers.address),
-      updated_at = CURRENT_TIMESTAMP
-    `,
-    [data.fullName, data.phone, data.email, data.address ?? null],
-  );
+  const existingCustomer = await findCustomerByEmail(data.email, db);
+
+  if (existingCustomer) {
+    await db.query(
+      `
+      UPDATE customers
+      SET
+        full_name = ?,
+        phone = ?,
+        address = COALESCE(?, address),
+        updated_at = CURRENT_TIMESTAMP
+      WHERE email = ?
+      `,
+      [data.fullName, data.phone, data.address ?? null, data.email],
+    );
+  } else {
+    await db.query(
+      `
+      INSERT INTO customers (
+        full_name,
+        phone,
+        email,
+        address
+      )
+      VALUES (?, ?, ?, ?)
+      `,
+      [data.fullName, data.phone, data.email, data.address ?? null],
+    );
+  }
 
   const [rows]: any = await db.query(
     `

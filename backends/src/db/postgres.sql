@@ -93,6 +93,10 @@ CREATE TABLE IF NOT EXISTS orders (
     order_date TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     total NUMERIC(10, 2) NOT NULL DEFAULT 0,
     status VARCHAR(20) NOT NULL DEFAULT 'pending',
+    delivery_address VARCHAR(180),
+    delivery_neighborhood VARCHAR(100),
+    delivery_city VARCHAR(100),
+    delivery_note TEXT,
     notes TEXT,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -102,8 +106,41 @@ CREATE TABLE IF NOT EXISTS orders (
     CONSTRAINT chk_orders_total
         CHECK (total >= 0),
     CONSTRAINT chk_orders_status
-        CHECK (status IN ('pending', 'processing', 'completed', 'cancelled'))
+        CHECK (
+            status IN (
+                'pending',
+                'processing',
+                'preparing',
+                'on_the_way',
+                'completed',
+                'delivered',
+                'cancelled'
+            )
+        )
 );
+
+ALTER TABLE orders
+    ADD COLUMN IF NOT EXISTS delivery_address VARCHAR(180),
+    ADD COLUMN IF NOT EXISTS delivery_neighborhood VARCHAR(100),
+    ADD COLUMN IF NOT EXISTS delivery_city VARCHAR(100),
+    ADD COLUMN IF NOT EXISTS delivery_note TEXT;
+
+ALTER TABLE orders
+    DROP CONSTRAINT IF EXISTS chk_orders_status;
+
+ALTER TABLE orders
+    ADD CONSTRAINT chk_orders_status
+    CHECK (
+        status IN (
+            'pending',
+            'processing',
+            'preparing',
+            'on_the_way',
+            'completed',
+            'delivered',
+            'cancelled'
+        )
+    );
 
 CREATE TABLE IF NOT EXISTS order_items (
     order_item_id SERIAL PRIMARY KEY,
