@@ -185,7 +185,7 @@ INSERT INTO users (full_name, email, password_hash, role, is_active)
 VALUES (
     'Administrador FarmaGest',
     'admin@farmagest.com',
-    '$2b$10$lW3jlzLLCZZ0/m/uiq.Dd.k5QEBGacpzSP42Cn9sKssoBvT5KcEMi',
+    '$2b$10$5ITis3FaX0O5S7MlV8W4M.4nzoxLNpR.RqwDBlQQprq6lIRv8bCnm',
     'admin',
     TRUE
 )
