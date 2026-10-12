@@ -229,8 +229,26 @@ async function loadProductsPage() {
 function applyProductFilters() {
   const categoryId = document.getElementById("filterCategory")?.value;
   const status = document.getElementById("filterStatus")?.value;
+  const search = (document.getElementById("productSearch")?.value || "")
+    .trim()
+    .toLowerCase();
 
   let products = [...cachedProducts];
+
+  if (search) {
+    products = products.filter((product) => {
+      const searchable = [
+        `PRD-${String(product.product_id).padStart(3, "0")}`,
+        product.name,
+        product.category_name,
+        product.presentation,
+      ]
+        .join(" ")
+        .toLowerCase();
+
+      return searchable.includes(search);
+    });
+  }
 
   if (categoryId) {
     products = products.filter(
@@ -365,6 +383,10 @@ document
 document
   .getElementById("applyProductFilters")
   ?.addEventListener("click", applyProductFilters);
+
+document
+  .getElementById("productSearch")
+  ?.addEventListener("input", applyProductFilters);
 
 document.getElementById("imageFile")?.addEventListener("change", async () => {
   try {

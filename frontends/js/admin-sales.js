@@ -6,6 +6,7 @@ import {
 } from "./api.js";
 
 const page = document.body.dataset.page;
+let cachedSales = [];
 const statuses = {
   pending: "Pendiente",
   processing: "En proceso",
@@ -128,6 +129,36 @@ function updateSalesSummary(sales) {
   ).length;
 }
 
+function applySalesSearch() {
+  const search = (document.getElementById("saleSearch")?.value || "")
+    .trim()
+    .toLowerCase();
+
+  if (!search) {
+    renderSales(cachedSales);
+    updateSalesSummary(cachedSales);
+    return;
+  }
+
+  const sales = cachedSales.filter((sale) => {
+    const searchable = [
+      `VTA-${String(sale.order_id).padStart(3, "0")}`,
+      sale.customer_name,
+      sale.customer_email,
+      sale.customer_phone,
+      getStatusLabel(sale.status),
+      formatCurrency(sale.total),
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    return searchable.includes(search);
+  });
+
+  renderSales(sales);
+  updateSalesSummary(sales);
+}
+
 async function loadSales() {
   const startDate = document.getElementById("startDate")?.value;
   const endDate = document.getElementById("endDate")?.value;
@@ -146,17 +177,19 @@ async function loadSales() {
     const path = queryString ? `/sales/range?${queryString}` : "/sales";
     const response = await apiRequest(path);
     const sales = response.data?.sales || [];
-    renderSales(sales);
-    updateSalesSummary(sales);
+    cachedSales = sales;
+    applySalesSearch();
     showMessage("", "success");
   } catch (error) {
     if (error.message.startsWith("No hay ventas registradas")) {
+      cachedSales = [];
       renderSales([]);
       updateSalesSummary([]);
       showMessage("", "success");
       return;
     }
 
+    cachedSales = [];
     renderSales([]);
     updateSalesSummary([]);
     showMessage(error.message, "error");
@@ -252,6 +285,9 @@ if (requireAdminSession()) {
     document
       .getElementById("applySalesFilters")
       ?.addEventListener("click", loadSales);
+    document
+      .getElementById("saleSearch")
+      ?.addEventListener("input", applySalesSearch);
     loadSales();
   }
 

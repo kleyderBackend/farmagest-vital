@@ -228,7 +228,9 @@ body[data-page="dashboard"][data-theme="light"] aside div:first-child li:nth-chi
 body[data-page="products"][data-theme="light"] aside div:first-child li:nth-child(2),
 body[data-page="categories"][data-theme="light"] aside div:first-child li:nth-child(3),
 body[data-page="sales"][data-theme="light"] aside div:first-child li:nth-child(4),
-body[data-page="sale-details"][data-theme="light"] aside div:first-child li:nth-child(4) {
+body[data-page="sale-details"][data-theme="light"] aside div:first-child li:nth-child(4),
+body[data-page="orders"][data-theme="light"] aside div:first-child li:nth-child(5),
+body[data-page="customers"][data-theme="light"] aside div:last-child li:nth-child(1) {
   background: rgba(37, 99, 235, 0.09);
   color: #1d4ed8;
 }
@@ -699,7 +701,9 @@ body[data-page="dashboard"] aside div:first-child li:nth-child(1),
 body[data-page="products"] aside div:first-child li:nth-child(2),
 body[data-page="categories"] aside div:first-child li:nth-child(3),
 body[data-page="sales"] aside div:first-child li:nth-child(4),
-body[data-page="sale-details"] aside div:first-child li:nth-child(4) {
+body[data-page="sale-details"] aside div:first-child li:nth-child(4),
+body[data-page="orders"] aside div:first-child li:nth-child(5),
+body[data-page="customers"] aside div:last-child li:nth-child(1) {
   background: rgba(141, 162, 255, 0.12);
   color: #ffffff;
 }
@@ -709,7 +713,9 @@ body[data-page="dashboard"] aside div:first-child li:nth-child(1)::after,
 body[data-page="products"] aside div:first-child li:nth-child(2)::after,
 body[data-page="categories"] aside div:first-child li:nth-child(3)::after,
 body[data-page="sales"] aside div:first-child li:nth-child(4)::after,
-body[data-page="sale-details"] aside div:first-child li:nth-child(4)::after {
+body[data-page="sale-details"] aside div:first-child li:nth-child(4)::after,
+body[data-page="orders"] aside div:first-child li:nth-child(5)::after,
+body[data-page="customers"] aside div:last-child li:nth-child(1)::after {
   content: "";
   position: absolute;
   left: -8px;

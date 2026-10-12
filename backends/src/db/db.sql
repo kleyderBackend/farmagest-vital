@@ -211,3 +211,113 @@ CREATE TABLE IF NOT EXISTS inventory_movements (
     CONSTRAINT chk_inventory_movements_quantity
         CHECK (quantity > 0)
 ) ENGINE=InnoDB;
+
+INSERT INTO users (full_name, email, password_hash, role, is_active)
+VALUES (
+    'Administrador FarmaGest',
+    'admin@farmagest.com',
+    '$2b$10$lW3jlzLLCZZ0/m/uiq.Dd.k5QEBGacpzSP42Cn9sKssoBvT5KcEMi',
+    'admin',
+    TRUE
+)
+ON DUPLICATE KEY UPDATE
+    full_name = VALUES(full_name),
+    password_hash = VALUES(password_hash),
+    role = VALUES(role),
+    is_active = VALUES(is_active);
+
+INSERT INTO categories (name, description, is_active)
+VALUES
+    ('Medicamentos', 'Productos farmaceuticos de uso frecuente.', TRUE),
+    ('Vitaminas y Suplementos', 'Suplementos para apoyar el bienestar diario.', TRUE),
+    ('Cuidado Personal', 'Productos para higiene y cuidado personal.', TRUE)
+ON DUPLICATE KEY UPDATE
+    description = VALUES(description),
+    is_active = VALUES(is_active);
+
+INSERT INTO products (
+    category_id,
+    name,
+    presentation,
+    description,
+    sale_price,
+    current_stock,
+    minimum_stock,
+    expiration_date,
+    is_available,
+    is_active
+)
+SELECT
+    category_id,
+    'Acetaminofen 500 mg',
+    'Caja x 10 tabletas',
+    'Analgesico y antipiretico de uso comun.',
+    8500.00,
+    48,
+    8,
+    '2027-09-30',
+    TRUE,
+    TRUE
+FROM categories
+WHERE name = 'Medicamentos'
+  AND NOT EXISTS (
+      SELECT 1 FROM products WHERE LOWER(name) = LOWER('Acetaminofen 500 mg')
+  );
+
+INSERT INTO products (
+    category_id,
+    name,
+    presentation,
+    description,
+    sale_price,
+    current_stock,
+    minimum_stock,
+    expiration_date,
+    is_available,
+    is_active
+)
+SELECT
+    category_id,
+    'Vitamina C',
+    'Frasco x 30 tabletas',
+    'Suplemento vitaminico para el bienestar diario.',
+    12500.00,
+    35,
+    6,
+    '2028-02-28',
+    TRUE,
+    TRUE
+FROM categories
+WHERE name = 'Vitaminas y Suplementos'
+  AND NOT EXISTS (
+      SELECT 1 FROM products WHERE LOWER(name) = LOWER('Vitamina C')
+  );
+
+INSERT INTO products (
+    category_id,
+    name,
+    presentation,
+    description,
+    sale_price,
+    current_stock,
+    minimum_stock,
+    expiration_date,
+    is_available,
+    is_active
+)
+SELECT
+    category_id,
+    'Alcohol antiseptico',
+    'Botella x 700 ml',
+    'Solucion antiseptica para limpieza externa.',
+    7900.00,
+    42,
+    7,
+    '2027-12-31',
+    TRUE,
+    TRUE
+FROM categories
+WHERE name = 'Cuidado Personal'
+  AND NOT EXISTS (
+      SELECT 1 FROM products WHERE LOWER(name) = LOWER('Alcohol antiseptico')
+  );

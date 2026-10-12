@@ -1,6 +1,7 @@
 import { apiRequest, requireAdminSession } from "./api.js";
 
 const page = document.body.dataset.page;
+let cachedCategories = [];
 
 function showMessage(message, type = "success") {
   const messageBox = document.getElementById("adminMessage");
@@ -65,12 +66,39 @@ function updateCategorySummary(categories) {
   inactive.textContent = categories.filter((category) => !category.is_active).length;
 }
 
+function applyCategorySearch() {
+  const search = (document.getElementById("categorySearch")?.value || "")
+    .trim()
+    .toLowerCase();
+
+  if (!search) {
+    renderCategories(cachedCategories);
+    return;
+  }
+
+  const categories = cachedCategories.filter((category) => {
+    const searchable = [
+      `CAT-${String(category.category_id).padStart(3, "0")}`,
+      category.name,
+      category.description,
+      category.is_active ? "activa" : "inactiva",
+    ]
+      .join(" ")
+      .toLowerCase();
+
+    return searchable.includes(search);
+  });
+
+  renderCategories(categories);
+}
+
 async function loadCategoriesPage() {
   try {
     const response = await apiRequest("/categories", { auth: false });
     const categories = response.data?.categories || [];
-    renderCategories(categories);
-    updateCategorySummary(categories);
+    cachedCategories = categories;
+    renderCategories(cachedCategories);
+    updateCategorySummary(cachedCategories);
   } catch (error) {
     renderCategories([]);
     showMessage(error.message, "error");
@@ -175,3 +203,7 @@ document
 document
   .getElementById("deactivateCategory")
   ?.addEventListener("click", deactivateCategory);
+
+document
+  .getElementById("categorySearch")
+  ?.addEventListener("input", applyCategorySearch);

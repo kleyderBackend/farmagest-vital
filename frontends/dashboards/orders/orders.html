@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Pedidos | Farmagest Vital</title>
+    <link rel="stylesheet" href="../css/dashboard-general.css" />
+    <link rel="stylesheet" href="../css/products-admin.css" />
+    <link rel="stylesheet" href="../css/sales-admin.css" />
+    <link rel="stylesheet" href="../css/orders-admin.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+  </head>
+  <body data-page="orders" data-theme="light">
+    <header>
+      <nav>
+        <input
+          id="orderSearch"
+          type="search"
+          placeholder="Buscar pedido, cliente o ciudad..."
+          aria-label="Buscar pedido"
+        />
+        <div></div>
+      </nav>
+    </header>
+
+    <main>
+      <div>
+        <div>
+          <img src="../../imgs/logo.png" alt="logo de Farmagest Vital" />
+        </div>
+        <aside>
+          <div>
+            <ul>
+              <li><a href="../dashboardAdmin.html"><i class="fa-solid fa-chart-line" aria-hidden="true"></i>Dashboard</a></li>
+              <li><a href="../products/products.html"><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i>Productos</a></li>
+              <li><a href="../categories/categories.html"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>Categorías</a></li>
+              <li><a href="../sales/sales.html"><i class="fa-solid fa-receipt" aria-hidden="true"></i>Ventas</a></li>
+              <li><a href="./orders.html"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i>Pedidos</a></li>
+              <li><span class="nav-disabled"><i class="fa-solid fa-warehouse" aria-hidden="true"></i>Inventario</span></li>
+              <li><span class="nav-disabled"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>Stock</span></li>
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <li><a href="../customers/customers.html"><i class="fa-solid fa-users" aria-hidden="true"></i>Clientes</a></li>
+              <li><span class="nav-disabled"><i class="fa-solid fa-file-lines" aria-hidden="true"></i>Reportes</span></li>
+              <li><span class="nav-disabled"><i class="fa-solid fa-gear" aria-hidden="true"></i>Configuración</span></li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+
+      <section class="admin-page-header">
+        <div>
+          <span>Operación</span>
+          <h1>Pedidos</h1>
+          <p>Controla el estado, entrega y productos asociados a cada compra.</p>
+        </div>
+      </section>
+
+      <section class="products-summary">
+        <article>
+          <span>Total pedidos</span>
+          <strong id="totalOrders">0</strong>
+          <small>Registrados</small>
+        </article>
+        <article>
+          <span>En proceso</span>
+          <strong id="activeOrders">0</strong>
+          <small>Pendientes de entrega</small>
+        </article>
+        <article>
+          <span>Entregados</span>
+          <strong id="deliveredOrders">0</strong>
+          <small>Finalizados</small>
+        </article>
+        <article>
+          <span>Cancelados</span>
+          <strong id="cancelledOrders">0</strong>
+          <small>No facturados</small>
+        </article>
+      </section>
+
+      <section class="products-toolbar orders-toolbar">
+        <div>
+          <label for="orderStatusFilter">Estado</label>
+          <select id="orderStatusFilter">
+            <option value="">Todos</option>
+            <option value="pending">Pendiente</option>
+            <option value="preparing">Preparando</option>
+            <option value="on_the_way">En camino</option>
+            <option value="delivered">Entregado</option>
+            <option value="cancelled">Cancelado</option>
+          </select>
+        </div>
+        <button type="button" id="applyOrderFilters">Aplicar filtros</button>
+      </section>
+
+      <section class="products-table">
+        <div class="section-title">
+          <h2>Listado de pedidos</h2>
+          <span>Selecciona un pedido para actualizar estado o entrega</span>
+        </div>
+        <div id="adminMessage" class="admin-message" aria-live="polite"></div>
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>Pedido</th>
+                <th>Cliente</th>
+                <th>Fecha</th>
+                <th>Total</th>
+                <th>Ciudad</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="ordersTableBody">
+              <tr>
+                <td colspan="7">Cargando pedidos...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="sale-details-grid order-detail-grid" id="orderDetails" hidden>
+        <article class="sale-detail-card">
+          <h2 id="orderDetailTitle">Detalle del pedido</h2>
+          <dl>
+            <div><dt>Cliente</dt><dd id="orderCustomer"></dd></div>
+            <div><dt>Correo</dt><dd id="orderEmail"></dd></div>
+            <div><dt>Teléfono</dt><dd id="orderPhone"></dd></div>
+            <div><dt>Total</dt><dd id="orderTotal"></dd></div>
+          </dl>
+          <form id="orderStatusForm" class="sale-status-form">
+            <label for="orderStatusSelect">Cambiar estado</label>
+            <div>
+              <select id="orderStatusSelect" name="status" required>
+                <option value="pending">Pendiente</option>
+                <option value="preparing">Preparando</option>
+                <option value="on_the_way">En camino</option>
+                <option value="delivered">Entregado</option>
+                <option value="cancelled">Cancelado</option>
+              </select>
+              <button type="submit" id="updateOrderStatus">Actualizar</button>
+            </div>
+          </form>
+        </article>
+
+        <article class="sale-detail-card">
+          <h2>Datos de entrega</h2>
+          <form id="orderDeliveryForm" class="delivery-form">
+            <label for="deliveryAddress">Dirección</label>
+            <input id="deliveryAddress" name="deliveryAddress" type="text" />
+            <label for="deliveryNeighborhood">Barrio</label>
+            <input id="deliveryNeighborhood" name="deliveryNeighborhood" type="text" />
+            <label for="deliveryCity">Ciudad</label>
+            <input id="deliveryCity" name="deliveryCity" type="text" />
+            <label for="deliveryNote">Nota</label>
+            <textarea id="deliveryNote" name="deliveryNote"></textarea>
+            <button type="submit">Guardar entrega</button>
+          </form>
+        </article>
+      </section>
+
+      <section class="products-table" id="orderItemsSection" hidden>
+        <div class="section-title">
+          <h2>Productos del pedido</h2>
+        </div>
+        <div>
+          <table>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Presentación</th>
+                <th>Cantidad</th>
+                <th>Precio unitario</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody id="orderItemsBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="../../js/admin-orders.js"></script>
+  </body>
+</html>

@@ -1,0 +1,65 @@
+body[data-page="orders"] aside div:first-child li:nth-child(5) {
+  background: linear-gradient(90deg, rgba(8, 127, 115, 0.14), rgba(8, 127, 115, 0.05));
+  color: var(--primary-dark);
+}
+
+body[data-page="orders"] aside div:first-child li:nth-child(5)::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  width: 3px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--primary);
+}
+
+body[data-page="orders"] .products-summary {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.orders-toolbar {
+  grid-template-columns: minmax(180px, 260px) auto;
+  justify-content: start;
+}
+
+.order-detail-grid {
+  align-items: start;
+}
+
+.delivery-form {
+  display: grid;
+  gap: 10px;
+}
+
+.delivery-form textarea {
+  min-height: 88px;
+}
+
+.delivery-form button {
+  min-height: 42px;
+  border: 0;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: #ffffff;
+  cursor: pointer;
+  font: inherit;
+  font-weight: 800;
+}
+
+.status.info {
+  background: rgba(47, 128, 237, 0.14);
+  color: #2563eb;
+}
+
+@media (max-width: 920px) {
+  body[data-page="orders"] .products-summary {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  body[data-page="orders"] .products-summary,
+  .orders-toolbar {
+    grid-template-columns: 1fr;
+  }
+}
