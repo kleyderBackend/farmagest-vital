@@ -41,6 +41,14 @@
         </div>
 
         <form class="tracking-card" id="trackingForm">
+          <label for="trackingEmail">Correo usado en la compra</label
+          ><input
+            id="trackingEmail"
+            name="trackingEmail"
+            type="email"
+            autocomplete="email"
+            required
+          />
           <label for="trackingCode">Número de pedido</label>
           <div>
             <input
@@ -53,7 +61,9 @@
             />
             <button type="submit" id="trackingButton">Consultar</button>
           </div>
-          <small>También puedes escribir solo el número, por ejemplo 123.</small>
+          <small
+            >También puedes escribir solo el número, por ejemplo 123.</small
+          >
           <p class="tracking-message" id="trackingMessage" hidden></p>
         </form>
 

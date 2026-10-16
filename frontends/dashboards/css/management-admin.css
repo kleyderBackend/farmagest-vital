@@ -1,0 +1,86 @@
+.management-grid {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  min-width: 0;
+}
+.management-grid .product-form-card,
+.management-grid .products-table {
+  min-width: 0;
+  overflow: auto;
+}
+.management-grid .product-form-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+.management-grid table {
+  width: 100%;
+}
+.management-grid .products-toolbar {
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.management-grid .products-toolbar > * {
+  flex: 1 1 180px;
+}
+.management-grid [hidden] {
+  display: none;
+}
+body:is([data-page="inventory"], [data-page="users"], [data-page="reports"])
+  > main {
+  width: calc(100% - var(--sidebar-width) - 40px);
+  max-width: 1120px;
+  margin-left: calc(var(--sidebar-width) + 20px);
+}
+body[data-theme]:is(
+    [data-page="inventory"],
+    [data-page="users"],
+    [data-page="reports"]
+  )
+  > main
+  aside
+  li:nth-child(n) {
+  background: transparent;
+  color: var(--text);
+}
+body[data-theme]:is(
+    [data-page="inventory"],
+    [data-page="users"],
+    [data-page="reports"]
+  )
+  > main
+  aside
+  li:nth-child(n)::after {
+  display: none;
+}
+body[data-theme]:is(
+    [data-page="inventory"],
+    [data-page="users"],
+    [data-page="reports"]
+  )
+  > main
+  aside
+  li:nth-child(n):has(a[aria-current="page"]) {
+  background: rgba(8, 127, 115, 0.1);
+}
+aside a[aria-current="page"] {
+  color: var(--primary);
+  font-weight: 700;
+}
+@media (max-width: 720px) {
+  body:is([data-page="inventory"], [data-page="users"], [data-page="reports"])
+    > main {
+    width: auto;
+    margin-left: 0;
+  }
+}
+@media (max-width: 600px) {
+  .management-grid .form-grid {
+    grid-template-columns: 1fr;
+  }
+}

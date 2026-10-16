@@ -14,7 +14,11 @@ aside div:first-child li:first-child::after {
 }
 
 aside div:first-child li:nth-child(2) {
-  background: linear-gradient(90deg, rgba(8, 127, 115, 0.14), rgba(8, 127, 115, 0.05));
+  background: linear-gradient(
+    90deg,
+    rgba(8, 127, 115, 0.14),
+    rgba(8, 127, 115, 0.05)
+  );
   color: var(--primary-dark);
 }
 

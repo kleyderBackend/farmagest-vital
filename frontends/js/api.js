@@ -57,6 +57,11 @@ export async function apiRequest(path, options = {}) {
   const data = await response.json().catch(() => null);
 
   if (!response.ok) {
+    if (response.status === 401 && options.auth !== false) {
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      window.location.href = new URL("../dashboards/auth/login.html", import.meta.url).href;
+    }
     const message =
       data?.error || data?.message || "No se pudo completar la solicitud";
     throw new Error(message);

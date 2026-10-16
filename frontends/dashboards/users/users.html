@@ -1,0 +1,184 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Usuarios | Farmagest Vital</title>
+    <link rel="stylesheet" href="../css/dashboard-general.css" />
+    <link rel="stylesheet" href="../css/products-admin.css" />
+    <link rel="stylesheet" href="../css/management-admin.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+  </head>
+  <body data-page="users" data-theme="light">
+    <header>
+      <nav>
+        <a href="../dashboardAdmin.html">FarmaGest Vital</a>
+        <div></div>
+      </nav>
+    </header>
+
+    <main>
+      <div>
+        <div>
+          <img src="../../imgs/logo.png" alt="logo de Farmagest Vital" />
+        </div>
+        <aside>
+          <div>
+            <ul>
+              <li>
+                <a href="../dashboardAdmin.html"
+                  ><i class="fa-solid fa-chart-line" aria-hidden="true"></i
+                  >Dashboard</a
+                >
+              </li>
+              <li>
+                <a href="../products/products.html"
+                  ><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i
+                  >Productos</a
+                >
+              </li>
+              <li>
+                <a href="../categories/categories.html"
+                  ><i class="fa-solid fa-layer-group" aria-hidden="true"></i
+                  >Categorías</a
+                >
+              </li>
+              <li>
+                <a href="../sales/sales.html"
+                  ><i class="fa-solid fa-receipt" aria-hidden="true"></i
+                  >Ventas</a
+                >
+              </li>
+              <li>
+                <a href="../orders/orders.html"
+                  ><i class="fa-solid fa-truck-fast" aria-hidden="true"></i
+                  >Pedidos</a
+                >
+              </li>
+              <li>
+                <a href="../inventory/inventory.html"
+                  ><i class="fa-solid fa-warehouse" aria-hidden="true"></i
+                  >Inventario</a
+                >
+              </li>
+              <li>
+                <a href="../inventory/inventory.html#alerts"
+                  ><i
+                    class="fa-solid fa-triangle-exclamation"
+                    aria-hidden="true"
+                  ></i
+                  >Stock</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <li>
+                <a href="../customers/customers.html"
+                  ><i class="fa-solid fa-users" aria-hidden="true"></i
+                  >Clientes</a
+                >
+              </li>
+              <li>
+                <a href="../reports/reports.html"
+                  ><i class="fa-solid fa-file-lines" aria-hidden="true"></i
+                  >Reportes</a
+                >
+              </li>
+              <li>
+                <a href="users.html" aria-current="page"
+                  ><i class="fa-solid fa-gear" aria-hidden="true"></i
+                  >Usuarios</a
+                >
+              </li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+
+      <section class="admin-page-header">
+        <div>
+          <span>Administración</span>
+          <h1>Usuarios</h1>
+          <p>Gestiona el acceso y los roles del personal de farmacia.</p>
+        </div>
+        <button type="button" id="newUserButton" class="primary-action">
+          Nuevo usuario
+        </button>
+      </section>
+      <section class="management-grid">
+        <p id="adminMessage" class="admin-message" role="status"></p>
+        <div class="products-table">
+          <div class="section-title"><h2>Usuarios internos</h2></div>
+          <table>
+            <thead>
+              <tr>
+                <th>Nombre</th>
+                <th>Correo</th>
+                <th>Rol</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody id="usersTableBody"></tbody>
+          </table>
+        </div>
+        <form class="product-form-card" id="userForm">
+          <div class="section-title">
+            <h2 id="userFormTitle">Nuevo usuario</h2>
+            <span>Al editar, deja la contraseña vacía para conservarla.</span>
+          </div>
+          <div class="form-grid">
+            <div>
+              <label for="userName">Nombre completo</label
+              ><input id="userName" name="fullName" maxlength="200" required />
+            </div>
+            <div>
+              <label for="userEmail">Correo</label
+              ><input
+                id="userEmail"
+                name="email"
+                type="email"
+                maxlength="100"
+                required
+              />
+            </div>
+            <div>
+              <label for="userRole">Rol</label
+              ><select id="userRole" name="role">
+                <option value="staff">Personal</option>
+                <option value="admin">Administrador</option>
+              </select>
+            </div>
+            <div>
+              <label for="userPassword">Contraseña (mínimo 12 caracteres)</label
+              ><input
+                id="userPassword"
+                name="password"
+                type="password"
+                minlength="12"
+                maxlength="72"
+                autocomplete="new-password"
+                required
+              />
+            </div>
+            <label class="toggle-row"
+              ><input type="checkbox" name="isActive" checked /> Usuario
+              activo</label
+            >
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="primary-action">
+              Guardar usuario
+            </button>
+          </div>
+        </form>
+      </section>
+    </main>
+    <script type="module" src="../../js/admin-users.js"></script>
+  </body>
+</html>

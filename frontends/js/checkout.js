@@ -91,7 +91,7 @@ const buildCheckoutPayload = (formData) => {
       fullName,
       email,
       phone,
-      address: [address, neighborhood, city].filter(Boolean).join(", "),
+      address,
     },
     delivery: {
       address,

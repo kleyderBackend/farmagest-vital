@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inventario | Farmagest Vital</title>
+    <link rel="stylesheet" href="../css/dashboard-general.css" />
+    <link rel="stylesheet" href="../css/products-admin.css" />
+    <link rel="stylesheet" href="../css/management-admin.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+    />
+  </head>
+  <body data-page="inventory" data-theme="light">
+    <header>
+      <nav>
+        <a href="../dashboardAdmin.html">FarmaGest Vital</a>
+        <div></div>
+      </nav>
+    </header>
+
+    <main>
+      <div>
+        <div>
+          <img src="../../imgs/logo.png" alt="logo de Farmagest Vital" />
+        </div>
+        <aside>
+          <div>
+            <ul>
+              <li>
+                <a href="../dashboardAdmin.html"
+                  ><i class="fa-solid fa-chart-line" aria-hidden="true"></i
+                  >Dashboard</a
+                >
+              </li>
+              <li>
+                <a href="../products/products.html"
+                  ><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i
+                  >Productos</a
+                >
+              </li>
+              <li>
+                <a href="../categories/categories.html"
+                  ><i class="fa-solid fa-layer-group" aria-hidden="true"></i
+                  >Categorías</a
+                >
+              </li>
+              <li>
+                <a href="../sales/sales.html"
+                  ><i class="fa-solid fa-receipt" aria-hidden="true"></i
+                  >Ventas</a
+                >
+              </li>
+              <li>
+                <a href="../orders/orders.html"
+                  ><i class="fa-solid fa-truck-fast" aria-hidden="true"></i
+                  >Pedidos</a
+                >
+              </li>
+              <li>
+                <a href="inventory.html" aria-current="page"
+                  ><i class="fa-solid fa-warehouse" aria-hidden="true"></i
+                  >Inventario</a
+                >
+              </li>
+              <li>
+                <a href="inventory.html#alerts"
+                  ><i
+                    class="fa-solid fa-triangle-exclamation"
+                    aria-hidden="true"
+                  ></i
+                  >Stock</a
+                >
+              </li>
+            </ul>
+          </div>
+          <div>
+            <ul>
+              <li>
+                <a href="../customers/customers.html"
+                  ><i class="fa-solid fa-users" aria-hidden="true"></i
+                  >Clientes</a
+                >
+              </li>
+              <li>
+                <a href="../reports/reports.html"
+                  ><i class="fa-solid fa-file-lines" aria-hidden="true"></i
+                  >Reportes</a
+                >
+              </li>
+              <li>
+                <a href="../users/users.html"
+                  ><i class="fa-solid fa-gear" aria-hidden="true"></i
+                  >Usuarios</a
+                >
+              </li>
+            </ul>
+          </div>
+        </aside>
+      </div>
+
+      <section class="admin-page-header">
+        <div>
+          <span>Gestión</span>
+          <h1>Inventario</h1>
+          <p>
+            Registra entradas, salidas y ajustes con su motivo y responsable.
+          </p>
+        </div>
+      </section>
+      <section class="management-grid">
+        <p id="adminMessage" class="admin-message" role="status"></p>
+        <div class="product-form-card">
+          <div class="section-title">
+            <h2>Registrar movimiento</h2>
+            <span
+              >En un ajuste, la cantidad indica el stock final contado.</span
+            >
+          </div>
+          <form id="movementForm">
+            <div class="form-grid">
+              <div>
+                <label for="movementProduct">Producto</label
+                ><select id="movementProduct" name="productId" required>
+                  <option value="">Selecciona un producto</option>
+                </select>
+              </div>
+              <div>
+                <label for="movementType">Tipo</label
+                ><select id="movementType" name="type">
+                  <option value="in">Entrada</option>
+                  <option value="out">Salida</option>
+                  <option value="adjustment">Ajuste</option>
+                </select>
+              </div>
+              <div>
+                <label for="movementQuantity">Cantidad</label
+                ><input
+                  id="movementQuantity"
+                  name="quantity"
+                  type="number"
+                  min="0"
+                  max="2147483647"
+                  step="1"
+                  required
+                />
+              </div>
+              <div>
+                <label for="movementReason">Motivo</label
+                ><input
+                  id="movementReason"
+                  name="reason"
+                  minlength="3"
+                  maxlength="500"
+                  required
+                />
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="primary-action">
+                Registrar movimiento
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="products-table" id="alerts">
+          <div class="section-title"><h2>Existencias y alertas</h2></div>
+          <div class="products-toolbar">
+            <input
+              id="inventorySearch"
+              type="search"
+              placeholder="Buscar producto"
+              aria-label="Buscar producto"
+            /><select id="stockFilter" aria-label="Filtrar alertas">
+              <option value="">Todos los productos</option>
+              <option value="low">Stock bajo</option>
+              <option value="soon">Vencen en 30 días</option>
+              <option value="expired">Vencidos</option>
+            </select>
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Stock</th>
+                <th>Mínimo</th>
+                <th>Vencimiento</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="inventoryTableBody"></tbody>
+          </table>
+        </div>
+        <div class="products-table">
+          <div class="section-title">
+            <h2>Historial de movimientos</h2>
+            <span
+              >Últimos 500 movimientos. Los ajustes muestran el stock anterior y
+              final en el motivo.</span
+            >
+          </div>
+          <table>
+            <thead>
+              <tr>
+                <th>Fecha</th>
+                <th>Producto</th>
+                <th>Tipo</th>
+                <th>Cantidad</th>
+                <th>Motivo</th>
+                <th>Responsable</th>
+              </tr>
+            </thead>
+            <tbody id="movementsTableBody"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+    <script type="module" src="../../js/admin-inventory.js"></script>
+  </body>
+</html>

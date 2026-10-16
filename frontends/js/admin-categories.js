@@ -1,3 +1,4 @@
+import { escapeHtml } from "./inventory-utils.js";
 import { apiRequest, requireAdminSession } from "./api.js";
 
 const page = document.body.dataset.page;
@@ -36,8 +37,8 @@ function renderCategories(categories) {
       (category) => `
         <tr>
           <td>CAT-${String(category.category_id).padStart(3, "0")}</td>
-          <td>${category.name}</td>
-          <td>${category.description || "Sin descripción"}</td>
+          <td>${escapeHtml(category.name)}</td>
+          <td>${escapeHtml(category.description || "Sin descripción")}</td>
           <td>
             <span class="status ${category.is_active ? "active" : "warning"}">
               ${category.is_active ? "Activa" : "Inactiva"}

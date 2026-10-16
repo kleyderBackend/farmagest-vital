@@ -34,20 +34,73 @@
         <aside>
           <div>
             <ul>
-              <li><a href="../dashboardAdmin.html"><i class="fa-solid fa-chart-line" aria-hidden="true"></i>Dashboard</a></li>
-              <li><a href="../products/products.html"><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i>Productos</a></li>
-              <li><a href="../categories/categories.html"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>Categorías</a></li>
-              <li><a href="../sales/sales.html"><i class="fa-solid fa-receipt" aria-hidden="true"></i>Ventas</a></li>
-              <li><a href="./orders.html"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i>Pedidos</a></li>
-              <li><span class="nav-disabled"><i class="fa-solid fa-warehouse" aria-hidden="true"></i>Inventario</span></li>
-              <li><span class="nav-disabled"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>Stock</span></li>
+              <li>
+                <a href="../dashboardAdmin.html"
+                  ><i class="fa-solid fa-chart-line" aria-hidden="true"></i
+                  >Dashboard</a
+                >
+              </li>
+              <li>
+                <a href="../products/products.html"
+                  ><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i
+                  >Productos</a
+                >
+              </li>
+              <li>
+                <a href="../categories/categories.html"
+                  ><i class="fa-solid fa-layer-group" aria-hidden="true"></i
+                  >Categorías</a
+                >
+              </li>
+              <li>
+                <a href="../sales/sales.html"
+                  ><i class="fa-solid fa-receipt" aria-hidden="true"></i
+                  >Ventas</a
+                >
+              </li>
+              <li>
+                <a href="./orders.html"
+                  ><i class="fa-solid fa-truck-fast" aria-hidden="true"></i
+                  >Pedidos</a
+                >
+              </li>
+              <li>
+                <a href="../inventory/inventory.html"
+                  ><i class="fa-solid fa-warehouse" aria-hidden="true"></i
+                  >Inventario</a
+                >
+              </li>
+              <li>
+                <a href="../inventory/inventory.html#alerts"
+                  ><i
+                    class="fa-solid fa-triangle-exclamation"
+                    aria-hidden="true"
+                  ></i
+                  >Stock</a
+                >
+              </li>
             </ul>
           </div>
           <div>
             <ul>
-              <li><a href="../customers/customers.html"><i class="fa-solid fa-users" aria-hidden="true"></i>Clientes</a></li>
-              <li><span class="nav-disabled"><i class="fa-solid fa-file-lines" aria-hidden="true"></i>Reportes</span></li>
-              <li><span class="nav-disabled"><i class="fa-solid fa-gear" aria-hidden="true"></i>Configuración</span></li>
+              <li>
+                <a href="../customers/customers.html"
+                  ><i class="fa-solid fa-users" aria-hidden="true"></i
+                  >Clientes</a
+                >
+              </li>
+              <li>
+                <a href="../reports/reports.html"
+                  ><i class="fa-solid fa-file-lines" aria-hidden="true"></i
+                  >Reportes</a
+                >
+              </li>
+              <li>
+                <a href="../users/users.html"
+                  ><i class="fa-solid fa-gear" aria-hidden="true"></i
+                  >Usuarios</a
+                >
+              </li>
             </ul>
           </div>
         </aside>
@@ -57,7 +110,9 @@
         <div>
           <span>Operación</span>
           <h1>Pedidos</h1>
-          <p>Controla el estado, entrega y productos asociados a cada compra.</p>
+          <p>
+            Controla el estado, entrega y productos asociados a cada compra.
+          </p>
         </div>
       </section>
 
@@ -127,14 +182,30 @@
         </div>
       </section>
 
-      <section class="sale-details-grid order-detail-grid" id="orderDetails" hidden>
+      <section
+        class="sale-details-grid order-detail-grid"
+        id="orderDetails"
+        hidden
+      >
         <article class="sale-detail-card">
           <h2 id="orderDetailTitle">Detalle del pedido</h2>
           <dl>
-            <div><dt>Cliente</dt><dd id="orderCustomer"></dd></div>
-            <div><dt>Correo</dt><dd id="orderEmail"></dd></div>
-            <div><dt>Teléfono</dt><dd id="orderPhone"></dd></div>
-            <div><dt>Total</dt><dd id="orderTotal"></dd></div>
+            <div>
+              <dt>Cliente</dt>
+              <dd id="orderCustomer"></dd>
+            </div>
+            <div>
+              <dt>Correo</dt>
+              <dd id="orderEmail"></dd>
+            </div>
+            <div>
+              <dt>Teléfono</dt>
+              <dd id="orderPhone"></dd>
+            </div>
+            <div>
+              <dt>Total</dt>
+              <dd id="orderTotal"></dd>
+            </div>
           </dl>
           <form id="orderStatusForm" class="sale-status-form">
             <label for="orderStatusSelect">Cambiar estado</label>
@@ -157,7 +228,11 @@
             <label for="deliveryAddress">Dirección</label>
             <input id="deliveryAddress" name="deliveryAddress" type="text" />
             <label for="deliveryNeighborhood">Barrio</label>
-            <input id="deliveryNeighborhood" name="deliveryNeighborhood" type="text" />
+            <input
+              id="deliveryNeighborhood"
+              name="deliveryNeighborhood"
+              type="text"
+            />
             <label for="deliveryCity">Ciudad</label>
             <input id="deliveryCity" name="deliveryCity" type="text" />
             <label for="deliveryNote">Nota</label>

@@ -1,3 +1,4 @@
+import { escapeHtml } from "./inventory-utils.js";
 import { apiRequest, formatCurrency, formatDate } from "./api.js";
 
 const form = document.getElementById("trackingForm");
@@ -93,8 +94,8 @@ function renderItems(items = []) {
       (item) => `
         <article class="tracking-item">
           <div>
-            <strong>${item.product_name}</strong>
-            <span>${item.presentation || "Presentación no registrada"}</span>
+            <strong>${escapeHtml(item.product_name)}</strong>
+            <span>${escapeHtml(item.presentation || "Presentación no registrada")}</span>
           </div>
           <p>${Number(item.quantity)} x ${formatCurrency(item.unit_price)}</p>
           <b>${formatCurrency(item.subtotal)}</b>
@@ -134,7 +135,7 @@ function renderTracking(tracking) {
     <div class="tracking-summary">
       <div>
         <span>Cliente</span>
-        <strong>${tracking.customerName}</strong>
+        <strong>${escapeHtml(tracking.customerName)}</strong>
       </div>
       <div>
         <span>Fecha</span>
@@ -148,8 +149,8 @@ function renderTracking(tracking) {
 
     <div class="tracking-delivery">
       <span>Dirección de entrega</span>
-      <strong>${deliveryAddress || "No registrada"}</strong>
-      ${delivery.note ? `<p>${delivery.note}</p>` : ""}
+      <strong>${escapeHtml(deliveryAddress || "No registrada")}</strong>
+      ${delivery.note ? `<p>${escapeHtml(delivery.note)}</p>` : ""}
     </div>
 
     <div class="tracking-timeline ${isCancelled ? "is-cancelled" : ""}">

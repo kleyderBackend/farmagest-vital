@@ -4,6 +4,7 @@ import {
   formatDate,
   requireAdminSession,
 } from "./api.js";
+import { configureStatusSelect } from "./order-status.js";
 
 const statuses = {
   pending: "Pendiente",
@@ -195,6 +196,7 @@ async function loadOrderDetails(orderId) {
     setText("orderPhone", order.customer_phone);
     setText("orderTotal", formatCurrency(order.total));
     document.getElementById("orderStatusSelect").value = order.status;
+    configureStatusSelect(document.getElementById("orderStatusSelect"), order.status);
     fillDeliveryForm(order);
     renderItems(order.items || []);
     document.getElementById("orderDetails").hidden = false;

@@ -4,6 +4,7 @@ import {
   formatDate,
   requireAdminSession,
 } from "./api.js";
+import { configureStatusSelect } from "./order-status.js";
 
 const page = document.body.dataset.page;
 let cachedSales = [];
@@ -74,10 +75,11 @@ function syncSaleStatus(status) {
     }
 
     statusSelect.value = statusOption ? status : "pending";
+    configureStatusSelect(statusSelect, status);
   }
 
   if (updateButton) {
-    updateButton.disabled = false;
+    updateButton.disabled = Boolean(statusSelect?.disabled);
   }
 }
 

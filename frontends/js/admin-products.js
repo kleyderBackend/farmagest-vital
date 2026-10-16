@@ -4,6 +4,7 @@ import {
   formatDate,
   requireAdminSession,
 } from "./api.js";
+import { expirationStatus, escapeHtml } from "./inventory-utils.js";
 
 const page = document.body.dataset.page;
 let cachedProducts = [];
@@ -120,6 +121,7 @@ async function getProductPayload(form) {
   }
 
   payload.isAvailable = formData.get("isAvailable") === "on";
+  if (page === "edit-product") payload.stockReason = String(formData.get("stockReason") || "").trim();
 
   return payload;
 }
@@ -178,8 +180,8 @@ function renderProducts(products) {
       return `
         <tr>
           <td>PRD-${String(product.product_id).padStart(3, "0")}</td>
-          <td>${product.name}</td>
-          <td>${product.category_name || "Sin categoría"}</td>
+          <td>${escapeHtml(product.name)}</td>
+          <td>${escapeHtml(product.category_name || "Sin categoría")}</td>
           <td>${formatCurrency(product.sale_price)}</td>
           <td>${product.current_stock}</td>
           <td><span class="status ${statusClass}">${statusLabel}</span></td>
@@ -209,7 +211,7 @@ function updateProductSummary(products) {
   total.textContent = products.length;
   available.textContent = products.filter((product) => product.is_available).length;
   lowStock.textContent = lowStockCount;
-  expireSoon.textContent = products.filter((product) => product.expiration_date).length;
+  expireSoon.textContent = products.filter((product) => product.is_active && expirationStatus(product.expiration_date) === "soon").length;
 }
 
 async function loadProductsPage() {

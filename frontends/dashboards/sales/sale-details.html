@@ -15,9 +15,12 @@
   <body data-page="sale-details" data-theme="light">
     <header>
       <nav>
-        <input type="search" placeholder="Buscar ventas..." aria-label="Buscar ventas" />
-        <div>
-        </div>
+        <input
+          type="search"
+          placeholder="Buscar ventas..."
+          aria-label="Buscar ventas"
+        />
+        <div></div>
       </nav>
     </header>
 
@@ -29,20 +32,73 @@
         <aside>
           <div>
             <ul>
-              <li><a href="../dashboardAdmin.html"><i class="fa-solid fa-chart-line" aria-hidden="true"></i>Dashboard</a></li>
-              <li><a href="../products/products.html"><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i>Productos</a></li>
-              <li><a href="../categories/categories.html"><i class="fa-solid fa-layer-group" aria-hidden="true"></i>Categorías</a></li>
-              <li><a href="./sales.html"><i class="fa-solid fa-receipt" aria-hidden="true"></i>Ventas</a></li>
-              <li><a href="../orders/orders.html"><i class="fa-solid fa-truck-fast" aria-hidden="true"></i>Pedidos</a></li>
-              <li><span class="nav-disabled"><i class="fa-solid fa-warehouse" aria-hidden="true"></i>Inventario</span></li>
-              <li><span class="nav-disabled"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i>Stock</span></li>
+              <li>
+                <a href="../dashboardAdmin.html"
+                  ><i class="fa-solid fa-chart-line" aria-hidden="true"></i
+                  >Dashboard</a
+                >
+              </li>
+              <li>
+                <a href="../products/products.html"
+                  ><i class="fa-solid fa-boxes-stacked" aria-hidden="true"></i
+                  >Productos</a
+                >
+              </li>
+              <li>
+                <a href="../categories/categories.html"
+                  ><i class="fa-solid fa-layer-group" aria-hidden="true"></i
+                  >Categorías</a
+                >
+              </li>
+              <li>
+                <a href="./sales.html"
+                  ><i class="fa-solid fa-receipt" aria-hidden="true"></i
+                  >Ventas</a
+                >
+              </li>
+              <li>
+                <a href="../orders/orders.html"
+                  ><i class="fa-solid fa-truck-fast" aria-hidden="true"></i
+                  >Pedidos</a
+                >
+              </li>
+              <li>
+                <a href="../inventory/inventory.html"
+                  ><i class="fa-solid fa-warehouse" aria-hidden="true"></i
+                  >Inventario</a
+                >
+              </li>
+              <li>
+                <a href="../inventory/inventory.html#alerts"
+                  ><i
+                    class="fa-solid fa-triangle-exclamation"
+                    aria-hidden="true"
+                  ></i
+                  >Stock</a
+                >
+              </li>
             </ul>
           </div>
           <div>
             <ul>
-              <li><a href="../customers/customers.html"><i class="fa-solid fa-users" aria-hidden="true"></i>Clientes</a></li>
-              <li><span class="nav-disabled"><i class="fa-solid fa-file-lines" aria-hidden="true"></i>Reportes</span></li>
-              <li><span class="nav-disabled"><i class="fa-solid fa-gear" aria-hidden="true"></i>Configuración</span></li>
+              <li>
+                <a href="../customers/customers.html"
+                  ><i class="fa-solid fa-users" aria-hidden="true"></i
+                  >Clientes</a
+                >
+              </li>
+              <li>
+                <a href="../reports/reports.html"
+                  ><i class="fa-solid fa-file-lines" aria-hidden="true"></i
+                  >Reportes</a
+                >
+              </li>
+              <li>
+                <a href="../users/users.html"
+                  ><i class="fa-solid fa-gear" aria-hidden="true"></i
+                  >Usuarios</a
+                >
+              </li>
             </ul>
           </div>
         </aside>
@@ -63,10 +119,22 @@
         <article class="sale-detail-card">
           <h2>Información de la venta</h2>
           <dl>
-            <div><dt>Estado</dt><dd id="saleStatus"></dd></div>
-            <div><dt>Fecha</dt><dd id="saleDate"></dd></div>
-            <div><dt>Total</dt><dd id="saleTotal"></dd></div>
-            <div><dt>Notas</dt><dd id="saleNotes"></dd></div>
+            <div>
+              <dt>Estado</dt>
+              <dd id="saleStatus"></dd>
+            </div>
+            <div>
+              <dt>Fecha</dt>
+              <dd id="saleDate"></dd>
+            </div>
+            <div>
+              <dt>Total</dt>
+              <dd id="saleTotal"></dd>
+            </div>
+            <div>
+              <dt>Notas</dt>
+              <dd id="saleNotes"></dd>
+            </div>
           </dl>
           <form id="saleStatusForm" class="sale-status-form">
             <label for="saleStatusSelect">Cambiar estado del pedido</label>
@@ -78,16 +146,27 @@
                 <option value="delivered">Entregado</option>
                 <option value="cancelled">Cancelado</option>
               </select>
-              <button type="submit" id="updateSaleStatus">Actualizar estado</button>
+              <button type="submit" id="updateSaleStatus">
+                Actualizar estado
+              </button>
             </div>
           </form>
         </article>
         <article class="sale-detail-card">
           <h2>Cliente</h2>
           <dl>
-            <div><dt>Nombre</dt><dd id="customerName"></dd></div>
-            <div><dt>Correo</dt><dd id="customerEmail"></dd></div>
-            <div><dt>Teléfono</dt><dd id="customerPhone"></dd></div>
+            <div>
+              <dt>Nombre</dt>
+              <dd id="customerName"></dd>
+            </div>
+            <div>
+              <dt>Correo</dt>
+              <dd id="customerEmail"></dd>
+            </div>
+            <div>
+              <dt>Teléfono</dt>
+              <dd id="customerPhone"></dd>
+            </div>
           </dl>
         </article>
       </section>

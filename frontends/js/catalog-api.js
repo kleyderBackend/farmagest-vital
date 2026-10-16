@@ -1,3 +1,4 @@
+import { escapeHtml } from "./inventory-utils.js";
 import { apiRequest, formatCurrency } from "./api.js";
 
 export const normalizeProduct = (product) => ({
@@ -60,8 +61,8 @@ export function createProductImage(product) {
       <circle cx="650" cy="120" r="90" fill="#9ee7c5" opacity="0.8"/>
       <circle cx="180" cy="420" r="120" fill="#b6e0ff" opacity="0.8"/>
       <rect x="120" y="170" width="560" height="180" rx="32" fill="rgba(255,255,255,0.82)"/>
-      <text x="50%" y="46%" text-anchor="middle" font-size="24" font-family="Segoe UI, Arial, sans-serif" font-weight="700" fill="#1f2d3d">${product.category}</text>
-      <text x="50%" y="58%" text-anchor="middle" font-size="36" font-family="Segoe UI, Arial, sans-serif" font-weight="800" fill="#0f8f64">${product.name}</text>
+      <text x="50%" y="46%" text-anchor="middle" font-size="24" font-family="Segoe UI, Arial, sans-serif" font-weight="700" fill="#1f2d3d">${escapeHtml(product.category)}</text>
+      <text x="50%" y="58%" text-anchor="middle" font-size="36" font-family="Segoe UI, Arial, sans-serif" font-weight="800" fill="#0f8f64">${escapeHtml(product.name)}</text>
     </svg>
   `;
 
