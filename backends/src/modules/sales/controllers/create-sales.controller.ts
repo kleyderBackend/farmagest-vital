@@ -1,3 +1,4 @@
+import type { AuthenticatedRequest } from "../../../middlewares/auth.middleware";
 import type { Request, Response } from "express";
 import type { CreateSaleServiceInput } from "../sales.type";
 import { createSaleService } from "../services/create-sales.service";
@@ -45,7 +46,7 @@ export async function checkoutSaleController(req: Request, res: Response) {
     return res.status(201).json({
       status: "success",
       message: "Compra creada con exito",
-      data: { sale },
+      data: { sale: { order_id: sale.order_id, total: sale.total, status: sale.status } },
     });
   } catch (error: any) {
     return res.status(400).json({
@@ -56,7 +57,7 @@ export async function checkoutSaleController(req: Request, res: Response) {
   }
 }
 
-export async function createSaleController(req: Request, res: Response) {
+export async function createSaleController(req: AuthenticatedRequest, res: Response) {
   try {
     const { customerId, customer, delivery, notes, items } = req.body;
 

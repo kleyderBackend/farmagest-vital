@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from "express";
 import jwt from "jsonwebtoken";
 import type { UserId, UserRole } from "../modules/auth/auth.types";
+import { findUserById } from "../modules/users/repositories/find-user.repository";
 
 export interface AuthenticatedRequest extends Request {
   user?: {
@@ -14,7 +15,7 @@ interface JwtPayload {
   role: UserRole;
 }
 
-export function authMiddleware(
+export async function authMiddleware(
   req: AuthenticatedRequest,
   res: Response,
   next: NextFunction
@@ -49,9 +50,12 @@ export function authMiddleware(
   try {
     const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
 
+    const user = await findUserById(decoded.userId);
+    if (!user?.is_active) return res.status(401).json({ message: "Usuario inactivo o inexistente" });
+
     req.user = {
       userId: decoded.userId,
-      role: decoded.role,
+      role: user.role,
     };
 
     return next();

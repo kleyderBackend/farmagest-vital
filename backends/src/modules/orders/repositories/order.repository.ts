@@ -39,6 +39,22 @@ export async function listOrders(db: QueryExecutor = pool) {
   return rows;
 }
 
+export async function findOrderForUpdate(orderId: number, db: QueryExecutor) {
+  const [rows]: any = await db.query(
+    "SELECT order_id, status FROM orders WHERE order_id = ? FOR UPDATE",
+    [orderId],
+  );
+  return rows[0];
+}
+
+export async function findOrderStockItems(orderId: number, db: QueryExecutor) {
+  const [rows]: any = await db.query(
+    "SELECT product_id, quantity FROM order_items WHERE order_id = ? ORDER BY product_id",
+    [orderId],
+  );
+  return rows;
+}
+
 export async function findOrderById(orderId: number, db: QueryExecutor = pool) {
   const [rows]: any = await db.query(
     `

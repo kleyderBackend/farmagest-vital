@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { rateLimit } from "../../middlewares/rate-limit";
 import { authMiddleware } from "../../middlewares/auth.middleware";
 import { roleMiddleware } from "../../middlewares/role.middleware";
 import {
@@ -11,7 +12,7 @@ import {
 
 export const routes: Router = Router();
 
-routes.get("/tracking/:code", trackOrderByCodeController);
+routes.post("/tracking/:code", rateLimit(), trackOrderByCodeController);
 
 routes.use(authMiddleware, roleMiddleware(["admin", "staff"]));
 routes.get("/", listOrdersController);

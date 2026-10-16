@@ -1,3 +1,4 @@
+import type { AuthenticatedRequest } from "../../../middlewares/auth.middleware";
 import type { Request, Response } from "express";
 import type { UpdateProductInput } from "../products.type";
 import {
@@ -21,7 +22,7 @@ function parseOptionalBoolean(value: unknown) {
   return undefined;
 }
 
-export async function updateProductController(req: Request, res: Response) {
+export async function updateProductController(req: AuthenticatedRequest, res: Response) {
   try {
     const { id } = req.params;
 
@@ -178,7 +179,7 @@ export async function updateProductController(req: Request, res: Response) {
       productData.isActive = parsedIsActive;
     }
 
-    const product = await updateProductService(productData);
+    const product = await updateProductService(productData, Number(req.user!.userId), req.body.stockReason);
 
     return res.status(200).json({
       status: "success",

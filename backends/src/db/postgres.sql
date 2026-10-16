@@ -164,7 +164,7 @@ CREATE TABLE IF NOT EXISTS order_items (
 CREATE TABLE IF NOT EXISTS inventory_movements (
     movement_id SERIAL PRIMARY KEY,
     product_id INT NOT NULL,
-    user_id INT NOT NULL,
+    user_id INT,
     movement_type VARCHAR(20) NOT NULL,
     quantity INT NOT NULL,
     reason TEXT,
@@ -180,20 +180,6 @@ CREATE TABLE IF NOT EXISTS inventory_movements (
     CONSTRAINT chk_inventory_movements_type
         CHECK (movement_type IN ('in', 'out', 'adjustment'))
 );
-
-INSERT INTO users (full_name, email, password_hash, role, is_active)
-VALUES (
-    'Administrador FarmaGest',
-    'admin@farmagest.com',
-    '$2b$10$5ITis3FaX0O5S7MlV8W4M.4nzoxLNpR.RqwDBlQQprq6lIRv8bCnm',
-    'admin',
-    TRUE
-)
-ON CONFLICT (email) DO UPDATE SET
-    full_name = EXCLUDED.full_name,
-    password_hash = EXCLUDED.password_hash,
-    role = EXCLUDED.role,
-    is_active = EXCLUDED.is_active;
 
 DO $$
 BEGIN

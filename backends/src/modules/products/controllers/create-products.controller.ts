@@ -1,8 +1,9 @@
+import type { AuthenticatedRequest } from "../../../middlewares/auth.middleware";
 import type { Request, Response } from "express";
 import type { CreateProductInput } from "../products.type";
 import { createProductService } from "../services/create-products.service";
 
-export async function createProductController(req: Request, res: Response) {
+export async function createProductController(req: AuthenticatedRequest, res: Response) {
   try {
     const {
       categoryId,
@@ -110,7 +111,7 @@ export async function createProductController(req: Request, res: Response) {
       productData.isAvailable = Boolean(isAvailable);
     }
 
-    const product = await createProductService(productData);
+    const product = await createProductService(productData, Number(req.user!.userId));
 
     return res.status(201).json({
       status: "success",

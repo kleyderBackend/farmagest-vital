@@ -35,6 +35,7 @@ export interface CheckoutCustomerInput {
 }
 
 export interface CreateSaleServiceInput {
+  userId?: number;
   customerId?: number;
   customer?: CheckoutCustomerInput;
   delivery?: {

@@ -5,8 +5,11 @@ import jwt from "jsonwebtoken";
 
 export async function LoginService(data: LoginInput) {
   const { email, password } = data;
+  if (typeof email !== "string" || typeof password !== "string" || password.length > 200) {
+    throw new Error("Credenciales inválidas");
+  }
 
-  const existingUser = await findAuthUserByEmail(email);
+  const existingUser = await findAuthUserByEmail(email.trim().toLowerCase());
 
   if (!existingUser) {
     throw new Error("Email incorrecto");

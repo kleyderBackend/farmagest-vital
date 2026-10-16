@@ -1,3 +1,4 @@
+import { recordMovementService } from "../../inventory/services/record-movement.service";
 import {
   createSale,
   createSaleItem,
@@ -24,7 +25,10 @@ function validateProductExpiration(product: SaleProductRow) {
     return;
   }
 
-  const expirationDate = new Date(product.expiration_date);
+  const dateValue = product.expiration_date as string | Date;
+  const expirationDate = dateValue instanceof Date
+    ? new Date(dateValue)
+    : new Date(`${dateValue.slice(0, 10)}T00:00:00`);
   expirationDate.setHours(0, 0, 0, 0);
 
   const today = new Date();
@@ -38,11 +42,29 @@ function validateProductExpiration(product: SaleProductRow) {
 export async function createSaleService(data: CreateSaleServiceInput) {
   const { customerId, customer: customerData, delivery, items, notes } = data;
 
+  if (customerData) {
+    const { fullName, phone, email, address } = customerData;
+    if (typeof fullName !== "string" || !fullName.trim() || fullName.length > 200 ||
+      typeof phone !== "string" || !phone.trim() || phone.length > 20 ||
+      typeof email !== "string" || email.length > 100 || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) ||
+      (address !== undefined && (typeof address !== "string" || address.length > 150))) {
+      throw new Error("Los datos del cliente no son válidos");
+    }
+    customerData.email = email.trim().toLowerCase();
+  }
+  if (delivery && Object.entries(delivery).some(([key, value]) => {
+    const limits: Record<string, number> = { address: 180, neighborhood: 100, city: 100, note: 2000 };
+    return !(key in limits) || (value !== undefined && (typeof value !== "string" || value.length > limits[key]!));
+  })) {
+    throw new Error("Los datos de entrega no son válidos");
+  }
+  if (notes !== undefined && (typeof notes !== "string" || notes.length > 2000)) throw new Error("Las notas no son válidas");
+
   if (!customerId && !customerData) {
     throw new Error("Los datos del cliente son obligatorios");
   }
 
-  if (!Array.isArray(items) || items.length === 0) {
+  if (!Array.isArray(items) || items.length === 0 || items.length > 100) {
     throw new Error("La venta debe tener al menos un producto");
   }
 
@@ -117,15 +139,15 @@ export async function createSaleService(data: CreateSaleServiceInput) {
     let total = 0;
     const saleItems = [];
 
-    for (const item of items) {
+    for (const item of [...items].sort((a, b) => Number(a.productId) - Number(b.productId))) {
       const productId = Number(item.productId);
       const quantity = Number(item.quantity);
 
-      if (!productId || Number.isNaN(productId)) {
+      if (!Number.isSafeInteger(productId) || productId <= 0) {
         throw new Error("El producto es obligatorio");
       }
 
-      if (!quantity || Number.isNaN(quantity) || quantity <= 0) {
+      if (!quantity || Number.isNaN(quantity) || quantity <= 0 || !Number.isSafeInteger(quantity)) {
         throw new Error("La cantidad debe ser mayor que cero");
       }
 
@@ -165,6 +187,7 @@ export async function createSaleService(data: CreateSaleServiceInput) {
         throw new Error(`No se pudo descontar stock de ${product.name}`);
       }
 
+      await recordMovementService({ productId, userId: data.userId ?? null, type: "out", quantity, reason: `Pedido FV-${String(sale.order_id).padStart(6, "0")}` }, client);
       total += subtotal;
       saleItems.push(saleItem);
     }

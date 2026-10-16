@@ -34,6 +34,7 @@ const postgresPrimaryKeys: Record<string, string> = {
 const toPostgresQuery = (sql: string) => {
   let index = 0;
   let nextSql = sql.replace(/\?/g, () => `$${++index}`);
+  nextSql = nextSql.replace(/HOUR\(order_date\)/gi, "EXTRACT(HOUR FROM order_date)");
   const insertMatch = nextSql.trim().match(/^INSERT\s+INTO\s+([a-z_]+)/i);
   const hasReturning = /\bRETURNING\b/i.test(nextSql);
 

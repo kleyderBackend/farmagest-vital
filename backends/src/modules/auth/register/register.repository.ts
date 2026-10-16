@@ -14,14 +14,15 @@ export async function createUser(data: {
   email: string;
   passwordHash: string;
   role: "admin" | "staff";
+  isActive: boolean;
 }) {
   // 1. Ejecutamos la inserción con los comodines '?'
   const [result]: any = await pool.query(
     `
-    INSERT INTO users (full_name, email, password_hash, role)
-    VALUES (?, ?, ?, ?)
+    INSERT INTO users (full_name, email, password_hash, role, is_active)
+    VALUES (?, ?, ?, ?, ?)
     `,
-    [data.fullName, data.email, data.passwordHash, data.role]
+    [data.fullName, data.email, data.passwordHash, data.role, data.isActive]
   );
 
   // 2. Obtenemos el ID del registro recién insertado

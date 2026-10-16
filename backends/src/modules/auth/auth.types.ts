@@ -6,6 +6,7 @@ export interface RegisterInput {
   email: string;
   password: string;
   role?: UserRole;
+  isActive?: boolean;
 }
 
 export interface LoginInput {

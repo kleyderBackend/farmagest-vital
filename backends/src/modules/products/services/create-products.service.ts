@@ -1,8 +1,11 @@
+import { validateExpirationDate } from "../utils/validate-expiration-date";
+import { executeSaleTransaction } from "../../sales/repositories/transaction.repository";
+import { recordMovementService } from "../../inventory/services/record-movement.service";
 import { findCategoryById } from "../../categories/repositories/find-category.repository";
 import { createProduct } from "../repositories/create-product.repository";
 import type { CreateProductInput } from "../products.type";
 
-export async function createProductService(data: CreateProductInput) {
+export async function createProductService(data: CreateProductInput, userId: number) {
   const {
     categoryId,
     name,
@@ -24,7 +27,7 @@ export async function createProductService(data: CreateProductInput) {
     throw new Error("El nombre y el precio del producto son obligatorios");
   }
 
-  if (salePrice <= 0 || Number.isNaN(salePrice)) {
+  if (salePrice <= 0 || !Number.isFinite(salePrice)) {
     throw new Error(
       "El precio del producto debe ser un valor numerico mayor que cero",
     );
@@ -32,7 +35,7 @@ export async function createProductService(data: CreateProductInput) {
 
   if (
     currentStock !== undefined &&
-    (currentStock < 0 || Number.isNaN(currentStock))
+    (currentStock < 0 || !Number.isSafeInteger(currentStock))
   ) {
     throw new Error(
       "El stock del producto debe ser un valor numerico y no puede ser negativo",
@@ -41,7 +44,7 @@ export async function createProductService(data: CreateProductInput) {
 
   if (
     minimumStock !== undefined &&
-    (minimumStock < 0 || Number.isNaN(minimumStock))
+    (minimumStock < 0 || !Number.isSafeInteger(minimumStock))
   ) {
     throw new Error(
       "El stock minimo del producto debe ser un valor numerico y no puede ser negativo",
@@ -88,7 +91,10 @@ export async function createProductService(data: CreateProductInput) {
     productData.isAvailable = isAvailable;
   }
 
-  const newProduct = await createProduct(productData);
-
-  return newProduct;
+  if (data.expirationDate !== undefined) validateExpirationDate(data.expirationDate);
+  return executeSaleTransaction(async (db) => {
+    const product = await createProduct(productData, db);
+    await recordMovementService({ productId: Number(product.product_id), userId, type: "in", quantity: Number(product.current_stock), reason: "Inventario inicial" }, db);
+    return product;
+  });
 }

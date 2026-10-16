@@ -1,9 +1,10 @@
+import type { QueryExecutor } from "../../sales/sales.type";
 import { pool } from "../../../config/db";
 import type { UpdateProductInput } from "../products.type";
 
-export async function updateProduct(data: UpdateProductInput) {
+export async function updateProduct(data: UpdateProductInput, db: QueryExecutor = pool) {
   // 1. Ejecutamos el UPDATE usando '?'
-  await pool.query(
+  await db.query(
     `
     UPDATE products
     SET
@@ -38,7 +39,7 @@ export async function updateProduct(data: UpdateProductInput) {
   );
 
   // 2. Consultamos y devolvemos el producto actualizado
-  const [rows]: any = await pool.query(
+  const [rows]: any = await db.query(
     `
     SELECT
       product_id,
@@ -64,9 +65,9 @@ export async function updateProduct(data: UpdateProductInput) {
   return rows[0];
 }
 
-export async function deactivateProduct(productId: number) {
+export async function deactivateProduct(productId: number, db: QueryExecutor = pool) {
   // 1. Ejecutamos la desactivación usando '?'
-  await pool.query(
+  await db.query(
     `
     UPDATE products
     SET
@@ -79,7 +80,7 @@ export async function deactivateProduct(productId: number) {
   );
 
   // 2. Consultamos y devolvemos el producto actualizado
-  const [rows]: any = await pool.query(
+  const [rows]: any = await db.query(
     `
     SELECT
       product_id,

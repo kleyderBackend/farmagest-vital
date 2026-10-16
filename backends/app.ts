@@ -10,15 +10,27 @@ import { routes as routerCustomers } from "./src/modules/customers/customers.rou
 import { routes as routerOrders } from "./src/modules/orders/orders.route";
 import { routes as routerProducts } from "./src/modules/products/products.route";
 import { routes as routerSales } from "./src/modules/sales/sales.route";
+import { routes as routerInventory } from "./src/modules/inventory/inventory.route";
+import { routes as routerUsers } from "./src/modules/users/users.route";
 
 export const app: Express = express();
 
 const allowedOrigins = new Set([
   "http://localhost:3000",
   "http://localhost:5173",
+  "http://127.0.0.1:5173",
+  "http://localhost:5500",
   "http://127.0.0.1:5500",
   "https://kleyderbackend.github.io",
 ]);
+for (const origin of (process.env.CORS_ORIGINS || "").split(",").filter(Boolean)) allowedOrigins.add(origin.trim());
+
+app.disable("x-powered-by");
+app.use((_req, res, next) => {
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("Cache-Control", "no-store");
+  next();
+});
 
 app.use(
   cors({
@@ -40,6 +52,8 @@ app.use("/api/customers", routerCustomers);
 app.use("/api/products", routerProducts);
 app.use("/api/sales", routerSales);
 app.use("/api/orders", routerOrders);
+app.use("/api/inventory", routerInventory);
+app.use("/api/users", routerUsers);
 
 app.get("/", (_req, res) => {
   res.json({ message: "API funcionando" });

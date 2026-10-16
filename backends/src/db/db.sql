@@ -188,7 +188,7 @@ CREATE TABLE IF NOT EXISTS order_items (
 CREATE TABLE IF NOT EXISTS inventory_movements (
     movement_id INT NOT NULL AUTO_INCREMENT,
     product_id INT NOT NULL,
-    user_id INT NOT NULL,
+    user_id INT,
     movement_type ENUM('in', 'out', 'adjustment') NOT NULL,
     quantity INT NOT NULL,
     reason TEXT,
@@ -211,20 +211,6 @@ CREATE TABLE IF NOT EXISTS inventory_movements (
     CONSTRAINT chk_inventory_movements_quantity
         CHECK (quantity > 0)
 ) ENGINE=InnoDB;
-
-INSERT INTO users (full_name, email, password_hash, role, is_active)
-VALUES (
-    'Administrador FarmaGest',
-    'admin@farmagest.com',
-    '$2b$10$5ITis3FaX0O5S7MlV8W4M.4nzoxLNpR.RqwDBlQQprq6lIRv8bCnm',
-    'admin',
-    TRUE
-)
-ON DUPLICATE KEY UPDATE
-    full_name = VALUES(full_name),
-    password_hash = VALUES(password_hash),
-    role = VALUES(role),
-    is_active = VALUES(is_active);
 
 INSERT INTO categories (name, description, is_active)
 VALUES

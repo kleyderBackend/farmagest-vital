@@ -1,9 +1,10 @@
+import type { QueryExecutor } from "../../sales/sales.type";
 import { pool } from "../../../config/db";
 import type { CreateProductInput } from "../products.type";
 
-export async function createProduct(data: CreateProductInput) {
+export async function createProduct(data: CreateProductInput, db: QueryExecutor = pool) {
   // 1. Ejecutamos la inserción usando '?'
-  const [result]: any = await pool.query(
+  const [result]: any = await db.query(
     `
     INSERT INTO products (
       category_id,
@@ -37,7 +38,7 @@ export async function createProduct(data: CreateProductInput) {
   const productId = result.insertId;
 
   // 3. Consultamos y devolvemos el producto insertado
-  const [rows]: any = await pool.query(
+  const [rows]: any = await db.query(
     `
     SELECT
       product_id,

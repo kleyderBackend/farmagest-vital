@@ -50,6 +50,9 @@ export async function listAvailableProducts() {
     ${productSelect}
     WHERE p.is_active = TRUE
       AND p.is_available = TRUE
+      AND p.current_stock > 0
+      AND (p.expiration_date IS NULL OR p.expiration_date >= CURRENT_DATE)
+      AND c.is_active = TRUE
     ORDER BY p.name ASC
     `,
   );

@@ -1,4 +1,5 @@
 import type { Request, Response } from "express";
+import type { AuthenticatedRequest } from "../../../middlewares/auth.middleware";
 import {
   findOrderByIdService,
   formatOrderCode,
@@ -14,8 +15,6 @@ function mapTrackingResponse(order: any) {
     orderCode: formatOrderCode(Number(order.order_id)),
     orderId: order.order_id,
     customerName: order.customer_name,
-    customerEmail: order.customer_email,
-    customerPhone: order.customer_phone,
     orderDate: order.order_date,
     status: order.status,
     total: order.total,
@@ -33,13 +32,6 @@ function mapTrackingResponse(order: any) {
 export async function listOrdersController(_req: Request, res: Response) {
   try {
     const orders = await listOrdersService();
-
-    if (orders.length === 0) {
-      return res.status(404).json({
-        status: "fail",
-        message: "No hay pedidos registrados",
-      });
-    }
 
     return res.status(200).json({
       status: "success",
@@ -101,7 +93,9 @@ export async function trackOrderByCodeController(req: Request, res: Response) {
       });
     }
 
-    const order = await trackOrderByCodeService(code);
+    const email = req.body?.email;
+    if (typeof email !== "string" || !email.trim()) return res.status(400).json({ message: "Indica el correo de la compra" });
+    const order = await trackOrderByCodeService(code, email);
 
     if (!order) {
       return res.status(404).json({
@@ -124,7 +118,7 @@ export async function trackOrderByCodeController(req: Request, res: Response) {
   }
 }
 
-export async function updateOrderStatusController(req: Request, res: Response) {
+export async function updateOrderStatusController(req: AuthenticatedRequest, res: Response) {
   try {
     const { id } = req.params;
     const { status } = req.body;
@@ -147,6 +141,7 @@ export async function updateOrderStatusController(req: Request, res: Response) {
     const order = await updateOrderStatusService({
       orderId,
       status: status as OrderStatus,
+      userId: Number(req.user!.userId),
     });
 
     return res.status(200).json({

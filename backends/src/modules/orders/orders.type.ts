@@ -14,6 +14,7 @@ export interface QueryExecutor {
 export interface UpdateOrderStatusInput {
   orderId: number;
   status: OrderStatus;
+  userId: number;
 }
 
 export interface UpdateOrderDeliveryInput {

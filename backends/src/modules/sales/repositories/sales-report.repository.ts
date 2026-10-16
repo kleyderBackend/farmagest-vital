@@ -12,8 +12,8 @@ export async function getTotalSold(
       COUNT(*) AS sales_count
     FROM orders
     WHERE status <> 'cancelled'
-      AND (? IS NULL OR DATE(order_date) >= DATE(?))
-      AND (? IS NULL OR DATE(order_date) <= DATE(?))
+      AND (CAST(? AS DATE) IS NULL OR DATE(order_date) >= DATE(?))
+      AND (CAST(? AS DATE) IS NULL OR DATE(order_date) <= DATE(?))
     `,
     [
       data.startDate ?? null,
@@ -57,8 +57,8 @@ export async function getIncomeByDay(
       COUNT(*) AS sales_count
     FROM orders
     WHERE status <> 'cancelled'
-      AND (? IS NULL OR DATE(order_date) >= DATE(?))
-      AND (? IS NULL OR DATE(order_date) <= DATE(?))
+      AND (CAST(? AS DATE) IS NULL OR DATE(order_date) >= DATE(?))
+      AND (CAST(? AS DATE) IS NULL OR DATE(order_date) <= DATE(?))
     GROUP BY DATE(order_date)
     ORDER BY sale_date ASC
     `,
