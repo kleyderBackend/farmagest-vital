@@ -1,3 +1,20 @@
+.catalog-status {
+    margin: 0 0 1rem;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    color: var(--muted);
+    background: #f0faf6;
+    line-height: 1.6;
+}
+.catalog-retry { margin-bottom: 1rem; padding: 0.65rem 1rem; cursor: pointer; }
+.catalog-retry[hidden], .catalog-status[hidden] { display: none; }
+.product-card .actions > button:disabled {
+    cursor: wait;
+    opacity: 0.65;
+    transform: none;
+}
+
 .catalog-hero {
 	overflow: hidden;
 	margin-bottom: 2rem;

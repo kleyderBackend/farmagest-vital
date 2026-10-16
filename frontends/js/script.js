@@ -5,6 +5,7 @@ import {
     getCategories,
 } from "./catalog-api.js";
 import { addToCart, setCatalogProducts, updateCartBadges } from "./cart.js?v=2";
+import { products as sampleProducts } from "./products.js";
 
 const productsContainer = document.getElementById("products-container");
 const productsHeading = document.getElementById("products-heading");
@@ -43,9 +44,38 @@ const escapeHtml = (value) =>
         "'": "&#39;",
     })[character]);
 
-let products = [];
-let categories = [];
+const sampleCategoryNames = {
+    Medicines: "Medicamentos", "Personal Care": "Cuidado personal", Vitamins: "Vitaminas",
+    Baby: "Bebés", Hygiene: "Higiene", Beauty: "Belleza",
+};
+const mockProducts = sampleProducts.map((product) => ({
+    ...product,
+    id: -product.id,
+    categoryId: `sample-${product.category}`,
+    category: sampleCategoryNames[product.category] || product.category,
+    imageUrl: product.image,
+    description: "Producto de muestra. Precio y disponibilidad por confirmar.",
+    available: false,
+    isMock: true,
+}));
+const categoriesFromProducts = (items) => [...new Map(items.map((product) => [
+    String(product.categoryId), { id: product.categoryId, name: product.category },
+])).values()];
+let products = mockProducts;
+let categories = categoriesFromProducts(mockProducts);
 let selectedCategory = "";
+let loading = false;
+const catalogStatus = document.createElement("p");
+catalogStatus.className = "catalog-status";
+catalogStatus.setAttribute("role", "status");
+catalogStatus.setAttribute("aria-live", "polite");
+productsContainer.before(catalogStatus);
+const retryButton = document.createElement("button");
+retryButton.type = "button";
+retryButton.className = "catalog-retry";
+retryButton.textContent = "Reintentar";
+retryButton.hidden = true;
+catalogStatus.after(retryButton);
 
 const renderCategories = () => {
     const categoryLinks = categories.map((category, index) => {
@@ -74,8 +104,10 @@ const createProductCard = (product) => `
         <p>${escapeHtml(product.description)}</p>
         <strong>${formatProductPrice(product.price)}</strong>
         <div class="actions">
+            ${product.isMock ? `<button type="button" disabled>Producto de muestra</button>` : `
             <a href="${escapeHtml(productDetailsUrl(product.id))}">Detalles</a>
             <button type="button" data-add-to-cart="${product.id}">Añadir al carrito</button>
+            `}
         </div>
     </article>
 `;
@@ -125,6 +157,7 @@ productsContainer.addEventListener("click", (event) => {
     if (!button) return;
 
     const product = products.find((item) => item.id === Number(button.dataset.addToCart));
+    if (!product || product.isMock) return;
     if (!addToCart(button.dataset.addToCart, 1, product)) return;
 
     button.textContent = "Añadido";
@@ -135,22 +168,37 @@ productsContainer.addEventListener("click", (event) => {
 });
 
 const loadCatalog = async () => {
-    productsHeading.textContent = "Cargando catálogo...";
-    productsContainer.innerHTML = `<p role="status">Consultando productos disponibles...</p>`;
+    if (loading) return;
+    loading = true;
+    retryButton.hidden = true;
+    catalogStatus.textContent = "Cargando el catálogo. Mientras tanto, mostramos productos de ejemplo; sus precios son ilustrativos.";
+    productsContainer.setAttribute("aria-busy", "true");
 
     try {
-        [products, categories] = await Promise.all([
+        const [realProducts, realCategories] = await Promise.all([
             getAvailableProducts(),
-            getCategories(),
+            getCategories().catch(() => null),
         ]);
+        const selectedName = categories.find((category) => String(category.id) === selectedCategory)?.name;
+        products = realProducts;
+        categories = realCategories || categoriesFromProducts(realProducts);
+        selectedCategory = String(categories.find((category) => category.name === selectedName)?.id ?? "");
         setCatalogProducts(products);
         renderCategories();
         renderProducts();
+        catalogStatus.textContent = "";
+        catalogStatus.hidden = true;
     } catch (error) {
-        productsHeading.textContent = "Catálogo no disponible";
-        productsContainer.innerHTML = `<p role="alert">${escapeHtml(error.message || "No se pudo conectar con el backend.")}</p>`;
+        catalogStatus.textContent = "El catálogo está tardando en responder. Sigues viendo productos de ejemplo; reintenta para consultar precios y disponibilidad reales.";
+        retryButton.hidden = false;
+    } finally {
+        loading = false;
+        productsContainer.setAttribute("aria-busy", "false");
     }
 };
 
 updateCartBadges();
+renderCategories();
+renderProducts();
+retryButton.addEventListener("click", loadCatalog);
 loadCatalog();
