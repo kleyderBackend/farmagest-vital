@@ -34,6 +34,36 @@ Al arrancar, la migración de inventario permite un responsable nulo para compra
 
 ## Verificación
 
+Las capturas de los formularios de acceso y pedido, y de las tablas de MySQL en phpMyAdmin, están en [docs/evidencias/README.md](docs/evidencias/README.md). Incluyen el formulario vacío y diligenciado con datos ficticios, sin enviar compras, y las dos imágenes de la base de datos proporcionadas por el usuario.
+
+### Formulario de acceso
+
+![Formulario de acceso](docs/evidencias/formulario-acceso.jpg)
+
+### Formulario de pedido vacío
+
+![Formulario de pedido vacío](docs/evidencias/formulario-pedido-vacio.jpg)
+
+### Formulario de pedido diligenciado
+
+Datos ficticios de prueba; el pedido no fue enviado.
+
+![Formulario de pedido diligenciado](docs/evidencias/formulario-pedido-diligenciado.jpg)
+
+### Tablas de MySQL
+
+Captura de phpMyAdmin proporcionada por el usuario. Muestra las tablas y su número de filas, sin el contenido de los registros.
+
+![Tablas de MySQL en phpMyAdmin](docs/evidencias/mysql-tablas.png)
+
+### Estructura de la base de datos
+
+![Base farma_vital y sus tablas](docs/evidencias/mysql-estructura.png)
+
+Las capturas de la base de datos no demuestran que el formulario mostrado haya guardado esos registros. La evidencia de consola todavía está pendiente.
+
+### Comprobaciones del proyecto
+
 `npm run typecheck` comprueba TypeScript. `npm test` ejecuta pruebas de inventario, rollback, estados, cancelación repetida y concurrente, checkout, vencimientos, autorización y privacidad del seguimiento.
 
 Las pruebas utilizan un doble transaccional de base de datos y un servidor HTTP temporal; no escriben en la base configurada. En Windows, el entorno debe permitir conexiones a localhost para las pruebas HTTP. Estas pruebas no sustituyen la validación final con MySQL/PostgreSQL.
