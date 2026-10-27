@@ -1,5 +1,5 @@
 import { apiRequest, formatCurrency } from "../api.js";
-import { getCartModel, hydrateCart, clearCart } from "../cart.js?v=3";
+import { getCartModel, hydrateCart, clearCart } from "../cart.js?v=4";
 import { escapeHtml } from "../inventory-utils.js";
 import { Checkout } from "../services/Checkout.js";
 import { ServicioHistorial } from "../services/ServicioHistorial.js";

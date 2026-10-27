@@ -6,7 +6,7 @@ import {
   removeFromCart,
   adjustCartQuantity,
   updateCartBadges,
-} from "./cart.js?v=3";
+} from "./cart.js?v=4";
 import { escapeHtml } from "./inventory-utils.js";
 
 const cartRoot = document.getElementById("cart-root");
