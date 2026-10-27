@@ -8,6 +8,7 @@
     line-height: 1.6;
 }
 .catalog-retry { margin-bottom: 1rem; padding: 0.65rem 1rem; cursor: pointer; }
+.catalog-demo-link { display: inline-block; margin: 0 0 1rem 0.5rem; color: var(--primary-dark); font-weight: bold; }
 .catalog-retry[hidden], .catalog-status[hidden] { display: none; }
 .product-card .actions > button:disabled {
     cursor: wait;

@@ -1,12 +1,13 @@
 import {
   clearCart,
   formatPrice,
-  getCartItems,
+  getCartModel,
   hydrateCart,
   removeFromCart,
-  setCartQuantity,
+  adjustCartQuantity,
   updateCartBadges,
-} from "./cart.js?v=2";
+} from "./cart.js?v=3";
+import { escapeHtml } from "./inventory-utils.js";
 
 const cartRoot = document.getElementById("cart-root");
 
@@ -14,10 +15,20 @@ if (!cartRoot) {
   throw new Error("No se encontró el contenedor del carrito.");
 }
 
+const cartMessage = document.createElement("p");
+cartMessage.setAttribute("role", "alert");
+cartMessage.hidden = true;
+cartRoot.before(cartMessage);
+window.addEventListener("cartmessage", (event) => {
+  cartMessage.textContent = event.detail;
+  cartMessage.hidden = false;
+});
+
 const renderCart = () => {
-  const items = getCartItems();
-  const itemCount = items.reduce((total, item) => total + item.quantity, 0);
-  const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
+  const model = getCartModel();
+  const items = model.items;
+  const itemCount = model.cantidad;
+  const total = model.subtotal;
 
   if (items.length === 0) {
     cartRoot.innerHTML = `
@@ -38,20 +49,20 @@ const renderCart = () => {
         ${items
           .map(
             (item) => `
-              <article class="cart-line" data-cart-item="${item.id}">
+              <article class="cart-line" data-cart-item="${item.producto.id}">
                 <div class="cart-line-copy">
-                  <h2>${item.name}</h2>
-                  <p>${item.presentation}</p>
-                  <strong>${formatPrice(item.price)} <span>por presentación</span></strong>
+                  <h2>${escapeHtml(item.producto.name)}</h2>
+                  <p>${escapeHtml(item.producto.presentation)}</p>
+                  <strong>${formatPrice(item.producto.price)} <span>por presentación</span></strong>
                 </div>
                 <div class="cart-line-actions">
                   <div class="cart-quantity" aria-label="Cantidad">
-                    <button type="button" data-quantity-change="-1" data-product-id="${item.id}" aria-label="Quitar una unidad">−</button>
-                    <span>${item.quantity}</span>
-                    <button type="button" data-quantity-change="1" data-product-id="${item.id}" aria-label="Añadir una unidad">+</button>
+                    <button type="button" data-quantity-change="-1" data-product-id="${item.producto.id}" aria-label="Quitar una unidad">−</button>
+                    <span>${item.cantidad}</span>
+                    <button type="button" data-quantity-change="1" data-product-id="${item.producto.id}" aria-label="Añadir una unidad">+</button>
                   </div>
-                  <strong class="cart-line-total">${formatPrice(item.price * item.quantity)}</strong>
-                  <button class="cart-remove" type="button" data-remove-product="${item.id}">Eliminar</button>
+                  <strong class="cart-line-total">${formatPrice(item.subtotal)}</strong>
+                  <button class="cart-remove" type="button" data-remove-product="${item.producto.id}">Eliminar</button>
                 </div>
               </article>
             `,
@@ -63,7 +74,7 @@ const renderCart = () => {
         <h2>Resumen</h2>
         <div><span>Presentaciones</span><strong>${itemCount}</strong></div>
         <div class="cart-total"><span>Total</span><strong>${formatPrice(total)}</strong></div>
-        <p>El total se actualiza al cambiar las cantidades.</p>
+        <p>${model.esDemo ? "Carrito de demostración. No genera pedidos ni cobros reales." : "El envío y la comisión se cotizan al finalizar."}</p>
         <a class="cart-checkout" href="./formularyOfShoip.html">
           <i class="fa-solid fa-credit-card" aria-hidden="true"></i>
           Finalizar compra
@@ -83,13 +94,7 @@ cartRoot.addEventListener("click", (event) => {
 
   if (quantityButton) {
     const productId = Number(quantityButton.dataset.productId);
-    const currentQuantity = getCartItems().find((item) => item.id === productId)?.quantity;
-    if (currentQuantity) {
-      setCartQuantity(
-        productId,
-        Math.max(1, currentQuantity + Number(quantityButton.dataset.quantityChange)),
-      );
-    }
+    adjustCartQuantity(productId, Number(quantityButton.dataset.quantityChange));
     renderCart();
     return;
   }

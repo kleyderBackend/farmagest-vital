@@ -5,6 +5,24 @@
   padding: 2.5rem 1.25rem 4rem;
 }
 
+.checkout-mode { padding: 1rem; margin: 0; border: 1px solid var(--line); background: #eef8f4; border-radius: 10px; line-height: 1.6; }
+.field-group select { width: 100%; min-height: 46px; padding: 0.7rem; border: 1px solid var(--line); border-radius: 8px; background: white; color: var(--text); font: inherit; }
+.payment-fields { margin-top: 1rem; }
+.payment-fields[hidden], .receipt-section[hidden] { display: none; }
+.privacy-consent { display: flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; margin: 1rem 0; line-height: 1.7; }
+.privacy-consent input { width: 20px; height: 20px; flex-shrink: 0; }
+.service-attribution, #quoteStatus { font-size: 0.85rem; line-height: 1.7; color: var(--muted); margin: 1rem 0; }
+#quoteButton, #downloadReceipt, .transaction-history button { cursor: pointer; padding: 0.8rem 1rem; border: 1px solid var(--line); border-radius: 8px; color: var(--primary-dark); background: #eef8f4; font: inherit; }
+.receipt-section { margin-top: 1.5rem; line-height: 1.7; overflow-wrap: anywhere; }
+.receipt-section h2 { margin-bottom: 0.8rem; }
+.receipt-section ul { padding-left: 1.25rem; }
+.receipt-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0; }
+.receipt-grid dd { margin: 0; } .receipt-grid dt { font-weight: bold; }
+.transaction-history { display: grid; gap: 0.6rem; margin-top: 1rem; }
+.transaction-history button { text-align: left; }
+.checkout-actions button:disabled, #quoteButton:disabled { opacity: 0.55; cursor: not-allowed; }
+@media print { header, .checkout-layout, .checkout-heading, #downloadReceipt, .transaction-history { display: none; } .receipt-section { border: 0; } }
+
 .checkout-heading {
   display: flex;
   align-items: flex-end;

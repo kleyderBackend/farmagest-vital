@@ -2,6 +2,7 @@ import type { AuthenticatedRequest } from "../../../middlewares/auth.middleware"
 import type { Request, Response } from "express";
 import type { CreateSaleServiceInput } from "../sales.type";
 import { createSaleService } from "../services/create-sales.service";
+import { CheckoutQuoteService } from "../services/checkout-quote.service";
 
 function mapSaleItems(items: any[]) {
   return items.map((item) => ({
@@ -12,7 +13,15 @@ function mapSaleItems(items: any[]) {
 
 export async function checkoutSaleController(req: Request, res: Response) {
   try {
-    const { customer, delivery, notes, items } = req.body;
+    const { customer, delivery, notes, items, quoteToken, consent } = req.body;
+
+    if (consent !== true)
+      return res
+        .status(400)
+        .json({
+          status: "fail",
+          message: "Autoriza el uso de datos para tramitar el pedido",
+        });
 
     if (!customer || typeof customer !== "object") {
       return res.status(400).json({
@@ -31,6 +40,7 @@ export async function checkoutSaleController(req: Request, res: Response) {
     const saleData: CreateSaleServiceInput = {
       customer,
       items: mapSaleItems(items),
+      checkoutQuote: CheckoutQuoteService.verificar(quoteToken, delivery?.city),
     };
 
     if (delivery !== undefined) {
@@ -46,7 +56,13 @@ export async function checkoutSaleController(req: Request, res: Response) {
     return res.status(201).json({
       status: "success",
       message: "Compra creada con exito",
-      data: { sale: { order_id: sale.order_id, total: sale.total, status: sale.status } },
+      data: {
+        sale: {
+          order_id: sale.order_id,
+          total: sale.total,
+          status: sale.status,
+        },
+      },
     });
   } catch (error: any) {
     return res.status(400).json({
@@ -57,7 +73,10 @@ export async function checkoutSaleController(req: Request, res: Response) {
   }
 }
 
-export async function createSaleController(req: AuthenticatedRequest, res: Response) {
+export async function createSaleController(
+  req: AuthenticatedRequest,
+  res: Response,
+) {
   try {
     const { customerId, customer, delivery, notes, items } = req.body;
 

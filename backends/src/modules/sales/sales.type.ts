@@ -35,6 +35,7 @@ export interface CheckoutCustomerInput {
 }
 
 export interface CreateSaleServiceInput {
+  checkoutQuote?: import("./checkout.type").CheckoutQuote;
   userId?: number;
   customerId?: number;
   customer?: CheckoutCustomerInput;

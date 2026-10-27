@@ -10,6 +10,8 @@ import { createSaleService } from "../src/modules/sales/services/create-sales.se
 import { validateTransition } from "../src/modules/orders/utils/order-policy";
 import { registerUser } from "../src/modules/auth/register/register.service";
 import { updateUserService } from "../src/modules/users/services/update-user.service";
+import { CheckoutQuoteService } from "../src/modules/sales/services/checkout-quote.service";
+import type { CheckoutQuote } from "../src/modules/sales/checkout.type";
 
 // A transactional test double: tests exercise services, repositories and HTTP handlers.
 // It deliberately rejects unknown SQL. Real database checks remain a separate integration step.
@@ -183,6 +185,37 @@ test("un producto que vence hoy todavía puede comprarse", async () => {
   assert.equal(result.total, 1000);
 });
 
+const signedQuoteData = (): CheckoutQuote => ({
+  subtotal: 2000, envio: 5000, comision: 203, total: 7203, tasa: 0.00025, moneda: "USD", ciudad: "Bogotá", metodo: "card",
+  fechaTasa: new Date().toISOString(), fuenteTasa: "Prueba", expiresAt: Date.now() + 600000,
+  items: [{ productId: 1, quantity: 2, price: 1000 }],
+});
+
+test("cotización firmada exige firma, ámbito, vigencia y ciudad correctos", () => {
+  const quote = signedQuoteData();
+  const token = jwt.sign({ scope: "checkout-quote", quote }, process.env.JWT_SECRET!);
+  assert.equal(CheckoutQuoteService.verificar(token, "Bogota").total, 7203);
+  assert.throws(() => CheckoutQuoteService.verificar(token, "Cali"));
+  assert.throws(() => CheckoutQuoteService.verificar(token + "modificado", "Bogotá"));
+  assert.throws(() => CheckoutQuoteService.verificar(jwt.sign({ scope: "other", quote }, process.env.JWT_SECRET!), "Bogotá"));
+  assert.throws(() => CheckoutQuoteService.verificar(jwt.sign({ scope: "checkout-quote", quote: { ...quote, expiresAt: 1 } }, process.env.JWT_SECRET!), "Bogotá"));
+});
+
+test("pedido con cotización agrega envío y comisión calculados por el servidor", async () => {
+  const result = await createSaleService({ customerId: 1, items: [{ productId: 1, quantity: 2 }], checkoutQuote: signedQuoteData() });
+  assert.equal(result.total, 7203);
+  assert.equal(state.products[0].current_stock, 8);
+  assert.match(state.orders[1].status, /pending/);
+});
+
+test("cambio de precio después de cotizar revierte el pedido sin descontar stock", async () => {
+  state.products[0].sale_price = "1500";
+  await assert.rejects(createSaleService({ customerId: 1, items: [{ productId: 1, quantity: 2 }], checkoutQuote: signedQuoteData() }), /precio/);
+  assert.equal(state.products[0].current_stock, 10);
+  assert.equal(state.orders.length, 1);
+  assert.equal(state.movements.length, 0);
+});
+
 test("seguimiento exige coincidencia del correo", async () => {
   assert.equal(await trackOrderByCodeService("FV-000001", "otro@test.example"), null);
   assert.equal((await trackOrderByCodeService("FV-000001", "CLIENTE@test.example"))?.order_id, 1);
@@ -228,6 +261,36 @@ test("HTTP protege usuarios, registro, inventario y datos de seguimiento", async
     assert.equal((await fetch(base + "/users", { headers: { Authorization: `Bearer ${token}` } })).status, 403);
     state.users[0].is_active = false;
     assert.equal((await fetch(base + "/inventory", { headers: { Authorization: `Bearer ${token}` } })).status, 401);
+  } finally {
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+});
+
+test("HTTP checkout exige consentimiento y firma antes de registrar el pedido", async () => {
+  const server = app.listen(0, "127.0.0.1");
+  await new Promise<void>((resolve) => server.once("listening", resolve));
+  const base = `http://127.0.0.1:${(server.address() as { port: number }).port}/api/sales/checkout`;
+  const quoteToken = jwt.sign({ scope: "checkout-quote", quote: signedQuoteData() }, process.env.JWT_SECRET!);
+  const body = {
+    customer: { fullName: "Cliente de prueba", email: "cliente@test.example", phone: "3000000000" },
+    delivery: { city: "Bogotá", address: "Dirección de prueba" },
+    items: [{ productId: 1, quantity: 2 }],
+    quoteToken,
+    consent: true,
+  };
+  const send = (data: unknown) => fetch(base, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(data) });
+  try {
+    assert.equal((await send({ ...body, consent: false })).status, 400);
+    assert.equal((await send({ ...body, quoteToken: quoteToken + "alterado" })).status, 400);
+    assert.equal((await send({ ...body, items: [...body.items, ...body.items] })).status, 400);
+    assert.equal(state.orders.length, 1);
+    const response = await send(body);
+    const result: any = await response.json();
+    assert.equal(response.status, 201);
+    assert.equal(result.data.sale.total, 7203);
+    assert.equal(result.data.sale.status, "pending");
+    assert.equal(result.data.sale.customer, undefined);
+    assert.equal(state.products[0].current_stock, 8);
   } finally {
     await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
   }

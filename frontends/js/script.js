@@ -4,7 +4,7 @@ import {
     getAvailableProducts,
     getCategories,
 } from "./catalog-api.js";
-import { addToCart, setCatalogProducts, updateCartBadges } from "./cart.js?v=2";
+import { addToCart, setCatalogProducts, updateCartBadges } from "./cart.js?v=3";
 import { products as sampleProducts } from "./products.js";
 
 const productsContainer = document.getElementById("products-container");
@@ -12,6 +12,7 @@ const productsHeading = document.getElementById("products-heading");
 const categoryMenu = document.getElementById("category-menu");
 const categoriesContainer = document.getElementById("categorias");
 const isProductsPage = document.body.dataset.catalogPage === "products";
+const isDemoCatalog = new URLSearchParams(window.location.search).get("modo") === "demo";
 const productDetailsUrl = (id) => {
     const currentPath = window.location.pathname.replace(/\\/g, "/");
     const pathPrefix = currentPath.includes("/frontends/ecommerce/")
@@ -20,7 +21,7 @@ const productDetailsUrl = (id) => {
             ? "./ecommerce"
             : "./frontends/ecommerce";
 
-    return `${pathPrefix}/details.html?id=${encodeURIComponent(id)}`;
+    return `${pathPrefix}/details.html?id=${encodeURIComponent(id)}${isDemoCatalog ? "&modo=demo" : ""}`;
 };
 const categoryIcons = [
     "fa-pills",
@@ -76,6 +77,15 @@ retryButton.className = "catalog-retry";
 retryButton.textContent = "Reintentar";
 retryButton.hidden = true;
 catalogStatus.after(retryButton);
+const demoLink = document.createElement("a");
+demoLink.href = new URL("../ecommerce/products.html?modo=demo", import.meta.url).href;
+demoLink.textContent = "Probar compra simulada";
+demoLink.className = "catalog-demo-link";
+retryButton.after(demoLink);
+window.addEventListener("cartmessage", (event) => {
+    catalogStatus.hidden = false;
+    catalogStatus.textContent = event.detail;
+});
 
 const renderCategories = () => {
     const categoryLinks = categories.map((category, index) => {
@@ -186,8 +196,10 @@ const loadCatalog = async () => {
         setCatalogProducts(products);
         renderCategories();
         renderProducts();
-        catalogStatus.textContent = "";
-        catalogStatus.hidden = true;
+        catalogStatus.textContent = isDemoCatalog ? "Simulación académica: productos ficticios, sin cobros ni pedidos a la farmacia." : "";
+        catalogStatus.hidden = !isDemoCatalog;
+        demoLink.textContent = isDemoCatalog ? "Volver al catálogo real" : "Probar compra simulada";
+        if (isDemoCatalog) demoLink.href = new URL("../ecommerce/products.html", import.meta.url).href;
     } catch (error) {
         catalogStatus.textContent = "El catálogo está tardando en responder. Sigues viendo productos de ejemplo; reintenta para consultar precios y disponibilidad reales.";
         retryButton.hidden = false;

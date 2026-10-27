@@ -1,5 +1,5 @@
 import { createProductImage, formatProductPrice, getAvailableProducts, getProductById } from "./catalog-api.js";
-import { addToCart, setCatalogProducts, updateCartBadges } from "./cart.js?v=2";
+import { addToCart, setCatalogProducts, updateCartBadges } from "./cart.js?v=3";
 
 const root = document.getElementById("product-detail-root");
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({
@@ -61,7 +61,7 @@ const renderProduct = (product, relatedProducts) => {
           <img src="${escapeHtml(createProductImage(item))}" alt="${escapeHtml(item.name)}" loading="lazy" />
           <h4>${escapeHtml(item.name)}</h4>
           <strong>${formatProductPrice(item.price)}</strong>
-          <a href="./details.html?id=${item.id}">Ver producto</a>
+          <a href="./details.html?id=${item.id}${item.isDemo ? "&modo=demo" : ""}">Ver producto</a>
           <button type="button" data-add-to-cart="${item.id}">Añadir al carrito</button>
         </article>`).join("")}</div>
     </aside>

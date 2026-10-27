@@ -1,6 +1,6 @@
 # Evidencias de formularios y base de datos
 
-Fecha: 25 de octubre de 2026.
+Formularios originales y MySQL: 25 de octubre de 2026. Flujo POO: 27 de octubre de 2026.
 
 Las capturas de formularios se tomaron del frontend abierto en un navegador mediante un servidor local. No se modificó la interfaz para generar estas imágenes. Las dos capturas de MySQL fueron proporcionadas por el usuario.
 
@@ -40,6 +40,16 @@ La segunda captura identifica la base `farma_vital` y sus nueve tablas en el pan
 
 ![Estructura de farma_vital en phpMyAdmin](mysql-estructura.png)
 
+## Compra simulada con POO
+
+Prueba del 27 de octubre de 2026: se agregaron dos productos del catálogo JSON, se cotizó el envío a Bogotá con clima y divisas consultados, se validó una tarjeta ficticia y se generó un recibo. Después se recargó la página y se abrió el recibo desde el historial: conservó el identificador, los importes y la tasa de cambio. También se verificó el diseño a 390 píxeles de ancho sin desbordamiento horizontal.
+
+La captura muestra el formulario limpio tras finalizar, el recibo reconstruido y el historial local. La operación está rotulada **COMPRA SIMULADA - SIN COBRO**; no creó un pedido en MySQL ni efectuó un pago. El recibo JSON no contiene datos de contacto ni datos bancarios.
+
+![Recibo e historial de la compra simulada](recibo-poo.jpg)
+
+[Ver detalle del recibo y el historial](recibo-poo-detalle.jpg).
+
 ## Alcance de las evidencias
 
-Las imágenes documentan los formularios y la existencia de tablas y registros en la base mostrada. No permiten atribuir esos registros al formulario diligenciado: ese pedido no se envió. Para demostrar el flujo completo falta capturar el resultado de una prueba enviada, la consola y el contenido del registro correspondiente en MySQL.
+Las imágenes documentan los formularios, una compra simulada completa y la existencia de tablas y registros en la base mostrada. No permiten atribuir esos registros al formulario diligenciado: ese pedido no se envió. Para demostrar el flujo real de persistencia falta capturar una prueba enviada al backend, la consola y el contenido del registro correspondiente en MySQL.

@@ -1,4 +1,6 @@
 import { Router } from "express";
+import { checkoutQuoteController } from "./controllers/checkout-quote.controller";
+import { rateLimit } from "../../middlewares/rate-limit";
 import { authMiddleware } from "../../middlewares/auth.middleware";
 import { roleMiddleware } from "../../middlewares/role.middleware";
 import {
@@ -21,6 +23,7 @@ import {
 
 export const routes: Router = Router();
 
+routes.post("/quote", rateLimit(20), checkoutQuoteController);
 routes.post("/checkout", checkoutSaleController);
 
 routes.use(authMiddleware, roleMiddleware(["admin", "staff"]));

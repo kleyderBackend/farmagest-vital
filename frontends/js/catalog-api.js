@@ -1,20 +1,12 @@
 import { escapeHtml } from "./inventory-utils.js";
 import { apiRequest, formatCurrency } from "./api.js";
+import { Producto } from "./models/Producto.js";
+import { ServicioCatalogo } from "./services/ServicioCatalogo.js";
 
-export const normalizeProduct = (product) => ({
-  id: Number(product.product_id ?? product.id),
-  categoryId: Number(product.category_id ?? product.categoryId),
-  category: product.category_name ?? product.category ?? "Sin categoría",
-  name: product.name ?? "Producto sin nombre",
-  presentation: product.presentation ?? "Presentación no especificada",
-  description: product.description ?? "Producto disponible en Farmagest Vital.",
-  price: Number(product.sale_price ?? product.price ?? 0),
-  stock: Number(product.current_stock ?? product.stock ?? 0),
-  minimumStock: Number(product.minimum_stock ?? product.minimumStock ?? 0),
-  expirationDate: product.expiration_date ?? product.expirationDate ?? null,
-  imageUrl: product.image_url ?? product.imageUrl ?? "",
-  available: Boolean(product.is_available ?? product.available),
-});
+const catalogo = new ServicioCatalogo(apiRequest);
+const isDemo = () => new URLSearchParams(window.location.search).get("modo") === "demo";
+
+export const normalizeProduct = (product) => Producto.desdeJSON(product);
 
 export const normalizeCategory = (category) => ({
   id: Number(category.category_id ?? category.id),
@@ -23,17 +15,15 @@ export const normalizeCategory = (category) => ({
   isActive: Boolean(category.is_active ?? category.isActive ?? true),
 });
 
-export async function getAvailableProducts() {
-  const response = await apiRequest("/products/available", { auth: false });
-  return (response.data?.products ?? []).map(normalizeProduct);
-}
+export async function getAvailableProducts() { return catalogo.listar(isDemo()); }
 
-export async function getProductById(productId) {
-  const response = await apiRequest(`/products/${productId}`, { auth: false });
-  return normalizeProduct(response.data?.product ?? response.product);
-}
+export async function getProductById(productId, options = {}) { return catalogo.buscar(productId, options.demo ?? isDemo()); }
 
 export async function getCategories() {
+  if (isDemo()) {
+    const products = await catalogo.listar(true);
+    return [...new Map(products.map((product) => [product.categoryId, { id: product.categoryId, name: product.category, isActive: true }])).values()];
+  }
   const response = await apiRequest("/categories/active", { auth: false });
   return (response.data?.categories ?? [])
     .map(normalizeCategory)

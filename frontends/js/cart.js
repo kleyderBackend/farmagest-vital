@@ -1,136 +1,64 @@
 import { getProductById } from "./catalog-api.js";
+import { Producto } from "./models/Producto.js";
+import { Carrito } from "./models/Carrito.js";
+import { AlmacenCarrito } from "./services/AlmacenCarrito.js";
 
-const storageKey = "farmagest-vital-cart";
-const productCache = new Map();
-
-const readCart = () => {
-  try {
-    const storedCart = JSON.parse(localStorage.getItem(storageKey) ?? "[]");
-    if (!Array.isArray(storedCart)) return [];
-
-    return storedCart.filter(
-      (item) =>
-        Number.isInteger(item.productId) &&
-        Number.isInteger(item.quantity) &&
-        item.quantity > 0,
-    );
-  } catch {
-    return [];
-  }
-};
-
-const saveCart = (cart) => {
-  localStorage.setItem(storageKey, JSON.stringify(cart));
+const store = new AlmacenCarrito(localStorage);
+const products = new Map();
+const key = (product) => (product.isDemo ? "demo:" : "real:") + product.id;
+const notify = (error) => window.dispatchEvent(new CustomEvent("cartmessage", { detail: error.message }));
+const save = (cart) => {
+  store.guardar(cart);
   updateCartBadges();
   window.dispatchEvent(new CustomEvent("cartchange"));
 };
-
-export const getCartItems = () =>
-  readCart().flatMap((entry) => {
-    const product = productCache.get(entry.productId) ?? entry.product;
-    return product ? [{ ...product, quantity: entry.quantity }] : [];
-  });
-
-export const setCatalogProducts = (products) => {
-  products.forEach((product) => productCache.set(product.id, product));
-};
-
+export const getCartModel = () => store.cargar();
+export const getCartItems = () => getCartModel().items.map((item) => ({ ...item.producto.toJSON(), quantity: item.cantidad }));
+export const getCartCount = () => getCartModel().cantidad;
+export const setCatalogProducts = (items) => items.forEach((item) => {
+  const product = Producto.desdeJSON(item);
+  products.set(key(product), product);
+});
 export const hydrateCart = async () => {
-  const cart = readCart();
-
-  await Promise.all(
-    cart.map(async (entry) => {
-      if (productCache.has(entry.productId)) return;
-
-      try {
-        const product = await getProductById(entry.productId);
-        productCache.set(product.id, product);
-        entry.product = product;
-      } catch {
-        if (entry.product) productCache.set(entry.productId, entry.product);
-        return;
-      }
-    }),
-  );
-
-  const validCart = cart.filter(
-    (entry) => productCache.has(entry.productId) || entry.product,
-  );
-  localStorage.setItem(storageKey, JSON.stringify(validCart));
+  const advertencias = store.cargar().advertencias;
+  const old = getCartItems();
+  const next = await Promise.all(old.map(async (entry) => {
+    try { return { productId: entry.id, quantity: entry.quantity, product: (await getProductById(entry.id, { demo: entry.isDemo })).toJSON() }; }
+    catch { return { productId: entry.id, quantity: entry.quantity, product: entry }; }
+  }));
+  store.guardar(Carrito.desdeJSON(next));
+  if (advertencias.length) notify(new Error(advertencias.join(". ")));
   return getCartItems();
 };
-
-export const getCartCount = () =>
-  readCart().reduce((total, item) => total + item.quantity, 0);
-
-export const addToCart = (productId, quantity = 1, catalogProduct) => {
-  const id = Number(productId);
-  const product = catalogProduct ?? productCache.get(id);
-  const amount = Math.max(1, Math.floor(Number(quantity) || 1));
-
-  if (!product || product.id !== id || !product.available || product.stock < 1) {
-    return false;
-  }
-
-  productCache.set(id, product);
-
-  const cart = readCart();
-  const existingItem = cart.find((item) => item.productId === id);
-  const newQuantity = Math.min(
-    product.stock,
-    (existingItem?.quantity ?? 0) + amount,
-  );
-
-  if (existingItem) {
-    existingItem.quantity = newQuantity;
-    existingItem.product = product;
-  } else {
-    cart.push({ productId: id, quantity: newQuantity, product });
-  }
-
-  saveCart(cart);
-  return true;
+export const addToCart = (id, quantity = 1, catalogProduct) => {
+  try {
+    const product = catalogProduct || products.get("real:" + Number(id)) || products.get("demo:" + Number(id));
+    if (!product || product.isMock) return false;
+    const cart = getCartModel();
+    cart.agregar(product, Number(quantity));
+    save(cart);
+    return true;
+  } catch (error) { notify(error); return false; }
 };
-
-export const setCartQuantity = (productId, quantity) => {
-  const id = Number(productId);
-  const cart = readCart();
-  const item = cart.find((entry) => entry.productId === id);
-  const product = productCache.get(id) ?? item?.product;
-  const amount = Math.floor(Number(quantity));
-
-  if (!item || !product) return;
-  if (amount < 1) {
-    saveCart(cart.filter((entry) => entry.productId !== id));
-    return;
-  }
-
-  item.quantity = Math.min(amount, product.stock);
-  item.product = product;
-  saveCart(cart);
+export const setCartQuantity = (id, quantity) => {
+  try { const cart = getCartModel(); cart.cambiarCantidad(Number(id), Number(quantity)); save(cart); }
+  catch (error) { notify(error); }
 };
-
-export const removeFromCart = (productId) => {
-  saveCart(readCart().filter((item) => item.productId !== Number(productId)));
+/** Persiste el ajuste resuelto por el dominio y comunica sus errores a la vista. */
+export const adjustCartQuantity = (id, variation) => {
+  try {
+    const cart = getCartModel();
+    cart.ajustarCantidad(Number(id), Number(variation));
+    save(cart);
+  } catch (error) { notify(error); }
 };
-
-export const clearCart = () => saveCart([]);
-
-export const updateCartBadges = () => {
-  const count = getCartCount();
-  document.querySelectorAll("[data-cart-count]").forEach((badge) => {
-    badge.textContent = String(count);
-    badge.hidden = count === 0;
-    badge.setAttribute("aria-label", `${count} productos en el carrito`);
-  });
-};
-
-export const formatPrice = (price) =>
-  `$${price.toLocaleString("es-CO")}`;
-
-window.addEventListener("storage", (event) => {
-  if (event.key === storageKey) updateCartBadges();
+export const removeFromCart = (id) => { const cart = getCartModel(); cart.quitar(id); save(cart); };
+export const clearCart = () => save(new Carrito());
+export const updateCartBadges = () => document.querySelectorAll("[data-cart-count]").forEach((badge) => {
+  const count = getCartCount(); badge.textContent = String(count); badge.hidden = count === 0;
+  badge.setAttribute("aria-label", count + " productos en el carrito");
 });
-
+export const formatPrice = (price) => new Intl.NumberFormat("es-CO", { style: "currency", currency: "COP", maximumFractionDigits: 0 }).format(price);
+window.addEventListener("storage", (event) => { if (event.key === AlmacenCarrito.KEY) updateCartBadges(); });
 document.addEventListener("DOMContentLoaded", updateCartBadges);
 updateCartBadges();

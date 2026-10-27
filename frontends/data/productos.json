@@ -1,0 +1,68 @@
+[
+  {
+    "id": 1,
+    "name": "Acetaminofén 500 mg",
+    "categoryId": 1,
+    "category": "Medicamentos",
+    "presentation": "Caja de demostración",
+    "description": "Producto ficticio para probar el flujo académico.",
+    "price": 8500,
+    "stock": 20,
+    "available": true
+  },
+  {
+    "id": 2,
+    "name": "Vitamina C",
+    "categoryId": 2,
+    "category": "Vitaminas",
+    "presentation": "Frasco de demostración",
+    "description": "Producto ficticio para probar el flujo académico.",
+    "price": 18000,
+    "stock": 12,
+    "available": true
+  },
+  {
+    "id": 3,
+    "name": "Protector solar",
+    "categoryId": 3,
+    "category": "Cuidado personal",
+    "presentation": "Envase de demostración",
+    "description": "Producto ficticio para probar el flujo académico.",
+    "price": 42000,
+    "stock": 8,
+    "available": true
+  },
+  {
+    "id": 4,
+    "name": "Jabón de manos",
+    "categoryId": 3,
+    "category": "Cuidado personal",
+    "presentation": "Unidad de demostración",
+    "description": "Producto ficticio para probar el flujo académico.",
+    "price": 6500,
+    "stock": 30,
+    "available": true
+  },
+  {
+    "id": 5,
+    "name": "Kit de primeros auxilios",
+    "categoryId": 4,
+    "category": "Bienestar",
+    "presentation": "Kit de demostración",
+    "description": "Producto ficticio para probar el flujo académico.",
+    "price": 55000,
+    "stock": 5,
+    "available": true
+  },
+  {
+    "id": 6,
+    "name": "Gel de limpieza",
+    "categoryId": 3,
+    "category": "Cuidado personal",
+    "presentation": "Envase de demostración",
+    "description": "Producto ficticio para probar el flujo académico.",
+    "price": 24000,
+    "stock": 15,
+    "available": true
+  }
+]

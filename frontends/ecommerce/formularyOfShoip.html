@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Finalizar compra | Farmagest Vital</title>
     <link rel="stylesheet" href="../css/style.css?v=1" />
-    <link rel="stylesheet" href="../css/checkout.css?v=1" />
+    <link rel="stylesheet" href="../css/checkout.css?v=3" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
@@ -46,6 +46,7 @@
       <div class="checkout-layout">
         <form action="" id="formShop" class="checkout-form">
           <p class="checkout-message" id="checkoutMessage" hidden></p>
+          <p class="checkout-mode" id="purchaseMode" role="status"></p>
 
           <section class="checkout-card">
             <div class="section-title">
@@ -64,6 +65,8 @@
                   name="fullName"
                   id="fullNameId"
                   required
+                  minlength="2"
+                  maxlength="200"
                   autocomplete="name"
                   placeholder="Juan Pérez"
                 />
@@ -76,6 +79,7 @@
                   name="email"
                   id="emailClientId"
                   required
+                  maxlength="100"
                   autocomplete="email"
                   placeholder="juanperez@gmail.com"
                 />
@@ -88,6 +92,7 @@
                   name="phone"
                   id="phoneClientId"
                   required
+                  maxlength="20"
                   autocomplete="tel"
                   inputmode="tel"
                   placeholder="300 000 0000"
@@ -115,6 +120,7 @@
                   name="address"
                   id="addressClientId"
                   required
+                  maxlength="150"
                   autocomplete="street-address"
                   placeholder="Calle 10 # 20-30"
                 />
@@ -127,20 +133,16 @@
                   name="neighborhood"
                   id="neighborhoodClientId"
                   required
+                  maxlength="100"
                   placeholder="Barrio"
                 />
               </div>
 
               <div class="field-group">
                 <label for="cityClientId">Ciudad</label>
-                <input
-                  type="text"
-                  name="city"
-                  id="cityClientId"
-                  required
-                  autocomplete="address-level2"
-                  placeholder="Ciudad"
-                />
+                <select name="city" id="cityClientId" required autocomplete="address-level2">
+                  <option value="">Selecciona una ciudad</option>
+                </select>
               </div>
 
               <div class="field-group full-width">
@@ -149,8 +151,13 @@
                   name="deliveryNote"
                   id="deliveryNoteId"
                   rows="4"
+                  maxlength="1000"
                   placeholder="Ejemplo: entregar en portería o llamar antes de llegar."
                 ></textarea>
+              </div>
+              <div class="field-group full-width">
+                <label for="currencyId">Moneda de referencia</label>
+                <select id="currencyId" name="currency"><option value="COP">Peso colombiano (COP)</option><option value="USD">Dólar (USD)</option><option value="EUR">Euro (EUR)</option></select>
               </div>
             </div>
           </section>
@@ -162,7 +169,7 @@
               ></span>
               <div>
                 <h2>Método de pago</h2>
-                <p>Selecciona cómo deseas pagar tu pedido.</p>
+                <p>Validación simulada: no se realizan cobros. Usa únicamente datos ficticios.</p>
               </div>
             </div>
 
@@ -179,10 +186,38 @@
                 <input type="radio" name="paymentMethod" value="transfer" />
                 <span>
                   <strong>Transferencia</strong>
-                  <small>Recibirás los datos de pago al confirmar.</small>
+                  <small>Pendiente de coordinación y verificación por la farmacia.</small>
                 </span>
               </label>
+              <label class="payment-option"><input type="radio" name="paymentMethod" value="card" /><span><strong>Tarjeta (simulada)</strong><small>Comisión ilustrativa: 2,9 %.</small></span></label>
+              <label class="payment-option"><input type="radio" name="paymentMethod" value="pse" /><span><strong>PSE (simulado)</strong><small>Comisión ilustrativa: $1.500.</small></span></label>
+              <label class="payment-option"><input type="radio" name="paymentMethod" value="nequi" /><span><strong>Nequi (simulado)</strong><small>Sin comisión ilustrativa.</small></span></label>
             </div>
+            <div class="payment-fields" data-payment-fields="cash">
+              <label><input type="checkbox" name="confirmOnDelivery" required /> Entiendo que el pago contra entrega queda pendiente hasta recibir el pedido. En la demostración no se realiza ningún cobro.</label>
+            </div>
+            <div class="payment-fields" data-payment-fields="transfer" hidden>
+              <label><input type="checkbox" name="acknowledgePendingTransfer" disabled /> Entiendo que este formulario no confirma una transferencia bancaria: el pago queda pendiente de verificación por la farmacia. En la demostración no se debe transferir dinero.</label>
+            </div>
+            <div class="form-grid payment-fields" data-payment-fields="card" hidden>
+              <div class="field-group"><label for="cardLastFour">Últimos 4 dígitos ficticios</label><input id="cardLastFour" name="lastFour" inputmode="numeric" pattern="[0-9]{4}" minlength="4" maxlength="4" autocomplete="off" placeholder="1234" disabled /></div>
+              <div class="field-group"><label for="cardExpiry">Vencimiento de prueba</label><input id="cardExpiry" name="expiry" type="month" autocomplete="off" disabled /></div>
+              <p class="full-width">No introduzcas el número completo de una tarjeta ni su código de seguridad.</p>
+            </div>
+            <div class="form-grid payment-fields" data-payment-fields="pse" hidden>
+              <div class="field-group"><label for="pseBank">Banco de prueba</label><select id="pseBank" name="bank" disabled><option value="">Selecciona</option><option value="bancolombia">Bancolombia</option><option value="davivienda">Davivienda</option><option value="bancobogota">Banco de Bogotá</option></select></div>
+              <div class="field-group"><label for="pseAccount">Tipo de cuenta de prueba</label><select id="pseAccount" name="accountType" disabled><option value="">Selecciona</option><option value="ahorros">Ahorros</option><option value="corriente">Corriente</option></select></div>
+            </div>
+            <div class="payment-fields field-group" data-payment-fields="nequi" hidden><label for="nequiPhone">Celular ficticio Nequi</label><input id="nequiPhone" name="nequiPhone" type="tel" pattern="3[0-9]{9}" maxlength="10" autocomplete="off" placeholder="3000000000" disabled /></div>
+          </section>
+
+          <section class="checkout-card">
+            <h2>Cotización y privacidad</h2>
+            <p>El envío se estima desde Medellín según distancia y clima de la ciudad seleccionada. Tarifas y comisiones académicas, sin cargo bancario.</p>
+            <button id="quoteButton" type="button">Cotizar pedido</button>
+            <p id="quoteStatus" role="status" aria-live="polite">Selecciona ciudad, moneda y medio de pago para cotizar.</p>
+            <label class="privacy-consent"><input type="checkbox" name="consent" required /> Autorizo el uso de mis datos para tramitar este pedido según el <a href="./privacidad.html" target="_blank" rel="noopener">aviso de privacidad</a>.</label>
+            <p class="service-attribution">Divisas: <a href="https://www.exchangerate-api.com" target="_blank" rel="noopener">Rates By Exchange Rate API</a>. Clima: <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>. Si fallan, se muestran valores de respaldo explícitos.</p>
           </section>
 
           <div class="checkout-actions">
@@ -218,15 +253,21 @@
               <span>Domicilio</span>
               <strong id="checkoutDelivery">$0</strong>
             </div>
+            <div><span>Comisión ilustrativa</span><strong id="checkoutCommission">Por cotizar</strong></div>
             <div class="summary-total">
               <span>Total</span>
               <strong id="checkoutTotal">$0</strong>
             </div>
+            <div><span>Total convertido</span><strong id="checkoutConverted">Por cotizar</strong></div>
           </div>
         </aside>
       </div>
+      <section id="receiptSection" class="checkout-card receipt-section" hidden>
+        <h2>Recibo</h2><div id="receiptContent"></div><button id="downloadReceipt" type="button">Descargar recibo JSON</button>
+      </section>
+      <section class="checkout-card receipt-section"><h2>Historial en este navegador</h2><p>Hasta 100 recibos, sin datos bancarios ni datos de contacto. Los pedidos reales se consultan también en “Seguir mi compra”.</p><div id="transactionHistory" class="transaction-history"></div></section>
     </main>
 
-    <script type="module" src="../js/checkout.js?v=2"></script>
+    <script type="module" src="../js/checkout.js?v=3"></script>
   </body>
 </html>

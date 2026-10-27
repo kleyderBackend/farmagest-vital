@@ -10,6 +10,6 @@
     "start": "npm run start --workspace backends",
     "dev": "npm run dev --workspace backends",
     "typecheck": "npm run typecheck --workspace backends",
-    "test": "npm run test --workspace backends"
+    "test": "npm run test --workspace backends && node --test frontends/tests/*.test.js"
   }
 }
