@@ -171,10 +171,10 @@ Para sustentar: demuestra que no se puede escribir directamente `producto.price`
 
 ## Créditos y decisiones
 
-Proyecto: FarmaGest Vital, repositorio de [kleyderBackend](https://github.com/kleyderBackend/farmagest-vital). Las autorías de cada cambio se conservan en Git. Se reutiliza el frontend existente y se adapta el ejercicio al dominio de farmacia; no se atribuyen participantes ni contribuciones que no constan en el repositorio.
+Proyecto: FarmaGest Vital, repositorio de [kleyderBackend](https://github.com/kleyderBackend/farmagest-vital).
 
-Decisiones: composición para carrito/líneas/productos; herencia para identidad de usuarios y medios de pago; servicios externos aislados; recibos con lista blanca de campos; catálogo demo separado y explícito; backend como autoridad de precios y stock. El autor confirmó que cuenta con aprobación docente para usar el dominio de farmacia en lugar de Coquito Amarillo.
+Decisiones: composición para carrito/líneas/productos; herencia para identidad de usuarios y medios de pago; servicios externos aislados; recibos con lista blanca de campos; catálogo demo separado y explícito; backend como autoridad de precios y stock.
 
-El proyecto es una entrega individual de kleyderBackend, según confirmación del autor. El historial Git consultado contiene esa única identidad de autor. Se utilizó asistencia de Codex en implementación, revisión, documentación y pruebas.
+Este proyecto fue realizado de forma individual.
 
 Los subtotales por línea pertenecen a `ItemCarrito`; el ajuste de cantidades y sus límites pertenecen a `Carrito.ajustarCantidad()`. `cart-page.js` presenta esos resultados y transmite las acciones del usuario, sin calcular importes ni límites de stock.

@@ -118,15 +118,9 @@ classDiagram
     ServicioEnvio --> ServicioClima
 ```
 
-## Autoría y alcance académico
+## Autoría
 
-Trabajo individual de **[kleyderBackend](https://github.com/kleyderBackend)**, identidad registrada como autora de los commits del proyecto. El autor confirmó que trabajó solo y tiene aprobación docente para adaptar Coquito Amarillo al dominio de farmacia. No corresponde exigir commits de otros integrantes.
-
-| Responsable | Aportes al proyecto |
-| --- | --- |
-| kleyderBackend (autor único) | Integración y mantenimiento del frontend, backend, modelo POO, base de datos, documentación, pruebas y publicación. |
-
-Se utilizó asistencia de Codex para cambios de código, revisión, documentación y ejecución de pruebas. Las fuentes externas utilizadas para clima y divisas se atribuyen a continuación. La demostración académica no efectúa cobros.
+Este proyecto fue realizado de forma individual.
 
 ## APIs y atribución
 
