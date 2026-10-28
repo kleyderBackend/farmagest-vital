@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Finalizar compra | Farmagest Vital</title>
     <link rel="stylesheet" href="../css/style.css?v=1" />
-    <link rel="stylesheet" href="../css/checkout.css?v=3" />
+    <link rel="stylesheet" href="../css/checkout.css?v=4" />
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
@@ -35,17 +35,17 @@
       <div class="checkout-heading">
         <div>
           <p>Finalizar compra</p>
-          <h1>Datos para completar tu pedido</h1>
+          <h1 id="checkoutTitle">Datos para completar tu pedido</h1>
         </div>
-        <a href="./carrito.html">
+        <a href="./carrito.html" id="checkoutBackLink">
           <i class="fa-solid fa-arrow-left" aria-hidden="true"></i>
           Volver al carrito
         </a>
       </div>
 
-      <div class="checkout-layout">
+      <p class="checkout-message" id="checkoutMessage" role="status" aria-live="polite" hidden></p>
+      <div class="checkout-layout" id="checkoutLayout">
         <form action="" id="formShop" class="checkout-form">
-          <p class="checkout-message" id="checkoutMessage" hidden></p>
           <p class="checkout-mode" id="purchaseMode" role="status"></p>
 
           <section class="checkout-card">
@@ -263,11 +263,12 @@
         </aside>
       </div>
       <section id="receiptSection" class="checkout-card receipt-section" hidden>
-        <h2>Recibo</h2><div id="receiptContent"></div><button id="downloadReceipt" type="button">Descargar recibo JSON</button>
+        <h2>Recibo</h2><div id="receiptContent"></div>
+        <div class="receipt-actions"><button id="downloadReceipt" type="button">Descargar recibo JSON</button><a id="newPurchaseLink" href="./products.html">Iniciar otra compra</a></div>
       </section>
       <section class="checkout-card receipt-section"><h2>Historial en este navegador</h2><p>Hasta 100 recibos, sin datos bancarios ni datos de contacto. Los pedidos reales se consultan también en “Seguir mi compra”.</p><div id="transactionHistory" class="transaction-history"></div></section>
     </main>
 
-    <script type="module" src="../js/checkout.js?v=4"></script>
+    <script type="module" src="../js/checkout.js?v=5"></script>
   </body>
 </html>

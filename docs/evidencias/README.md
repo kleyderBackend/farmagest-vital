@@ -44,7 +44,7 @@ La segunda captura identifica la base `farma_vital` y sus nueve tablas en el pan
 
 Prueba del 27 de octubre de 2026: se agregaron dos productos del catálogo JSON, se cotizó el envío a Bogotá con clima y divisas consultados, se validó una tarjeta ficticia y se generó un recibo. Después se recargó la página y se abrió el recibo desde el historial: conservó el identificador, los importes y la tasa de cambio. También se verificó el diseño a 390 píxeles de ancho sin desbordamiento horizontal.
 
-La captura muestra el formulario limpio tras finalizar, el recibo reconstruido y el historial local. La operación está rotulada **COMPRA SIMULADA - SIN COBRO**; no creó un pedido en MySQL ni efectuó un pago. El recibo JSON no contiene datos de contacto ni datos bancarios.
+La revisión de la vista final se repitió con una unidad de producto, destino Medellín y medios de pago simulados. Las capturas actualizadas muestran la vista final con el recibo reconstruido y el historial local. Tras confirmar, se ocultan el formulario y el resumen del carrito vacío; al recargar permanece el recibo con los mismos importes. La operación está rotulada **COMPRA SIMULADA - SIN COBRO**; no creó un pedido en MySQL ni efectuó un pago. El recibo JSON no contiene datos de contacto ni datos bancarios.
 
 ![Recibo e historial de la compra simulada](recibo-poo.jpg)
 

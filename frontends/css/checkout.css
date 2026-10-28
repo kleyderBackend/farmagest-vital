@@ -76,6 +76,12 @@
   gap: 1rem;
 }
 
+.checkout-layout[hidden], .checkout-message[hidden] { display: none; }
+.checkout-page > .checkout-message { margin-bottom: 1rem; }
+.receipt-section { scroll-margin-top: 130px; }
+.receipt-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 1rem; margin-top: 1rem; }
+.receipt-actions a { color: var(--primary-dark); font-weight: 700; }
+
 .checkout-message {
   margin: 0;
   padding: 0.85rem 1rem;

@@ -178,11 +178,11 @@ Las capturas de la base de datos no demuestran que el formulario mostrado haya g
 
 ### Recibo e historial de la simulación POO
 
-Prueba del 27 de octubre de 2026: compra de productos ficticios, cotización con clima y divisas, validación de tarjeta simulada y recuperación del mismo recibo al recargar. No generó cobros ni registros en MySQL.
+Prueba del 27 de octubre de 2026: compra de productos ficticios, cotización con clima y divisas, validación simulada del medio de pago y recuperación del mismo recibo al recargar. No generó cobros ni registros en MySQL.
 
 ![Detalle del recibo y el historial](docs/evidencias/recibo-poo-detalle.jpg)
 
-Vista completa del formulario, recibo e historial:
+Vista final del recibo y el historial. El formulario y el resumen vacío se ocultan después de confirmar:
 
 ![Recibo e historial de la compra simulada](docs/evidencias/recibo-poo.jpg)
 

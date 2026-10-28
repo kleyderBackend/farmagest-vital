@@ -15,6 +15,7 @@ export class CheckoutUI {
   #busy = false;
   #cotizando = false;
   #receipt = null;
+  #completado = false;
   constructor() {
     this.#form = document.getElementById("formShop");
     this.#historial = new ServicioHistorial(localStorage);
@@ -39,6 +40,7 @@ export class CheckoutUI {
   invalidar() {
     this.#revision++;
     this.#quote = null;
+    if (!this.#busy && getCartModel().cantidad) this.#completado = false;
     document.getElementById("quoteStatus").textContent =
       "Cotiza el pedido para conocer envío, comisión y conversión.";
     this.render();
@@ -60,6 +62,22 @@ export class CheckoutUI {
    */
   render() {
     const cart = getCartModel();
+    const receipt = this.#receipt?.toJSON();
+    const completed = this.#completado && receipt;
+    document.getElementById("checkoutLayout").hidden = Boolean(completed);
+    document.getElementById("checkoutTitle").textContent = completed
+      ? receipt.pedido ? `Pedido ${receipt.pedido} registrado` : "Simulación completada"
+      : "Datos para completar tu pedido";
+    const backLink = document.getElementById("checkoutBackLink");
+    backLink.href = completed
+      ? receipt.estado === "simulada" ? "./products.html?modo=demo" : "./products.html"
+      : "./carrito.html";
+    backLink.textContent = completed ? "Volver al catálogo" : "Volver al carrito";
+    if (completed) {
+      document.getElementById("btnCreateSale").disabled = true;
+      document.getElementById("quoteButton").disabled = true;
+      return;
+    }
     const data = this.#quote?.cotizacion.toJSON();
     document.getElementById("checkoutSummaryProducts").innerHTML =
       cart.items
@@ -110,7 +128,7 @@ export class CheckoutUI {
    * @returns {Promise<void>} Actualización de la vista o aviso de error.
    */
   async cotizar() {
-    if (this.#busy || this.#cotizando) return;
+    if (this.#busy || this.#cotizando || this.#completado) return;
     this.#cotizando = true;
     this.#quote = null;
     const revision = ++this.#revision;
@@ -150,7 +168,7 @@ export class CheckoutUI {
    */
   async confirmar(event) {
     event.preventDefault();
-    if (this.#busy) return;
+    if (this.#busy || this.#completado) return;
     if (!this.#form.reportValidity()) return;
     this.#busy = true;
     const fields = new FormData(this.#form);
@@ -187,6 +205,7 @@ export class CheckoutUI {
         this.#quote,
       );
       this.#receipt = result.transaccion;
+      this.#completado = true;
       // Do not offer a second submission after a successful backend response, even if storage is full.
       this.#quote = null;
       let warning = result.advertencia;
@@ -228,15 +247,18 @@ export class CheckoutUI {
   recibo(transaction) {
     const data = transaction.toJSON(),
       quote = data.cotizacion;
+    const conversion = quote.moneda === "COP" ? "" : ` / ${new Intl.NumberFormat("es-CO", { style: "currency", currency: quote.moneda }).format(quote.convertido)}`;
     const target = document.getElementById("receiptContent");
     target.innerHTML = `<p><strong>${data.estado === "simulada" ? "COMPRA SIMULADA - SIN COBRO" : "PEDIDO REGISTRADO - PAGO PENDIENTE"}</strong></p>
       <dl class="receipt-grid"><div><dt>Identificador</dt><dd>${escapeHtml(data.id)}</dd></div><div><dt>Fecha</dt><dd>${escapeHtml(new Date(data.fecha).toLocaleString("es-CO"))}</dd></div>
       <div><dt>Pedido</dt><dd>${escapeHtml(data.pedido || "Simulación local")}</dd></div><div><dt>Medio validado (simulado)</dt><dd>${escapeHtml(data.metodo)}</dd></div></dl>
       <ul>${data.items.map((item) => `<li>${escapeHtml(item.name)} · ${item.quantity} × ${formatCurrency(item.price)}</li>`).join("")}</ul>
       <p>Subtotal: ${formatCurrency(quote.subtotal)} · Envío: ${formatCurrency(quote.envio)} · Comisión ilustrativa: ${formatCurrency(quote.comision)}</p>
-      <p><strong>Total: ${formatCurrency(quote.total)}</strong> / ${new Intl.NumberFormat("es-CO", { style: "currency", currency: quote.moneda }).format(quote.convertido)}</p>
+      <p><strong>Total: ${formatCurrency(quote.total)}</strong>${conversion}</p>
       <p>Tasa fijada: ${escapeHtml(quote.tasa)} ${escapeHtml(quote.moneda)}/COP. Fuente: ${escapeHtml(quote.fuenteTasa)}. Fecha: ${escapeHtml(new Date(quote.fechaTasa).toLocaleString("es-CO"))}. ${quote.respaldoClima ? "Clima de respaldo." : "Clima consultado."}</p>`;
     document.getElementById("receiptSection").hidden = false;
+    document.getElementById("newPurchaseLink").href = data.estado === "simulada"
+      ? "./products.html?modo=demo" : "./products.html";
   }
   historial() {
     const target = document.getElementById("transactionHistory");
@@ -253,7 +275,10 @@ export class CheckoutUI {
       button.textContent = `${new Date(data.fecha).toLocaleString("es-CO")} · ${data.pedido || "Simulación"} · ${formatCurrency(transaction.total)}`;
       button.addEventListener("click", () => {
         this.#receipt = transaction;
+        this.#completado = !getCartModel().cantidad;
         this.recibo(transaction);
+        this.render();
+        document.getElementById("receiptSection").scrollIntoView({ behavior: "smooth", block: "start" });
       });
       target.append(button);
     }
@@ -306,6 +331,14 @@ export class CheckoutUI {
     this.render();
     this.historial();
     await hydrateCart();
+    if (!getCartModel().cantidad) {
+      const last = this.#historial.listar()[0];
+      if (last) {
+        this.#receipt = last;
+        this.#completado = true;
+        this.recibo(last);
+      }
+    }
     this.render();
   }
 }
