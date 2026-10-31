@@ -1,4 +1,4 @@
-import { resolveApiUrl, isLoopback } from "./api-config.js";
+import { resolveApiUrl } from "./api-config.js";
 
 export const API_BASE_URL = resolveApiUrl(window.location, localStorage.getItem("farmagestApiUrl"));
 
@@ -52,10 +52,9 @@ export async function apiRequest(path, options = {}) {
     });
   } catch (error) {
     if (fetchOptions.signal?.aborted) throw error;
-    const local = isLoopback(new URL(API_BASE_URL).hostname);
-    throw new Error(local
-      ? "No se pudo conectar con la API local. Inicia MySQL en XAMPP y ejecuta npm run dev desde la raíz del proyecto. Si compraste en la web publicada, selecciona Render en el seguimiento."
-      : "El servidor de Render no respondió. Puede estar iniciándose; espera un momento y vuelve a consultar.");
+    const connectionError = new Error("No pudimos conectar con el servicio. Intenta nuevamente en unos momentos.");
+    connectionError.code = "API_UNAVAILABLE";
+    throw connectionError;
   }
 
   const data = await response.json().catch(() => null);

@@ -1,6 +1,5 @@
 import { escapeHtml } from "./inventory-utils.js";
-import { apiRequest, API_BASE_URL, formatCurrency, formatDate } from "./api.js?v=2";
-import { LOCAL_API_URL, PRODUCTION_API_URL, isLoopback } from "./api-config.js";
+import { apiRequest, formatCurrency, formatDate } from "./api.js?v=3";
 
 const form = document.getElementById("trackingForm");
 const input = document.getElementById("trackingCode");
@@ -64,7 +63,6 @@ function setLoading(isLoading) {
   button.disabled = isLoading;
   input.disabled = isLoading;
   document.getElementById("trackingEmail").disabled = isLoading;
-  document.getElementById("trackingServer").disabled = isLoading;
   button.textContent = isLoading ? "Consultando..." : "Consultar";
 }
 
@@ -199,7 +197,7 @@ async function handleTracking(event) {
   try {
     setLoading(true);
     result.hidden = true;
-    showMessage("Consultando la compra. El servidor puede tardar un minuto en iniciar.");
+    showMessage("Consultando tu pedido…");
 
     const response = await apiRequest(`/orders/tracking/${encodeURIComponent(code)}`, {
       auth: false,
@@ -231,34 +229,5 @@ function hydrateInitialCode() {
   }
 }
 
-function setupServerSelection() {
-  const selector = document.getElementById("trackingServer");
-  const help = document.getElementById("trackingServerHelp");
-  const localPage = window.location.protocol === "file:" || isLoopback(window.location.hostname);
-  const localApi = isLoopback(new URL(API_BASE_URL).hostname);
-  help.textContent = localApi
-    ? "Pedidos guardados en MySQL local. Los pedidos de Render se consultan por separado."
-    : "Pedidos de la web publicada. Las simulaciones no generan un número de pedido real.";
-  if (!localPage) return;
-  selector.hidden = false;
-  document.getElementById("trackingServerLabel").hidden = false;
-  if (![LOCAL_API_URL, PRODUCTION_API_URL].includes(API_BASE_URL)) {
-    const option = new Option("Servidor configurado", API_BASE_URL);
-    selector.add(option);
-    selector.value = API_BASE_URL;
-  } else {
-    selector.value = localApi ? "local" : "render";
-  }
-  selector.addEventListener("change", () => {
-    const target = ({ render: PRODUCTION_API_URL, local: LOCAL_API_URL })[selector.value] ?? API_BASE_URL;
-    // Las sesiones administrativas pertenecen a una base específica.
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.setItem("farmagestApiUrl", target);
-    window.location.reload();
-  });
-}
-
-setupServerSelection();
 hydrateInitialCode();
 form?.addEventListener("submit", handleTracking);

@@ -30,7 +30,7 @@ test("los errores de red no cambian de base y el seguimiento envía correo sin t
       requests.push({ url, options });
       throw new TypeError("Network error");
     };
-    await assert.rejects(apiRequest("/orders/tracking/FV-000002", { auth: false, method: "POST", body: JSON.stringify({ email: "test@example.com" }) }), /Inicia MySQL/);
+    await assert.rejects(apiRequest("/orders/tracking/FV-000002", { auth: false, method: "POST", body: JSON.stringify({ email: "test@example.com" }) }), { code: "API_UNAVAILABLE" });
     assert.equal(requests.length, 1);
     assert.equal(requests[0].url, LOCAL_API_URL + "/orders/tracking/FV-000002");
     assert.equal(requests[0].options.headers.Authorization, undefined);
@@ -52,7 +52,7 @@ test("Render informa sus fallos sin recomendar localhost y respeta cancelación"
   globalThis.fetch = async () => { throw new TypeError("Network error"); };
   try {
     const { apiRequest } = await import("../js/api.js?test=render");
-    await assert.rejects(apiRequest("/products", { auth: false }), /Render/);
+    await assert.rejects(apiRequest("/products", { auth: false }), { code: "API_UNAVAILABLE" });
     const controller = new AbortController();
     controller.abort();
     globalThis.fetch = async (_url, { signal }) => { throw signal.reason; };
