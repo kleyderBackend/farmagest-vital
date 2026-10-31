@@ -1,4 +1,4 @@
-import { apiRequest, requireAdminSession } from "./api.js";
+import { apiRequest, requireAdminSession } from "./api.js?v=2";
 
 let cachedCustomers = [];
 

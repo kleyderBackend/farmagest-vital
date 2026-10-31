@@ -3,7 +3,7 @@ import {
   formatCurrency,
   formatDate,
   requireAdminSession,
-} from "./api.js";
+} from "./api.js?v=2";
 import { expirationStatus, escapeHtml } from "./inventory-utils.js";
 
 const page = document.body.dataset.page;

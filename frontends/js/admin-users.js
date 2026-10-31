@@ -1,4 +1,4 @@
-import { apiRequest, getUser, requireAdminSession } from "./api.js";
+import { apiRequest, getUser, requireAdminSession } from "./api.js?v=2";
 import { escapeHtml } from "./inventory-utils.js";
 
 const form = document.getElementById("userForm");

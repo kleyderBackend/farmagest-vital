@@ -1,4 +1,4 @@
-import { CheckoutUI } from "./ui/CheckoutUI.js?v=3";
+import { CheckoutUI } from "./ui/CheckoutUI.js?v=4";
 
 new CheckoutUI().iniciar().catch((error) => {
   const message = document.getElementById("checkoutMessage");

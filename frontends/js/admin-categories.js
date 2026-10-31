@@ -1,5 +1,5 @@
 import { escapeHtml } from "./inventory-utils.js";
-import { apiRequest, requireAdminSession } from "./api.js";
+import { apiRequest, requireAdminSession } from "./api.js?v=2";
 
 const page = document.body.dataset.page;
 let cachedCategories = [];

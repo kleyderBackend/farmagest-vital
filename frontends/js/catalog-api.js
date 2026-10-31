@@ -1,5 +1,5 @@
 import { escapeHtml } from "./inventory-utils.js";
-import { apiRequest, formatCurrency } from "./api.js";
+import { apiRequest, formatCurrency } from "./api.js?v=2";
 import { Producto } from "./models/Producto.js";
 import { ServicioCatalogo } from "./services/ServicioCatalogo.js";
 

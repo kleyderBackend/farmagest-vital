@@ -1,4 +1,4 @@
-import { apiRequest, formatCurrency, requireAdminSession } from "./api.js";
+import { apiRequest, formatCurrency, requireAdminSession } from "./api.js?v=2";
 import { expirationStatus, escapeHtml } from "./inventory-utils.js";
 
 async function loadReports() {

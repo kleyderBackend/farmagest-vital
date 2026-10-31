@@ -1,4 +1,4 @@
-import { apiRequest, formatDate, requireAdminSession } from "./api.js";
+import { apiRequest, formatDate, requireAdminSession } from "./api.js?v=2";
 import { expirationStatus, escapeHtml } from "./inventory-utils.js";
 
 const message = document.getElementById("adminMessage");

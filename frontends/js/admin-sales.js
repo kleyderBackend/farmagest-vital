@@ -3,7 +3,7 @@ import {
   formatCurrency,
   formatDate,
   requireAdminSession,
-} from "./api.js";
+} from "./api.js?v=2";
 import { configureStatusSelect } from "./order-status.js";
 
 const page = document.body.dataset.page;

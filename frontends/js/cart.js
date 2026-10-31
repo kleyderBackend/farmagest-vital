@@ -1,4 +1,4 @@
-import { getProductById } from "./catalog-api.js?v=2";
+import { getProductById } from "./catalog-api.js?v=3";
 import { Producto } from "./models/Producto.js";
 import { Carrito } from "./models/Carrito.js";
 import { AlmacenCarrito } from "./services/AlmacenCarrito.js";

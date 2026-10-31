@@ -295,3 +295,18 @@ test("HTTP checkout exige consentimiento y firma antes de registrar el pedido", 
     await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
   }
 });
+
+
+test("HTTP catálogo vacío responde 200 y no simula un fallo de conexión", async () => {
+  state.products = [];
+  const server = app.listen(0, "127.0.0.1");
+  await new Promise<void>((resolve) => server.once("listening", resolve));
+  try {
+    const response = await fetch(`http://127.0.0.1:${(server.address() as { port: number }).port}/api/products/available`, { headers: { Origin: "http://localhost" } });
+    assert.equal(response.status, 200);
+    assert.equal(response.headers.get("access-control-allow-origin"), "http://localhost");
+    assert.deepEqual((await response.json()).data.products, []);
+  } finally {
+    await new Promise<void>((resolve, reject) => server.close((error) => error ? reject(error) : resolve()));
+  }
+});

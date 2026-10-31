@@ -1,5 +1,5 @@
-import { createProductImage, formatProductPrice, getAvailableProducts, getProductById } from "./catalog-api.js?v=2";
-import { addToCart, setCatalogProducts, updateCartBadges } from "./cart.js?v=4";
+import { createProductImage, formatProductPrice, getAvailableProducts, getProductById } from "./catalog-api.js?v=3";
+import { addToCart, setCatalogProducts, updateCartBadges } from "./cart.js?v=5";
 
 const root = document.getElementById("product-detail-root");
 const escapeHtml = (value) => String(value ?? "").replace(/[&<>"']/g, (character) => ({

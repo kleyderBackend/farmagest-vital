@@ -1,4 +1,4 @@
-import { apiRequest } from "./api.js";
+import { apiRequest } from "./api.js?v=2";
 
 const formLoginAdmin = document.getElementById("formLoginAdmin");
 const emailAdmin = document.getElementById("emailAdmin");

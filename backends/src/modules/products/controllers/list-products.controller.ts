@@ -63,13 +63,6 @@ export async function listAvailableProductController(
   try {
     const products = await listAvailableProductService();
 
-    if (products.length === 0) {
-      return res.status(400).json({
-        status: "fail",
-        message: "No hay productos disponibles registrados",
-      });
-    }
-
     return res.status(200).json({
       status: "success",
       message: "Productos disponibles encontrados con exito",

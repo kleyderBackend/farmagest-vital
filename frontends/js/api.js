@@ -1,13 +1,6 @@
-const localApiUrl = "http://localhost:3000/api";
-const productionApiUrl = "https://farmagest-vital-backend.onrender.com/api";
-const isLocalFrontend =
-  window.location.protocol === "file:" ||
-  window.location.hostname === "localhost" ||
-  window.location.hostname === "127.0.0.1";
+import { resolveApiUrl, isLoopback } from "./api-config.js";
 
-export const API_BASE_URL =
-  localStorage.getItem("farmagestApiUrl") ||
-  (isLocalFrontend ? localApiUrl : productionApiUrl);
+export const API_BASE_URL = resolveApiUrl(window.location, localStorage.getItem("farmagestApiUrl"));
 
 export function getToken() {
   return localStorage.getItem("token");
@@ -15,7 +8,13 @@ export function getToken() {
 
 export function getUser() {
   const user = localStorage.getItem("user");
-  return user ? JSON.parse(user) : null;
+  try {
+    return user ? JSON.parse(user) : null;
+  } catch {
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+    return null;
+  }
 }
 
 export function requireAdminSession() {
@@ -41,17 +40,22 @@ export async function apiRequest(path, options = {}) {
     headers.Authorization = `Bearer ${token}`;
   }
 
+  const { auth, timeoutMs = 65000, ...fetchOptions } = options;
+  const signal = fetchOptions.signal ?? AbortSignal.timeout(timeoutMs);
   let response;
 
   try {
     response = await fetch(`${API_BASE_URL}${path}`, {
-      ...options,
+      ...fetchOptions,
+      signal,
       headers,
     });
-  } catch {
-    throw new Error(
-      `No se pudo conectar con el servidor. Verifica que el backend este activo en ${API_BASE_URL}`,
-    );
+  } catch (error) {
+    if (fetchOptions.signal?.aborted) throw error;
+    const local = isLoopback(new URL(API_BASE_URL).hostname);
+    throw new Error(local
+      ? "No se pudo conectar con la API local. Inicia MySQL en XAMPP y ejecuta npm run dev desde la raíz del proyecto. Si compraste en la web publicada, selecciona Render en el seguimiento."
+      : "El servidor de Render no respondió. Puede estar iniciándose; espera un momento y vuelve a consultar.");
   }
 
   const data = await response.json().catch(() => null);
@@ -67,6 +71,7 @@ export async function apiRequest(path, options = {}) {
     throw new Error(message);
   }
 
+  if (data === null) throw new Error("El servidor devolvió una respuesta inválida. Revisa la dirección de la API.");
   return data;
 }
 

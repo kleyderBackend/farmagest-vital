@@ -1,11 +1,10 @@
 import {
-  API_BASE_URL,
+  apiRequest,
   formatCurrency,
   formatDate,
-  getToken,
   getUser,
   requireAdminSession,
-} from "./api.js";
+} from "./api.js?v=2";
 
 requireAdminSession();
 
@@ -361,29 +360,8 @@ function renderIncomeChart(rows) {
   `;
 }
 
-async function fetchDashboardJson(path, options = {}) {
-  const headers = {
-    "Content-Type": "application/json",
-  };
-  const token = getToken();
-
-  if (options.auth !== false && token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
-  const response = await fetch(`${API_BASE_URL}${path}`, {
-    ...options,
-    headers,
-  });
-  const data = await response.json().catch(() => null);
-
-  if (!response.ok) {
-    const message =
-      data?.error || data?.message || "No se pudo consultar el backend";
-    throw new Error(message);
-  }
-
-  return data;
+function fetchDashboardJson(path, options = {}) {
+  return apiRequest(path, options);
 }
 
 async function loadSalesMetrics() {

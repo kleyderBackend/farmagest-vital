@@ -3,8 +3,8 @@ import {
     formatProductPrice,
     getAvailableProducts,
     getCategories,
-} from "./catalog-api.js?v=2";
-import { addToCart, setCatalogProducts, updateCartBadges } from "./cart.js?v=4";
+} from "./catalog-api.js?v=3";
+import { addToCart, setCatalogProducts, updateCartBadges } from "./cart.js?v=5";
 import { products as sampleProducts } from "./products.js";
 
 const productsContainer = document.getElementById("products-container");
